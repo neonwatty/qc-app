@@ -1,1 +1,1 @@
-// Context providers exports will be added here
+export { CheckInProvider, useCheckInContext } from './CheckInContext'

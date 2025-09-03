@@ -5,6 +5,10 @@ import { Heart, MessageCircle, StickyNote, TrendingUp } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { 
+  LazyStatsGrid, 
+  ViewportLazyComponent 
+} from '@/components/ui/LazyComponents'
 import { QuickActions } from '@/components/dashboard/QuickActions'
 
 export default function DashboardPage() {
@@ -101,25 +105,14 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-          <div className="text-2xl font-bold text-pink-600">24</div>
-          <div className="text-sm text-gray-600">Check-ins Completed</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-          <div className="text-2xl font-bold text-blue-600">18</div>
-          <div className="text-sm text-gray-600">Shared Notes</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-          <div className="text-2xl font-bold text-green-600">6</div>
-          <div className="text-sm text-gray-600">Milestones Reached</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-          <div className="text-2xl font-bold text-purple-600">85%</div>
-          <div className="text-sm text-gray-600">Consistency Score</div>
-        </div>
-      </div>
+      {/* Stats Overview - Lazy Loaded */}
+      <ViewportLazyComponent 
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        threshold={0.2}
+        rootMargin="100px"
+      >
+        <LazyStatsGrid />
+      </ViewportLazyComponent>
 
       {/* Quick Actions Floating Bottom Bar - Mobile Only */}
       <QuickActions variant="floating" />

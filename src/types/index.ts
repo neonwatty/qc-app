@@ -18,6 +18,29 @@ export interface Category {
   order: number
 }
 
+export interface PromptTemplate {
+  id: string
+  title: string
+  description: string
+  prompts: string[]
+  categoryId?: string
+  tags: string[]
+  isSystem: boolean
+  usageCount: number
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface CustomPrompt {
+  id: string
+  content: string
+  categoryId: string
+  order: number
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Note {
   id: string
   content: string
@@ -65,8 +88,14 @@ export interface Milestone {
   description: string
   achievedAt: Date
   icon: string
-  category: 'communication' | 'trust' | 'growth' | 'celebration'
+  category: 'communication' | 'trust' | 'growth' | 'celebration' | 'consistency' | 'goals' | 'connection'
   coupleId: string
+  achieved?: boolean
+  points?: number
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary'
+  progress?: number
+  targetDate?: Date
+  data?: any
 }
 
 export interface Couple {

@@ -4,3 +4,7 @@ export { useNoteEditor, useMultiNoteEditor, useNoteEditorShortcuts, useNoteTempl
 export type { UseNoteEditorOptions, UseNoteEditorReturn, NotePrivacy } from './useNoteEditor'
 export { useNoteTags, useTagColors, useTagAnalytics } from './useNoteTags'
 export type { UseNoteTagsOptions, TagStats, BulkTagOperation } from './useNoteTags'
+export { useMilestones } from './useMilestones'
+export type { MilestoneInput, UseMilestonesReturn } from './useMilestones'
+export { useTheme } from './useTheme'
+export type { ThemeMode, ActualTheme, ThemeColors, ThemeSettings } from './useTheme'
