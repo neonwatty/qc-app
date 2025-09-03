@@ -1,2 +1,6 @@
 export { useLocalStorage } from './use-local-storage'
 export { useDebounce } from './use-debounce'
+export { useNoteEditor, useMultiNoteEditor, useNoteEditorShortcuts, useNoteTemplates } from './useNoteEditor'
+export type { UseNoteEditorOptions, UseNoteEditorReturn, NotePrivacy } from './useNoteEditor'
+export { useNoteTags, useTagColors, useTagAnalytics } from './useNoteTags'
+export type { UseNoteTagsOptions, TagStats, BulkTagOperation } from './useNoteTags'
