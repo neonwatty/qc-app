@@ -27,7 +27,7 @@ const Hero = () => {
       <div className="absolute inset-0 gradient-blush opacity-50" />
       <div className="absolute inset-0 bg-gradient-to-br from-rose-50/80 via-pink-50/80 to-orange-50/80" />
       <motion.div
-        className="w-full max-w-lg sm:max-w-4xl mx-auto text-center relative z-10"
+        className="w-full sm:max-w-4xl mx-auto text-center relative z-10"
         variants={staggerContainer}
         initial="initial"
         animate="animate"

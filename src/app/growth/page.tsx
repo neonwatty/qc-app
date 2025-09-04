@@ -132,43 +132,43 @@ export default function GrowthPage() {
       </StaggerContainer>
 
       {/* View Toggle */}
-      <div className="flex justify-center">
-        <div className="bg-gray-100 p-1 rounded-lg">
+      <div className="flex justify-center overflow-x-auto">
+        <div className="bg-gray-100 p-1 rounded-lg flex-shrink-0">
           <Button
             variant={activeView === 'timeline' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('timeline')}
-            className="rounded-md"
+            className="rounded-md text-xs sm:text-sm"
           >
-            <Award className="h-4 w-4 mr-2" />
-            Milestones
+            <Award className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">Mile</span>stones
           </Button>
           <Button
             variant={activeView === 'progress' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('progress')}
-            className="rounded-md"
+            className="rounded-md text-xs sm:text-sm"
           >
-            <Target className="h-4 w-4 mr-2" />
+            <Target className="h-4 w-4 mr-1 sm:mr-2" />
             Progress
           </Button>
           <Button
             variant={activeView === 'analytics' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('analytics')}
-            className="rounded-md"
+            className="rounded-md text-xs sm:text-sm"
           >
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Analytics
+            <BarChart3 className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">Analy</span>tics
           </Button>
           <Button
             variant={activeView === 'memories' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('memories')}
-            className="rounded-md"
+            className="rounded-md text-xs sm:text-sm"
           >
-            <Camera className="h-4 w-4 mr-2" />
-            Memories
+            <Camera className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">Memo</span>ries
           </Button>
         </div>
       </div>

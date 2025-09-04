@@ -108,7 +108,6 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="preload" as="font" href="/fonts/inter.woff2" type="font/woff2" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.className} gradient-romantic min-h-screen antialiased touch-manipulation`}>
           <div className="flex min-h-screen lg:h-screen safe-area-inset">
@@ -137,31 +136,6 @@ export default function RootLayout({
             </div>
           </div>
         
-        {/* PWA Install Prompt Script */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
-                });
-              }
-              
-              // PWA Install Prompt
-              let deferredPrompt;
-              window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                // Show custom install button if needed
-              });
-              
-              // Handle app installed
-              window.addEventListener('appinstalled', (evt) => {
-                console.log('QC App installed');
-              });
-            `,
-          }}
-        />
       </body>
     </html>
   )

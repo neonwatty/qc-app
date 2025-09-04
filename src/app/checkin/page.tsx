@@ -100,17 +100,17 @@ export default function CheckInPage() {
               Start with our guided quick check-in
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button className="bg-pink-600 hover:bg-pink-700">
-              <Play className="h-4 w-4 mr-2" />
-              Start Now
+          <div className="flex gap-2 flex-wrap">
+            <Button className="bg-pink-600 hover:bg-pink-700 text-sm sm:text-base">
+              <Play className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">Start </span>Now
             </Button>
             <Button 
               variant="outline"
               onClick={() => setShowCardStack(!showCardStack)}
-              className="lg:hidden"
+              className="lg:hidden text-sm sm:text-base"
             >
-              {showCardStack ? 'Grid View' : 'Card View'}
+              {showCardStack ? 'Grid' : 'Cards'}
             </Button>
           </div>
         </div>
