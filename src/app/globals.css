@@ -1,52 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 99%; /* Pure white background */
+    --foreground: 210 15% 25%; /* Soft dark text */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 15% 25%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --popover-foreground: 210 15% 25%;
+    --primary: 350 85% 50%; /* Coral pink - vibrant and dark enough for contrast */
+    --primary-foreground: 0 0% 100%; /* Pure white */
+    --secondary: 15 90% 65%; /* Soft coral - darker */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 40% 98%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 25 95% 75%; /* Peach */
+    --accent-foreground: 210 15% 25%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 25% 92%;
+    --input: 20 25% 96%;
+    --ring: 350 85% 60%;
+    --radius: 1.5rem;
+    
+    /* Modern dating app color palette */
+    --coral-primary: 350 85% 60%;
+    --coral-light: 350 80% 75%;
+    --coral-lighter: 350 70% 85%;
+    --peach: 25 95% 75%;
+    --peach-light: 25 90% 85%;
+    --blush: 340 75% 80%;
+    --rose-gold: 20 50% 80%;
+    --warm-gray: 210 15% 95%;
+    --soft-shadow: 210 15% 85%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
 }
 
 @layer base {
@@ -56,6 +44,50 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+  }
+  
+  /* Ensure button text has proper contrast */
+  button {
+    text-shadow: none;
+  }
+  
+  /* Force button color overrides */
+  button[class*="bg-[hsl(350_85%_50%)]"] {
+    background-color: hsl(350 85% 50%) !important;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  
+  button[class*="text-[hsl(350_85%_50%)]"] {
+    color: hsl(350 85% 50%) !important;
+  }
+  
+  button[class*="bg-white"] {
+    background-color: white !important;
+    color: hsl(350 85% 50%) !important;
+  }
+  
+  /* Fix ghost button visibility */
+  button[class*="text-gray-800"][class*="bg-transparent"] {
+    background-color: transparent !important;
+    color: #1f2937 !important;
+    border: 1px solid #d1d5db !important;
+  }
+  
+  button[class*="text-gray-800"][class*="bg-transparent"]:hover {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+  }
+  
+  /* Fix stats card number visibility */
+  .text-gray-900 {
+    color: #111827 !important;
+  }
+  
+  /* Ensure stats numbers are dark and visible */
+  span[class*="text-2xl"][class*="text-gray-900"] {
+    color: #000000 !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
   }
   
   /* High contrast mode */
@@ -143,4 +175,109 @@
   font-size: 16px; /* Prevents zoom on iOS */
   line-height: 1.4;
   touch-action: manipulation;
+}
+
+/* =====================================================
+   COLORFUL GRADIENTS AND EFFECTS
+   ===================================================== */
+
+/* Modern Dating App Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--coral-primary)), hsl(var(--coral-light)));
+}
+
+.gradient-warm {
+  background: linear-gradient(135deg, hsl(var(--coral-light)), hsl(var(--peach)), hsl(var(--peach-light)));
+}
+
+.gradient-soft-coral {
+  background: linear-gradient(135deg, hsl(var(--coral-lighter)), hsl(var(--blush)));
+}
+
+.gradient-sunset {
+  background: linear-gradient(135deg, #FF7B7B, #FFB6C1, #FFA07A);
+}
+
+.gradient-blush {
+  background: linear-gradient(135deg, #FFE4E1, #FFF0F5, #FFEEF0);
+}
+
+.gradient-peach-dream {
+  background: linear-gradient(135deg, #FFCCCB, #FFB6C1, #FFDAB9);
+}
+
+.gradient-romantic {
+  background: linear-gradient(135deg, #FFF0F5, #FFE4E6, #FFEEF0);
+}
+
+/* Animated gradient */
+.gradient-animated {
+  background: linear-gradient(270deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--accent)), hsl(var(--primary)));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Glassmorphism with color */
+.glass-colorful {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1), 
+    rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Colorful shadows */
+.shadow-primary {
+  box-shadow: 0 4px 20px -2px hsla(var(--primary), 0.3);
+}
+
+.shadow-secondary {
+  box-shadow: 0 4px 20px -2px hsla(var(--secondary), 0.3);
+}
+
+.shadow-accent {
+  box-shadow: 0 4px 20px -2px hsla(var(--accent), 0.3);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px -4px hsla(var(--primary), 0.3);
+}
+
+/* Text gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-warm {
+  background: linear-gradient(135deg, hsl(var(--coral)), hsl(var(--peach)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

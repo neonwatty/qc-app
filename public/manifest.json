@@ -1,0 +1,57 @@
+{
+  "name": "QC - Relationship Check-in",
+  "short_name": "QC",
+  "description": "Strengthen your relationship with regular check-ins",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ec4899",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "390x844",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "390x844",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Check-in",
+      "url": "/checkin",
+      "description": "Start a new relationship check-in"
+    },
+    {
+      "name": "View Notes",
+      "url": "/notes",
+      "description": "View your shared notes"
+    },
+    {
+      "name": "Growth Timeline",
+      "url": "/growth",
+      "description": "See your relationship milestones"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
+}

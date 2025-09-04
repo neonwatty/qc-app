@@ -5,6 +5,7 @@ import { MessageCircle, Clock, Users, ArrowRight, Play } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { CardStack } from '@/components/ui/SwipeGestures'
 
 const checkInCategories = [
   {
@@ -39,6 +40,37 @@ const checkInCategories = [
 
 export default function CheckInPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [showCardStack, setShowCardStack] = useState(false)
+  
+  // Convert categories to swipeable cards
+  const categoryCards = checkInCategories.map(category => ({
+    id: category.id,
+    content: (
+      <div className="p-6 h-full flex flex-col justify-between">
+        <div className="text-center">
+          <div className="text-4xl mb-4">{category.icon}</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            {category.name}
+          </h3>
+          <p className="text-gray-600">
+            {category.description}
+          </p>
+        </div>
+        <div className="text-center text-sm text-gray-500 mt-8">
+          Swipe right to explore • Swipe left to skip
+        </div>
+      </div>
+    )
+  }))
+  
+  const handleSwipeRight = (card: any) => {
+    console.log('Exploring category:', card.id)
+    // Here you would navigate to the category discussion
+  }
+  
+  const handleSwipeLeft = (card: any) => {
+    console.log('Skipping category:', card.id)
+  }
 
   return (
     <MotionBox variant="page" className="space-y-8">
@@ -68,10 +100,19 @@ export default function CheckInPage() {
               Start with our guided quick check-in
             </p>
           </div>
-          <Button className="bg-pink-600 hover:bg-pink-700">
-            <Play className="h-4 w-4 mr-2" />
-            Start Now
-          </Button>
+          <div className="flex gap-2">
+            <Button className="bg-pink-600 hover:bg-pink-700">
+              <Play className="h-4 w-4 mr-2" />
+              Start Now
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setShowCardStack(!showCardStack)}
+              className="lg:hidden"
+            >
+              {showCardStack ? 'Grid View' : 'Card View'}
+            </Button>
+          </div>
         </div>
         
         <div className="flex items-center mt-4 text-sm text-gray-500">
@@ -88,43 +129,56 @@ export default function CheckInPage() {
           Or choose a specific topic to explore:
         </h2>
         
-        <StaggerContainer className="grid gap-4 sm:grid-cols-2">
-          {checkInCategories.map((category, index) => (
-            <StaggerItem key={category.id}>
-              <div 
-                className={`
-                  bg-white rounded-lg border-2 p-6 cursor-pointer transition-all
-                  ${selectedCategory === category.id 
-                    ? `border-${category.color}-500 bg-${category.color}-50` 
-                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                  }
-                `}
-                onClick={() => setSelectedCategory(
-                  selectedCategory === category.id ? null : category.id
-                )}
-              >
-                <div className="flex items-start space-x-3">
-                  <div className="text-2xl">{category.icon}</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {category.description}
-                    </p>
-                  </div>
-                  <ArrowRight className={`
-                    h-5 w-5 transition-colors
+        {showCardStack ? (
+          // Card Stack View - Mobile optimized
+          <div className="lg:hidden">
+            <CardStack
+              cards={categoryCards}
+              onSwipeLeft={handleSwipeLeft}
+              onSwipeRight={handleSwipeRight}
+              className="mx-auto max-w-sm"
+            />
+          </div>
+        ) : (
+          // Grid View - Default
+          <StaggerContainer className="grid gap-4 sm:grid-cols-2">
+            {checkInCategories.map((category, index) => (
+              <StaggerItem key={category.id}>
+                <div 
+                  className={`
+                    bg-white rounded-lg border-2 p-6 cursor-pointer transition-all
                     ${selectedCategory === category.id 
-                      ? `text-${category.color}-500` 
-                      : 'text-gray-400'
+                      ? `border-${category.color}-500 bg-${category.color}-50` 
+                      : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                     }
-                  `} />
+                  `}
+                  onClick={() => setSelectedCategory(
+                    selectedCategory === category.id ? null : category.id
+                  )}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="text-2xl">{category.icon}</div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {category.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {category.description}
+                      </p>
+                    </div>
+                    <ArrowRight className={`
+                      h-5 w-5 transition-colors
+                      ${selectedCategory === category.id 
+                        ? `text-${category.color}-500` 
+                        : 'text-gray-400'
+                      }
+                    `} />
+                  </div>
                 </div>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        )}
 
         {selectedCategory && (
           <MotionBox variant="fade" className="mt-6">

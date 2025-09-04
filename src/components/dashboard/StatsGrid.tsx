@@ -76,20 +76,20 @@ const StatCard: React.FC<StatCardProps> = ({
         <CardContent className="pt-0">
           <div className="space-y-1">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">
+              <span className="text-2xl font-bold text-gray-900">
                 {Math.round(count)}
               </span>
               {suffix && (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-gray-700 font-medium">
                   {suffix}
                 </span>
               )}
             </div>
-            <p className="text-sm text-muted-foreground font-medium">
+            <p className="text-sm text-gray-800 font-semibold">
               {label}
             </p>
             {changeLabel && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-700 font-medium">
                 {changeLabel}
               </p>
             )}

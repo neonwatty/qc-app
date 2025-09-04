@@ -20,31 +20,41 @@ const navigationItems = [
     name: 'Dashboard',
     href: '/dashboard',
     icon: Home,
-    mobileOrder: 1
+    mobileOrder: 1,
+    color: 'purple',
+    gradient: 'from-purple-500 to-purple-600'
   },
   {
     name: 'Check-in',
     href: '/checkin',
     icon: MessageCircle,
-    mobileOrder: 2
+    mobileOrder: 2,
+    color: 'pink',
+    gradient: 'from-pink-500 to-rose-500'
   },
   {
     name: 'Notes',
     href: '/notes',
     icon: StickyNote,
-    mobileOrder: 3
+    mobileOrder: 3,
+    color: 'yellow',
+    gradient: 'from-yellow-400 to-orange-400'
   },
   {
     name: 'Growth',
     href: '/growth',
     icon: TrendingUp,
-    mobileOrder: 4
+    mobileOrder: 4,
+    color: 'teal',
+    gradient: 'from-teal-500 to-cyan-500'
   },
   {
     name: 'Settings',
     href: '/settings',
     icon: Settings,
-    mobileOrder: 5
+    mobileOrder: 5,
+    color: 'violet',
+    gradient: 'from-violet-500 to-indigo-500'
   }
 ]
 
@@ -71,7 +81,7 @@ export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
         delay={0.2}
         className={`hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:w-64 ${className}`}
       >
-        <div className="flex flex-col flex-1 bg-white/80 backdrop-blur-md border-r border-gray-100">
+        <div className="flex flex-col flex-1 bg-white/95 backdrop-blur-md border-r border-rose-200/40 shadow-lg shadow-rose-100/50">
           <div className="flex flex-col flex-1 pt-20 pb-4 overflow-y-auto">
             <nav className="flex-1 px-4 space-y-2">
               {navigationItems.map((item) => {
@@ -83,16 +93,16 @@ export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors group",
+                      "flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-300 group hover-lift",
                       active
-                        ? "bg-pink-50 text-pink-700 border border-pink-200"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        ? "gradient-primary text-white shadow-lg shadow-rose-200/50"
+                        : "text-gray-600 hover:bg-rose-50/80 hover:shadow-md hover:text-rose-600"
                     )}
                   >
                     <Icon
                       className={cn(
-                        "mr-3 h-5 w-5 flex-shrink-0",
-                        active ? "text-pink-600" : "text-gray-400 group-hover:text-gray-500"
+                        "mr-3 h-5 w-5 flex-shrink-0 transition-transform group-hover:scale-110",
+                        active ? "text-white" : "text-gray-400 group-hover:text-purple-500"
                       )}
                     />
                     {item.name}
@@ -108,7 +118,7 @@ export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
       <MotionBox 
         variant="slideUp" 
         delay={0.3}
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-gray-100"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-rose-200/40 shadow-lg shadow-rose-100/30"
       >
         <nav className="flex justify-around items-center py-2 px-1">
           {navigationItems
@@ -123,14 +133,16 @@ export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex flex-col items-center justify-center px-3 py-2 text-xs font-medium transition-colors min-w-0 flex-1",
-                    active ? "text-pink-600" : "text-gray-500"
+                    "flex flex-col items-center justify-center px-3 py-2 text-xs font-medium transition-all duration-300 min-w-0 flex-1 rounded-2xl",
+                    active 
+                      ? "text-rose-600 bg-rose-50" 
+                      : "text-gray-500 hover:bg-rose-50/60"
                   )}
                 >
                   <Icon
                     className={cn(
-                      "h-5 w-5 mb-1",
-                      active ? "text-pink-600" : "text-gray-400"
+                      "h-5 w-5 mb-1 transition-transform",
+                      active ? "text-rose-600 scale-110" : "text-gray-400"
                     )}
                   />
                   <span className="truncate">{item.name}</span>

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Heart, MessageCircle, StickyNote, TrendingUp } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
@@ -10,19 +10,30 @@ import {
   ViewportLazyComponent 
 } from '@/components/ui/LazyComponents'
 import { QuickActions } from '@/components/dashboard/QuickActions'
+import { PullToRefresh } from '@/components/ui/PullToRefresh'
+import { MobileActionBar } from '@/components/ui/PrimaryActionFAB'
 
 export default function DashboardPage() {
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const handleRefresh = async () => {
+    // Simulate API refresh
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setRefreshKey(prev => prev + 1)
+  }
+
   return (
-    <MotionBox variant="page" className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-          Welcome to Your Dashboard
-        </h1>
-        <p className="mt-4 text-lg text-gray-600">
-          Your relationship wellness hub
-        </p>
-      </div>
+    <PullToRefresh onRefresh={handleRefresh} className="h-full">
+      <MotionBox variant="page" className="space-y-8" key={refreshKey}>
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            Welcome to Your Dashboard
+          </h1>
+          <p className="mt-4 text-lg text-gray-800 font-medium">
+            Your relationship wellness hub
+          </p>
+        </div>
 
       {/* Quick Actions */}
       <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -34,7 +45,7 @@ export default function DashboardPage() {
                 Start Check-in
               </h3>
             </div>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-700 font-medium">
               Begin a new relationship check-in session
             </p>
             <Link href="/checkin" className="mt-4 inline-block">
@@ -53,7 +64,7 @@ export default function DashboardPage() {
                 View Notes
               </h3>
             </div>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-700 font-medium">
               Review your shared and private notes
             </p>
             <Link href="/notes" className="mt-4 inline-block">
@@ -72,7 +83,7 @@ export default function DashboardPage() {
                 Growth Gallery
               </h3>
             </div>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-700 font-medium">
               Track your relationship progress
             </p>
             <Link href="/growth" className="mt-4 inline-block">
@@ -90,15 +101,15 @@ export default function DashboardPage() {
           Recent Activity
         </h2>
         <div className="space-y-3">
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-gray-800 font-medium">
             <Heart className="h-4 w-4 text-pink-500 mr-2" />
             <span>Last check-in completed 3 days ago</span>
           </div>
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-gray-800 font-medium">
             <StickyNote className="h-4 w-4 text-blue-500 mr-2" />
             <span>2 new shared notes added this week</span>
           </div>
-          <div className="flex items-center text-sm text-gray-600">
+          <div className="flex items-center text-sm text-gray-800 font-medium">
             <TrendingUp className="h-4 w-4 text-green-500 mr-2" />
             <span>Milestone: 6 months of regular check-ins!</span>
           </div>
@@ -114,8 +125,9 @@ export default function DashboardPage() {
         <LazyStatsGrid />
       </ViewportLazyComponent>
 
-      {/* Quick Actions Floating Bottom Bar - Mobile Only */}
-      <QuickActions variant="floating" />
-    </MotionBox>
+        {/* Mobile Action Bar - Context-aware actions */}
+        <MobileActionBar />
+      </MotionBox>
+    </PullToRefresh>
   )
 }

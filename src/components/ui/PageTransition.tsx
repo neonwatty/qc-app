@@ -14,21 +14,11 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children, className }) 
   const pathname = usePathname()
   const transition = getTransitionForRoute(pathname)
 
+  // Temporarily disable animations to fix content loading issue
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={pathname}
-        className={className}
-        variants={transition}
-        {...pageWrapperVariants}
-        transition={{
-          duration: 0.3,
-          ease: 'easeInOut'
-        }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div className={className}>
+      {children}
+    </div>
   )
 }
 

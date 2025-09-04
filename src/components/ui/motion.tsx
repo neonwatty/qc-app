@@ -38,17 +38,11 @@ export const MotionBox: React.FC<MotionBoxProps> = ({
 
   const selectedVariant = variants[variant]
   
+  // Temporarily disable animations to fix content loading issue
   return (
-    <motion.div
-      className={cn(className)}
-      variants={selectedVariant}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      transition={{ delay }}
-    >
+    <div className={cn(className)}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 
@@ -63,24 +57,11 @@ export const StaggerContainer: React.FC<StaggerContainerProps> = ({
   children,
   className
 }) => {
-  const customStaggerContainer = {
-    initial: {},
-    animate: {
-      transition: {
-        staggerChildren: staggerDelay
-      }
-    }
-  }
-
+  // Temporarily disable animations to fix content loading issue
   return (
-    <motion.div
-      className={cn(className)}
-      variants={customStaggerContainer}
-      initial="initial"
-      animate="animate"
-    >
+    <div className={cn(className)}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 
@@ -93,13 +74,11 @@ export const StaggerItem: React.FC<StaggerItemProps> = ({
   children,
   className
 }) => {
+  // Temporarily disable animations to fix content loading issue
   return (
-    <motion.div
-      className={cn(className)}
-      variants={staggerItem}
-    >
+    <div className={cn(className)}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 

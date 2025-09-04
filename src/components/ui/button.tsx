@@ -13,15 +13,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90 active:bg-primary/95",
+          "bg-[hsl(350_85%_50%)] text-white shadow-lg hover:bg-[hsl(350_85%_45%)] active:bg-[hsl(350_85%_40%)] font-bold border-2 border-[hsl(350_85%_40%)] backdrop-blur-sm",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 active:bg-destructive/95",
+          "bg-red-600 text-white shadow-lg hover:bg-red-700 active:bg-red-800 font-bold border-2 border-red-700/30",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
+          "border-2 border-[hsl(350_85%_50%)] bg-white/95 text-[hsl(350_85%_50%)] shadow-lg hover:bg-[hsl(350_85%_50%)] hover:text-white active:bg-[hsl(350_85%_45%)] font-bold backdrop-blur-sm",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 active:bg-secondary/90",
-        ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
-        link: "text-primary underline-offset-4 hover:underline active:underline",
+          "bg-gray-200 text-gray-900 shadow-lg hover:bg-gray-300 active:bg-gray-400 font-bold border-2 border-gray-400/50",
+        ghost: "text-gray-800 bg-transparent hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 font-semibold border border-gray-300",
+        link: "text-[hsl(350_85%_50%)] underline-offset-4 hover:underline active:underline font-bold",
       },
       size: {
         default: "h-10 px-4 py-2", // Increased from h-9 for better touch

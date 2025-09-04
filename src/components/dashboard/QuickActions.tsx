@@ -83,12 +83,12 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
       <MotionBox
         variant="slideUp"
         className={cn(
-          "fixed bottom-20 left-4 right-4 lg:bottom-6 lg:left-6 lg:right-auto lg:w-auto z-40",
+          "fixed bottom-20 left-4 right-4 lg:bottom-6 lg:right-6 lg:left-auto lg:w-auto z-40",
           "lg:hidden", // Only show on mobile
           className
         )}
       >
-        <StaggerContainer className="flex gap-3 justify-center lg:flex-col lg:gap-2">
+        <StaggerContainer className="flex gap-2 justify-center lg:flex-col lg:gap-2">
           {quickActions.map((action, index) => (
             <QuickAction
               key={action.label}
@@ -97,7 +97,10 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
               label={action.label}
               description={action.description}
               hapticFeedback={action.hapticFeedback}
-              className="flex-1 lg:w-20"
+              className={cn(
+                "flex-1 lg:w-16 h-14 rounded-xl shadow-lg hover:shadow-xl transition-shadow",
+                index === 0 && "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-0 hover:from-pink-600 hover:to-rose-600"
+              )}
             />
           ))}
         </StaggerContainer>

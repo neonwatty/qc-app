@@ -22,16 +22,19 @@ const Hero = () => {
   ]
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-background to-muted/30">
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Soft romantic background */}
+      <div className="absolute inset-0 gradient-blush opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-rose-50/80 via-pink-50/80 to-orange-50/80" />
       <motion.div
-        className="max-w-4xl mx-auto text-center"
+        className="max-w-4xl mx-auto text-center relative z-10"
         variants={staggerContainer}
         initial="initial"
         animate="animate"
       >
         {/* Hero Badge */}
         <motion.div
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-soft-coral text-rose-700 text-sm font-medium mb-8 shadow-lg shadow-rose-200/50"
           variants={staggerFadeUp}
         >
           <Heart className="w-4 h-4" />
@@ -43,8 +46,8 @@ const Hero = () => {
           className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6"
           variants={slideUp}
         >
-          Quality Control
-          <span className="block text-primary mt-2">for your relationship</span>
+          <span className="bg-gradient-to-r from-rose-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">Quality Control</span>
+          <span className="block bg-gradient-to-r from-rose-400 to-pink-500 bg-clip-text text-transparent mt-2">for your relationship</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -66,8 +69,9 @@ const Hero = () => {
             return (
               <motion.div
                 key={index}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 text-sm"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-rose-200/50 text-sm font-medium hover:shadow-lg hover:border-rose-300/50 transition-all cursor-pointer backdrop-blur-sm"
                 variants={staggerFadeUp}
+                whileHover={{ scale: 1.05 }}
               >
                 <Icon className="w-4 h-4 text-primary" />
                 {feature.text}
@@ -84,7 +88,7 @@ const Hero = () => {
           <motion.div variants={buttonTap}>
             <Button
               size="lg"
-              className="px-8 py-4 text-lg font-semibold group"
+              className="px-8 py-4 text-lg font-semibold group gradient-primary text-white border-0 shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 transition-all"
               asChild
             >
               <a href="/dashboard" className="flex items-center gap-2">
@@ -98,7 +102,7 @@ const Hero = () => {
             <Button
               variant="outline"
               size="lg"
-              className="px-8 py-4 text-lg font-semibold"
+              className="border-2 border-rose-300 hover:bg-rose-50 text-rose-600 shadow-md hover:shadow-lg transition-all px-8 py-4 text-lg font-semibold"
               asChild
             >
               <a href="#features">Learn more</a>

@@ -6,7 +6,7 @@ import {
   Camera, 
   Upload, 
   X, 
-  Image, 
+  Image as ImageIcon, 
   RefreshCw,
   Check,
   AlertCircle
@@ -162,7 +162,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
               onClick={openMockSelector}
               disabled={isUploading}
             >
-              <Image className="h-4 w-4" />
+              <ImageIcon className="h-4 w-4" />
             </Button>
           </div>
         )}
@@ -271,7 +271,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
               disabled={isUploading}
               className="h-12"
             >
-              <Image className="h-5 w-5 mr-2" />
+              <ImageIcon className="h-5 w-5 mr-2" />
               Choose Icon
             </Button>
           </div>
@@ -375,7 +375,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                     onClick={openMockSelector}
                     disabled={isUploading}
                   >
-                    <Image className="h-4 w-4 mr-2" />
+                    <ImageIcon className="h-4 w-4 mr-2" />
                     Choose Icon
                   </Button>
                   <Button
@@ -445,7 +445,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                         Upload Photo
                       </Button>
                       <Button variant="outline" onClick={openMockSelector} className="px-6">
-                        <Image className="h-4 w-4 mr-2" />
+                        <ImageIcon className="h-4 w-4 mr-2" />
                         Choose Icon
                       </Button>
                     </div>
