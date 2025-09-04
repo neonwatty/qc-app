@@ -111,7 +111,7 @@ export default function RootLayout({
         <link rel="preload" as="font" href="/fonts/inter.woff2" type="font/woff2" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.className} gradient-romantic min-h-screen antialiased touch-manipulation`}>
-          <div className="flex h-screen safe-area-inset">
+          <div className="flex min-h-screen lg:h-screen safe-area-inset">
             {/* Desktop Sidebar Navigation */}
             <Navigation />
             
@@ -120,12 +120,19 @@ export default function RootLayout({
               <Header />
               
               {/* Page Content */}
-              <main className="flex-1 overflow-auto pb-16 lg:pb-0 px-4 sm:px-6 lg:px-8 py-6 safe-area-bottom">
-                <SwipeNavigation className="h-full" enableBackSwipe>
+              <main className="flex-1 overflow-auto pb-16 lg:pb-0 px-4 sm:px-6 lg:px-8 py-6 safe-area-bottom scroll-smooth">
+                <div className="lg:hidden">
+                  <SwipeNavigation className="min-h-full" enableBackSwipe disabled={false}>
+                    <PageTransition>
+                      {children}
+                    </PageTransition>
+                  </SwipeNavigation>
+                </div>
+                <div className="hidden lg:block">
                   <PageTransition>
                     {children}
                   </PageTransition>
-                </SwipeNavigation>
+                </div>
               </main>
             </div>
           </div>

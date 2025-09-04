@@ -74,22 +74,24 @@ export const SwipeNavigation: React.FC<SwipeNavigationProps> = ({
   }
   
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn("relative", className)}>
       <motion.div
-        className="h-full"
-        drag="x"
+        className="min-h-full"
+        drag={disabled ? false : "x"}
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.2}
+        dragElastic={0.1}
+        dragMomentum={false}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
         style={{
-          x: isDragging ? dragOffset * 0.8 : 0
+          x: isDragging && !disabled ? dragOffset * 0.5 : 0,
+          touchAction: 'pan-y'
         }}
         transition={{
           type: "spring",
-          damping: 25,
-          stiffness: 300
+          damping: 30,
+          stiffness: 400
         }}
       >
         {children}
