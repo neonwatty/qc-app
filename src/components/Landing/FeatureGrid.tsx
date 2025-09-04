@@ -83,7 +83,7 @@ const FeatureGrid = () => {
   ]
 
   return (
-    <section id="features" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">
+    <section id="features" className="py-24 px-2 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted/30">
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="text-center mb-20"

@@ -22,12 +22,12 @@ const Hero = () => {
   ]
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center px-2 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Soft romantic background */}
       <div className="absolute inset-0 gradient-blush opacity-50" />
       <div className="absolute inset-0 bg-gradient-to-br from-rose-50/80 via-pink-50/80 to-orange-50/80" />
       <motion.div
-        className="max-w-4xl mx-auto text-center relative z-10"
+        className="w-full max-w-lg sm:max-w-4xl mx-auto text-center relative z-10"
         variants={staggerContainer}
         initial="initial"
         animate="animate"

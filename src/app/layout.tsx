@@ -120,7 +120,7 @@ export default function RootLayout({
               <Header />
               
               {/* Page Content */}
-              <main className="flex-1 overflow-auto pb-16 lg:pb-0 px-4 sm:px-6 lg:px-8 py-6 safe-area-bottom scroll-smooth">
+              <main className="flex-1 overflow-auto pb-16 lg:pb-0 px-2 sm:px-4 lg:px-8 py-6 safe-area-bottom scroll-smooth">
                 <div className="lg:hidden">
                   <SwipeNavigation className="min-h-full" enableBackSwipe disabled={false}>
                     <PageTransition>
