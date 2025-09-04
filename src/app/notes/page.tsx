@@ -122,11 +122,12 @@ export default function NotesPage() {
             className="w-full pl-10 pr-4 py-3 text-base border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent mobile-input touch-manipulation"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1 sm:gap-2 overflow-x-auto pb-2 sm:pb-0">
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('all')}
+            className="flex-shrink-0"
           >
             All
           </Button>
@@ -134,34 +135,34 @@ export default function NotesPage() {
             variant={filter === 'shared' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('shared')}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 flex-shrink-0"
           >
             <Eye className="h-3 w-3" />
-            Shared
+            <span className="hidden xs:inline">Share</span>d
           </Button>
           <Button
             variant={filter === 'private' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('private')}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 flex-shrink-0"
           >
             <EyeOff className="h-3 w-3" />
-            Private
+            <span className="hidden xs:inline">Priva</span>te
           </Button>
           <Button
             variant={filter === 'draft' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('draft')}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 flex-shrink-0"
           >
             <StickyNote className="h-3 w-3" />
-            Drafts
+            <span className="hidden xs:inline">Draf</span>ts
           </Button>
         </div>
       </div>
 
       {/* Notes Grid */}
-      <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <StaggerContainer className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredNotes.map((note, index) => (
           <StaggerItem key={note.id}>
             <LongPressCard
@@ -219,26 +220,26 @@ export default function NotesPage() {
       )}
 
       {/* Note Types Info */}
-      <div className="bg-gray-50 rounded-lg p-6">
+      <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
         <h3 className="font-semibold text-gray-900 mb-3">Note Types</h3>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 xs:grid-cols-1 sm:grid-cols-3">
           <div className="flex items-center gap-2">
-            <Eye className="h-4 w-4 text-green-600" />
-            <div>
+            <Eye className="h-4 w-4 text-green-600 flex-shrink-0" />
+            <div className="min-w-0">
               <div className="font-medium text-sm">Shared</div>
               <div className="text-xs text-gray-600">Visible to both partners</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <EyeOff className="h-4 w-4 text-blue-600" />
-            <div>
+            <EyeOff className="h-4 w-4 text-blue-600 flex-shrink-0" />
+            <div className="min-w-0">
               <div className="font-medium text-sm">Private</div>
               <div className="text-xs text-gray-600">Only visible to you</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <StickyNote className="h-4 w-4 text-orange-600" />
-            <div>
+            <StickyNote className="h-4 w-4 text-orange-600 flex-shrink-0" />
+            <div className="min-w-0">
               <div className="font-medium text-sm">Draft</div>
               <div className="text-xs text-gray-600">Work in progress</div>
             </div>

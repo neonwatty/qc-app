@@ -104,7 +104,7 @@ export default function GrowthPage() {
       </div>
 
       {/* Stats Overview */}
-      <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <StaggerContainer className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StaggerItem>
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">{achievedMilestones.length}</div>
@@ -132,43 +132,47 @@ export default function GrowthPage() {
       </StaggerContainer>
 
       {/* View Toggle */}
-      <div className="flex justify-center overflow-x-auto">
-        <div className="bg-gray-100 p-1 rounded-lg flex-shrink-0">
+      <div className="flex justify-center overflow-x-auto px-4">
+        <div className="bg-gray-100 p-1 rounded-lg flex-shrink-0 min-w-max">
           <Button
             variant={activeView === 'timeline' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('timeline')}
-            className="rounded-md text-xs sm:text-sm"
+            className="rounded-md text-xs sm:text-sm px-2 sm:px-3"
           >
-            <Award className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Mile</span>stones
+            <Award className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            <span className="hidden xs:inline text-xs sm:text-sm">Miles</span>
+            <span className="xs:hidden text-xs">M</span>
           </Button>
           <Button
             variant={activeView === 'progress' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('progress')}
-            className="rounded-md text-xs sm:text-sm"
+            className="rounded-md text-xs sm:text-sm px-2 sm:px-3"
           >
-            <Target className="h-4 w-4 mr-1 sm:mr-2" />
-            Progress
+            <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            <span className="hidden xs:inline text-xs sm:text-sm">Prog</span>
+            <span className="xs:hidden text-xs">P</span>
           </Button>
           <Button
             variant={activeView === 'analytics' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('analytics')}
-            className="rounded-md text-xs sm:text-sm"
+            className="rounded-md text-xs sm:text-sm px-2 sm:px-3"
           >
-            <BarChart3 className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Analy</span>tics
+            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            <span className="hidden xs:inline text-xs sm:text-sm">Data</span>
+            <span className="xs:hidden text-xs">D</span>
           </Button>
           <Button
             variant={activeView === 'memories' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveView('memories')}
-            className="rounded-md text-xs sm:text-sm"
+            className="rounded-md text-xs sm:text-sm px-2 sm:px-3"
           >
-            <Camera className="h-4 w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Memo</span>ries
+            <Camera className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            <span className="hidden xs:inline text-xs sm:text-sm">Pics</span>
+            <span className="xs:hidden text-xs">📷</span>
           </Button>
         </div>
       </div>
@@ -191,22 +195,22 @@ export default function GrowthPage() {
                         <CheckCircle className="h-5 w-5 text-green-600" />
                       </div>
                     </div>
-                    <div className="ml-4 flex-1">
-                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900">
+                    <div className="ml-4 flex-1 min-w-0">
+                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight">
                               {milestone.title}
                             </h3>
-                            <p className="text-gray-600 mt-1">
+                            <p className="text-gray-600 mt-1 text-sm sm:text-base">
                               {milestone.description}
                             </p>
-                            <div className="flex items-center mt-3 text-sm text-gray-500">
-                              <Calendar className="h-4 w-4 mr-1" />
+                            <div className="flex items-center mt-3 text-xs sm:text-sm text-gray-500">
+                              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                               {milestone.date}
                             </div>
                           </div>
-                          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-green-100 text-green-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium flex-shrink-0 self-start">
                             {milestone.category}
                           </span>
                         </div>
@@ -233,22 +237,22 @@ export default function GrowthPage() {
                         <Target className="h-5 w-5 text-blue-600" />
                       </div>
                     </div>
-                    <div className="ml-4 flex-1">
-                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900">
+                    <div className="ml-4 flex-1 min-w-0">
+                      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight">
                               {milestone.title}
                             </h3>
-                            <p className="text-gray-600 mt-1">
+                            <p className="text-gray-600 mt-1 text-sm sm:text-base">
                               {milestone.description}
                             </p>
-                            <div className="flex items-center mt-3 text-sm text-gray-500">
-                              <Calendar className="h-4 w-4 mr-1" />
+                            <div className="flex items-center mt-3 text-xs sm:text-sm text-gray-500">
+                              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                               {milestone.date}
                             </div>
                           </div>
-                          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium flex-shrink-0 self-start">
                             {milestone.category}
                           </span>
                         </div>
@@ -271,12 +275,12 @@ export default function GrowthPage() {
           <div className="space-y-6">
             {growthAreas.map((area, index) => (
               <StaggerItem key={area.name}>
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight">
                       {area.name}
                     </h3>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-xl sm:text-2xl font-bold text-gray-900">
                       {area.progress}%
                     </span>
                   </div>
