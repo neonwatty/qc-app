@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Heart } from 'lucide-react'
-import { MotionBox } from '@/components/ui/motion'
 
 interface HeaderProps {
   className?: string
@@ -11,8 +10,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
   return (
-    <MotionBox variant="slideUp" delay={0.1}>
-      <header className={`bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 ${className}`}>
+    <header className={`bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 ${className}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             {/* App Branding */}
@@ -23,7 +21,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </div>
               <span className="hidden sm:block text-sm text-gray-500">Quality Control</span>
               <span className="px-2 py-0.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-full border border-gray-200">
-                Prototype
+                Proof of Concept
               </span>
             </div>
 
@@ -41,12 +39,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 </div>
                 <div className="hidden sm:block ml-2">
                   <p className="text-sm font-medium text-gray-900">Alex & Blake</p>
-                  <p className="text-xs text-gray-500">Together since Jan 2023</p>
+                  <p className="text-xs text-gray-500">Together since Jan 2023 (if they were real)</p>
                 </div>
               </div>
           </div>
         </div>
       </header>
-    </MotionBox>
   )
 }

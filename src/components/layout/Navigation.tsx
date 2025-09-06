@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
@@ -10,17 +10,26 @@ import {
   TrendingUp, 
   Settings, 
   Menu,
-  X
+  X,
+  Sparkles
 } from 'lucide-react'
 import { MotionBox, MotionButton } from '@/components/ui/motion'
 import { cn } from '@/lib/utils'
 
 const navigationItems = [
   {
+    name: 'Home',
+    href: '/',
+    icon: Sparkles,
+    mobileOrder: 1,
+    color: 'rose',
+    gradient: 'from-rose-500 to-pink-500'
+  },
+  {
     name: 'Dashboard',
     href: '/dashboard',
     icon: Home,
-    mobileOrder: 1,
+    mobileOrder: 2,
     color: 'purple',
     gradient: 'from-purple-500 to-purple-600'
   },
@@ -28,7 +37,7 @@ const navigationItems = [
     name: 'Check-in',
     href: '/checkin',
     icon: MessageCircle,
-    mobileOrder: 2,
+    mobileOrder: 3,
     color: 'pink',
     gradient: 'from-pink-500 to-rose-500'
   },
@@ -36,7 +45,7 @@ const navigationItems = [
     name: 'Notes',
     href: '/notes',
     icon: StickyNote,
-    mobileOrder: 3,
+    mobileOrder: 4,
     color: 'yellow',
     gradient: 'from-yellow-400 to-orange-400'
   },
@@ -44,7 +53,7 @@ const navigationItems = [
     name: 'Growth',
     href: '/growth',
     icon: TrendingUp,
-    mobileOrder: 4,
+    mobileOrder: 5,
     color: 'teal',
     gradient: 'from-teal-500 to-cyan-500'
   },
@@ -52,7 +61,7 @@ const navigationItems = [
     name: 'Settings',
     href: '/settings',
     icon: Settings,
-    mobileOrder: 5,
+    mobileOrder: 6,
     color: 'violet',
     gradient: 'from-violet-500 to-indigo-500'
   }
@@ -64,13 +73,26 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === '/' || pathname === '/dashboard'
+    // During SSR, don't mark anything as active to avoid hydration mismatch
+    if (!mounted) {
+      return false
     }
-    return pathname?.startsWith(href)
+    
+    // Exact match for home page
+    if (href === '/') {
+      return pathname === '/'
+    }
+    
+    // For all other pages, use startsWith to catch sub-routes
+    return pathname === href || pathname?.startsWith(href + '/')
   }
 
   return (
