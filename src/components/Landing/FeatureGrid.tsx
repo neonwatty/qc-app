@@ -171,7 +171,7 @@ const FeatureGrid = () => {
               Start your systematic approach to relationship improvement.
             </p>
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex justify-center"
               variants={staggerFadeUp}
             >
               <motion.a
@@ -181,14 +181,6 @@ const FeatureGrid = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 Start your first check-in
-              </motion.a>
-              <motion.a
-                href="#demo"
-                className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-lg border border-border hover:bg-muted/50 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Watch demo
               </motion.a>
             </motion.div>
           </motion.div>

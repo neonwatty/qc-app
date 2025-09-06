@@ -22,7 +22,7 @@ const Hero = () => {
   ]
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-2 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section className="min-h-screen flex items-start justify-center pt-20 sm:pt-24 lg:pt-32 px-2 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Soft romantic background */}
       <div className="absolute inset-0 gradient-blush opacity-50" />
       <div className="absolute inset-0 bg-gradient-to-br from-rose-50/80 via-pink-50/80 to-orange-50/80" />
@@ -32,15 +32,6 @@ const Hero = () => {
         initial="initial"
         animate="animate"
       >
-        {/* Hero Badge */}
-        <motion.div
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-soft-coral text-rose-700 text-sm font-medium mb-8 shadow-lg shadow-rose-200/50"
-          variants={staggerFadeUp}
-        >
-          <Heart className="w-4 h-4" />
-          Relationship wellness made simple
-        </motion.div>
-
         {/* Main Headline */}
         <motion.h1
           className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6"
