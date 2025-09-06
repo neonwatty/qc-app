@@ -31,7 +31,7 @@ export default function DashboardPage() {
             Welcome to Your Dashboard
           </h1>
           <p className="mt-4 text-lg text-gray-800 font-medium">
-            Your relationship wellness hub
+            Your relationship command center
           </p>
         </div>
 

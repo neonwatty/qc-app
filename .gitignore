@@ -6,6 +6,7 @@
 
 # Testing
 /coverage
+*.png
 
 # Next.js
 /.next/

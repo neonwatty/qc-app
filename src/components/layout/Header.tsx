@@ -22,6 +22,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 <span className="text-xl font-semibold text-gray-900">QC</span>
               </div>
               <span className="hidden sm:block text-sm text-gray-500">Quality Control</span>
+              <span className="px-2 py-0.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-full border border-gray-200">
+                Prototype
+              </span>
             </div>
 
             {/* User Avatar Pair */}

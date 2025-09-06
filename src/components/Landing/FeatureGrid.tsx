@@ -20,21 +20,21 @@ const FeatureGrid = () => {
     {
       icon: MessageSquare,
       title: "Guided Check-ins",
-      description: "Structured conversations that help you connect deeper and address what matters most in your relationship.",
+      description: "Structured conversations that help you identify and address what needs attention.",
       gradient: "from-blue-500/10 to-cyan-500/10",
       iconColor: "text-blue-600"
     },
     {
       icon: Heart,
-      title: "Emotional Intelligence",
-      description: "Track moods, feelings, and emotional patterns to better understand each other's needs and responses.",
+      title: "Pattern Recognition",
+      description: "Track moods and responses to understand each other's patterns better.",
       gradient: "from-rose-500/10 to-pink-500/10",
       iconColor: "text-rose-600"
     },
     {
       icon: TrendingUp,
-      title: "Growth Tracking",
-      description: "Visualize your relationship progress with meaningful metrics and celebrate milestones together.",
+      title: "Progress Metrics",
+      description: "Visualize your journey with meaningful data and celebrate improvements.",
       gradient: "from-green-500/10 to-emerald-500/10",
       iconColor: "text-green-600"
     },
@@ -47,29 +47,29 @@ const FeatureGrid = () => {
     },
     {
       icon: Clock,
-      title: "5-Minute Sessions",
-      description: "Quick, focused check-ins that fit into your busy schedule without overwhelming your routine.",
+      title: "Efficient Check-ins",
+      description: "Quick, focused sessions designed to fit into any schedule.",
       gradient: "from-orange-500/10 to-amber-500/10",
       iconColor: "text-orange-600"
     },
     {
       icon: Users,
-      title: "Couple Dashboard",
-      description: "Shared insights and individual perspectives combined in one beautiful, easy-to-understand interface.",
+      title: "Unified View",
+      description: "See individual perspectives and shared insights in one clear interface.",
       gradient: "from-teal-500/10 to-cyan-500/10",
       iconColor: "text-teal-600"
     },
     {
       icon: Sparkles,
       title: "Action Items",
-      description: "Turn insights into action with personalized suggestions and gentle reminders to keep improving.",
+      description: "Turn insights into concrete next steps with built-in accountability.",
       gradient: "from-yellow-500/10 to-orange-500/10",
       iconColor: "text-yellow-600"
     },
     {
       icon: Target,
       title: "Relationship Goals",
-      description: "Set meaningful objectives together and track progress toward the relationship you both want.",
+      description: "Set objectives together and track your progress systematically.",
       gradient: "from-indigo-500/10 to-blue-500/10",
       iconColor: "text-indigo-600"
     },
@@ -97,23 +97,22 @@ const FeatureGrid = () => {
             variants={staggerFadeUp}
           >
             <Sparkles className="w-4 h-4" />
-            Everything you need for a thriving relationship
+            A systematic approach to relationship growth
           </motion.div>
 
           <motion.h2
             className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
             variants={staggerFadeUp}
           >
-            Built for modern
-            <span className="text-primary block sm:inline sm:ml-3">couples</span>
+            Built for analytical
+            <span className="text-primary block sm:inline sm:ml-3">minds</span>
           </motion.h2>
 
           <motion.p
             className="text-lg text-muted-foreground max-w-2xl mx-auto"
             variants={staggerFadeUp}
           >
-            Discover tools designed specifically for busy couples who want to strengthen 
-            their relationship without adding stress to their lives.
+            Smart tools for couples who value improvement and efficiency.
           </motion.p>
         </motion.div>
 
@@ -166,10 +165,10 @@ const FeatureGrid = () => {
             variants={staggerFadeUp}
           >
             <h3 className="text-2xl sm:text-3xl font-bold mb-4">
-              Ready to strengthen your relationship?
+              Ready to engineer a better relationship?
             </h3>
             <p className="text-muted-foreground mb-8">
-              Join thousands of couples who have transformed their relationships with Quality Control.
+              Start your systematic approach to relationship improvement.
             </p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"

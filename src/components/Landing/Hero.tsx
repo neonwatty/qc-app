@@ -9,15 +9,15 @@ const Hero = () => {
   const features = [
     {
       icon: Heart,
-      text: "Strengthen your bond"
+      text: "Build stronger foundations"
     },
     {
       icon: MessageCircle,
-      text: "Open communication"
+      text: "Debug communication"
     },
     {
       icon: TrendingUp,
-      text: "Track your growth"
+      text: "Measure progress"
     }
   ]
 
@@ -55,8 +55,7 @@ const Hero = () => {
           className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
           variants={staggerFadeUp}
         >
-          Transform your relationship with thoughtful check-ins, meaningful conversations, 
-          and tools designed to help you grow together.
+          Simple tools to engineer a stronger relationship.
         </motion.p>
 
         {/* Feature Pills */}
@@ -110,30 +109,6 @@ const Hero = () => {
           </motion.div>
         </motion.div>
 
-        {/* Social Proof */}
-        <motion.div
-          className="mt-16 text-center"
-          variants={staggerFadeUp}
-        >
-          <p className="text-sm text-muted-foreground mb-4">
-            Trusted by couples who prioritize their relationship
-          </p>
-          <div className="flex justify-center items-center gap-8 opacity-60">
-            <div className="flex -space-x-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border-2 border-background flex items-center justify-center text-xs font-bold"
-                >
-                  {String.fromCharCode(65 + i)}
-                </div>
-              ))}
-            </div>
-            <p className="text-sm font-medium">
-              Join 1000+ couples building stronger relationships
-            </p>
-          </div>
-        </motion.div>
       </motion.div>
     </section>
   )
