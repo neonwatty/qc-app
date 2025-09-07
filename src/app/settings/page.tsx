@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Settings, User, Bell, Shield, Palette, Clock, Heart, Save, Grid3x3 } from 'lucide-react'
+import { Settings, User, Bell, Shield, Palette, Clock, Heart, Save, Grid3x3, Users } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import { CategoryManager } from '@/components/Settings/CategoryManager'
@@ -9,6 +9,8 @@ import { NotificationSettings } from '@/components/Settings/NotificationSettings
 import { ReminderScheduler } from '@/components/Settings/ReminderScheduler'
 import { ThemeSelector } from '@/components/Settings/ThemeSelector'
 import { PersonalizationPanel } from '@/components/Settings/PersonalizationPanel'
+import { SessionSettingsPanel } from '@/components/Settings/SessionSettingsPanel'
+import { SessionSettingsProvider } from '@/contexts/SessionSettingsContext'
 
 interface SettingsSection {
   id: string
@@ -23,6 +25,12 @@ const settingSections: SettingsSection[] = [
     title: 'Profile & Relationship',
     description: 'Manage your couple profile and relationship details',
     icon: Heart
+  },
+  {
+    id: 'session',
+    title: 'Session Rules',
+    description: 'Configure check-in session settings and rules',
+    icon: Users
   },
   {
     id: 'categories',
@@ -85,9 +93,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <MotionBox variant="page" className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <SessionSettingsProvider>
+      <MotionBox variant="page" className="space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
           <p className="mt-2 text-gray-600">
@@ -135,7 +144,15 @@ export default function SettingsPage() {
 
         {/* Settings Content */}
         <div className="lg:col-span-3">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          {/* Session Rules - No wrapper needed as SessionSettingsPanel has its own cards */}
+          {activeSection === 'session' && (
+            <SessionSettingsPanel />
+          )}
+          
+          {activeSection !== 'session' && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              {/* Other sections keep the wrapper */}
+
             {/* Categories */}
             {activeSection === 'categories' && (
               <div className="space-y-6">
@@ -280,9 +297,11 @@ export default function SettingsPage() {
             {activeSection === 'schedule' && (
               <ReminderScheduler />
             )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </MotionBox>
+    </SessionSettingsProvider>
   )
 }

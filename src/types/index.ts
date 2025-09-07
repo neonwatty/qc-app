@@ -110,6 +110,14 @@ export interface CheckIn {
     after?: number
   }
   reflection?: string
+  sessionSettingsId?: string
+  timeouts?: {
+    [userId: string]: {
+      used: number
+      remaining: number
+    }
+  }
+  extensions?: number
 }
 
 export interface Milestone {
@@ -128,6 +136,43 @@ export interface Milestone {
   data?: any
 }
 
+export interface SessionSettings {
+  id: string
+  coupleId: string
+  sessionDuration: number // minutes
+  timeoutsPerPartner: number
+  timeoutDuration: number // minutes
+  turnBasedMode: boolean
+  turnDuration?: number // seconds
+  allowExtensions: boolean
+  pauseNotifications: boolean
+  autoSaveDrafts: boolean
+  warmUpQuestions: boolean
+  coolDownTime: number // minutes
+  agreedAt: Date
+  agreedBy: string[]
+  version: number
+}
+
+export interface SessionSettingsProposal {
+  id: string
+  proposedBy: string
+  proposedAt: Date
+  settings: Partial<SessionSettings>
+  status: 'pending' | 'accepted' | 'rejected'
+  reviewedBy?: string
+  reviewedAt?: Date
+}
+
+export type SessionTemplate = 'quick' | 'standard' | 'deep-dive' | 'custom'
+
+export interface SessionSettingsTemplate {
+  name: string
+  type: SessionTemplate
+  description: string
+  settings: Omit<SessionSettings, 'id' | 'coupleId' | 'agreedAt' | 'agreedBy' | 'version'>
+}
+
 export interface Couple {
   id: string
   name: string
@@ -138,6 +183,8 @@ export interface Couple {
     reminderTime?: string
     categories: Category[]
     theme?: 'light' | 'dark' | 'system'
+    sessionSettings?: SessionSettings
+    pendingSessionProposal?: SessionSettingsProposal
   }
   stats?: {
     totalCheckIns: number

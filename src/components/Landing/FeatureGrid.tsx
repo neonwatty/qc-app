@@ -10,7 +10,9 @@ import {
   Users,
   Sparkles,
   Target,
-  Calendar
+  Calendar,
+  Settings,
+  Bell
 } from 'lucide-react'
 import { staggerContainer, staggerFadeUp, cardHover } from '@/lib/animations'
 import { Card } from '@/components/ui/card'
@@ -23,6 +25,20 @@ const FeatureGrid = () => {
       description: "Structured conversations that help you identify and address what needs attention.",
       gradient: "from-blue-500/10 to-cyan-500/10",
       iconColor: "text-blue-600"
+    },
+    {
+      icon: Settings,
+      title: "Session Rules",
+      description: "Partner-agreed ground rules with live timers, turn-based discussions, and structured templates for fair, productive conversations.",
+      gradient: "from-indigo-500/10 to-purple-500/10",
+      iconColor: "text-indigo-600"
+    },
+    {
+      icon: Bell,
+      title: "Relationship Reminders",
+      description: "Chat-like reminder management with smart scheduling, progress tracking, and categories for habits, check-ins, and special moments.",
+      gradient: "from-pink-500/10 to-rose-500/10",
+      iconColor: "text-pink-600"
     },
     {
       icon: Heart,
@@ -46,13 +62,6 @@ const FeatureGrid = () => {
       iconColor: "text-purple-600"
     },
     {
-      icon: Clock,
-      title: "Efficient Check-ins",
-      description: "Quick, focused sessions designed to fit into any schedule.",
-      gradient: "from-orange-500/10 to-amber-500/10",
-      iconColor: "text-orange-600"
-    },
-    {
       icon: Users,
       title: "Unified View",
       description: "See individual perspectives and shared insights in one clear interface.",
@@ -70,15 +79,8 @@ const FeatureGrid = () => {
       icon: Target,
       title: "Relationship Goals",
       description: "Set objectives together and track your progress systematically.",
-      gradient: "from-indigo-500/10 to-blue-500/10",
-      iconColor: "text-indigo-600"
-    },
-    {
-      icon: Calendar,
-      title: "Smart Reminders",
-      description: "Gentle nudges at the right time to maintain consistency without feeling pressured or overwhelmed.",
-      gradient: "from-pink-500/10 to-rose-500/10",
-      iconColor: "text-pink-600"
+      gradient: "from-amber-500/10 to-orange-500/10",
+      iconColor: "text-amber-600"
     }
   ]
 
@@ -97,22 +99,22 @@ const FeatureGrid = () => {
             variants={staggerFadeUp}
           >
             <Sparkles className="w-4 h-4" />
-            A systematic approach to relationship growth
+            Tools that actually work
           </motion.div>
 
           <motion.h2
             className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
             variants={staggerFadeUp}
           >
-            Built for analytical
-            <span className="text-primary block sm:inline sm:ml-3">minds</span>
+            For lovers who like 🤌
+            <span className="text-primary block sm:inline sm:ml-3">systems 🤌</span>
           </motion.h2>
 
           <motion.p
             className="text-lg text-muted-foreground max-w-2xl mx-auto"
             variants={staggerFadeUp}
           >
-            Smart tools for couples who value improvement and efficiency.
+            For couples who like to solve problems together.
           </motion.p>
         </motion.div>
 

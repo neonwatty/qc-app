@@ -8,7 +8,11 @@ import NoteTabs from './NoteTabs'
 import BasicTextInput from './BasicTextInput'
 import { useCheckInContext } from '@/contexts/CheckInContext'
 import { ArrowRight, Clock, MessageCircle, Save } from 'lucide-react'
-import { Note } from '@/types'
+import { Note, User } from '@/types'
+import { SessionTimer } from './SessionTimer'
+import { TurnIndicator } from './TurnIndicator'
+import { SessionRulesCard } from './SessionRulesCard'
+import { useSessionSettings } from '@/contexts/SessionSettingsContext'
 
 interface DiscussionViewProps {
   categoryId: string
@@ -36,12 +40,33 @@ export default function DiscussionView({
     saveSession
   } = useCheckInContext()
 
+  const { getActiveSettings } = useSessionSettings()
+  const sessionSettings = getActiveSettings()
+
   const [activeTab, setActiveTab] = useState<'private' | 'shared'>('private')
   const [privateNote, setPrivateNote] = useState('')
   const [sharedNote, setSharedNote] = useState('')
   const [privateDraftId, setPrivateDraftId] = useState<string | null>(null)
   const [sharedDraftId, setSharedDraftId] = useState<string | null>(null)
   const [startTime] = useState(Date.now())
+  const [showSessionRules, setShowSessionRules] = useState(false)
+
+  // Mock users for demo
+  const currentUser: User = {
+    id: 'demo-user-1',
+    name: 'Alex',
+    email: 'alex@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+  
+  const partner: User = {
+    id: 'demo-user-2',
+    name: 'Jordan',
+    email: 'jordan@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
 
   // Load existing drafts if available
   useEffect(() => {
@@ -165,6 +190,43 @@ export default function DiscussionView({
 
   return (
     <MotionBox variant="page" className="space-y-6">
+      {/* Session Timer and Turn Indicator */}
+      {sessionSettings && (
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-2">
+          <SessionTimer 
+            settings={sessionSettings}
+            onTimeUp={() => {
+              console.log('Time is up!')
+              // Could trigger auto-save or prompt to continue
+            }}
+            onExtension={() => {
+              console.log('Session extended')
+            }}
+            onTimeout={() => {
+              console.log('Timeout activated')
+            }}
+            className="w-full"
+          />
+          
+          {sessionSettings.turnBasedMode && (
+            <TurnIndicator
+              settings={sessionSettings}
+              currentUser={currentUser}
+              partner={partner}
+              onTurnEnd={() => {
+                console.log('Turn ended')
+              }}
+              className="w-full"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Session Rules Summary */}
+      {sessionSettings && showSessionRules && (
+        <SessionRulesCard settings={sessionSettings} compact />
+      )}
+
       {/* Header */}
       <Card className="p-6">
         <div className="flex items-start space-x-3">
@@ -185,10 +247,21 @@ export default function DiscussionView({
           </div>
         </div>
 
-        {/* Timer indicator */}
-        <div className="mt-4 flex items-center text-sm text-gray-500">
-          <Clock className="h-4 w-4 mr-1" />
-          <span>Take your time to reflect and discuss</span>
+        {/* Session Rules Toggle */}
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center text-sm text-gray-500">
+            <Clock className="h-4 w-4 mr-1" />
+            <span>Take your time to reflect and discuss</span>
+          </div>
+          {sessionSettings && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSessionRules(!showSessionRules)}
+            >
+              {showSessionRules ? 'Hide' : 'Show'} Rules
+            </Button>
+          )}
         </div>
       </Card>
 
