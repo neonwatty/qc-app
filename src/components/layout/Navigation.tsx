@@ -11,7 +11,8 @@ import {
   Settings, 
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  Bell
 } from 'lucide-react'
 import { MotionBox, MotionButton } from '@/components/ui/motion'
 import { cn } from '@/lib/utils'
@@ -58,10 +59,18 @@ const navigationItems = [
     gradient: 'from-teal-500 to-cyan-500'
   },
   {
+    name: 'Reminders',
+    href: '/reminders',
+    icon: Bell,
+    mobileOrder: 6,
+    color: 'indigo',
+    gradient: 'from-indigo-500 to-purple-500'
+  },
+  {
     name: 'Settings',
     href: '/settings',
     icon: Settings,
-    mobileOrder: 6,
+    mobileOrder: 7,
     color: 'violet',
     gradient: 'from-violet-500 to-indigo-500'
   }

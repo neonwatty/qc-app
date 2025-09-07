@@ -23,7 +23,7 @@ Quality Control (QC) is a relationship check-in iOS app mockup project. The curr
 # Install dependencies
 npm install
 
-# Run development server
+# Run development server (with Turbopack)
 npm run dev
 
 # Build for production
@@ -40,6 +40,15 @@ npm run lint
 
 # Format code
 npm run format
+
+# Testing
+npm run test              # Run all tests
+npm run test:watch        # Run tests in watch mode
+npm run test:coverage     # Run tests with coverage report
+npm run test:ci          # Run tests in CI mode
+
+# Run a single test file
+npm test -- path/to/test.spec.ts
 ```
 
 ## Architecture Overview
@@ -50,12 +59,20 @@ The project follows a mobile-first design approach with these core systems:
 - Welcome → Category Selection → Category Discussion → Reflection → Action Items → Completion
 - Dual-privacy note system (private vs shared notes)
 - Progress tracking with visual timeline
+- Managed via CheckInContext provider with session persistence in localStorage
+
+### State Management
+- **CheckInContext**: Manages active check-in sessions with reducer pattern
+- **ThemeContext**: Handles dark/light mode preferences
+- Session data persisted to localStorage with auto-save
+- Demo data auto-initialized for "Alex & Jordan" couple
 
 ### Data Structure
 - **CheckIn**: Session data with categories, notes, action items, mood tracking
 - **Category**: Discussion topics (default + custom) with associated prompts
 - **Note**: Content with privacy levels (private/shared/draft)
 - **Milestone**: Relationship achievements tracked in Growth Gallery
+- **ActionItem**: Tasks with assignment, due dates, and completion tracking
 
 ### Project Structure
 ```
@@ -97,6 +114,8 @@ The project also uses `.todoq` for local task tracking with a SQLite database.
 3. **Animations**: Consistent use of Framer Motion presets for page transitions and interactions
 4. **Privacy Model**: Clear separation between private and shared notes with visual indicators
 5. **Responsive Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
+6. **Test Pages**: Available in development at `/test-*` routes for component and feature testing
+7. **Type Safety**: Comprehensive TypeScript types in `src/types/` directory
 
 ## Code Search and Analysis
 
@@ -137,8 +156,15 @@ Documentation: https://ast-grep.github.io/reference/cli.html
 
 ## Testing Approach
 
+### Jest Configuration
+- Test files: `src/**/*.{test,spec}.{ts,tsx}` or in `__tests__` folders
+- Setup: Mocks for Framer Motion, Next.js router, and Lucide icons
+- Coverage: Excludes Next.js pages, layouts, and generated files
+
+### Test Guidelines
 - Component rendering verification
 - User flow completion (check-in should take < 5 minutes)
 - Responsive design testing across viewports
 - Animation performance monitoring
 - LocalStorage persistence validation
+- Mock browser APIs configured in `src/test-utils/`
