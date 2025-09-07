@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Heart, MessageCircle, StickyNote, TrendingUp } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Heart, MessageCircle, StickyNote, TrendingUp, Bell } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -12,9 +12,20 @@ import {
 import { QuickActions } from '@/components/dashboard/QuickActions'
 import { PullToRefresh } from '@/components/ui/PullToRefresh'
 import { MobileActionBar } from '@/components/ui/PrimaryActionFAB'
+import { simplifiedMockReminders } from '@/lib/mock-reminders'
+import { isToday } from 'date-fns'
 
 export default function DashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0)
+  const [todayRemindersCount, setTodayRemindersCount] = useState(0)
+
+  useEffect(() => {
+    // Count today's active reminders
+    const count = simplifiedMockReminders.filter(r => 
+      isToday(new Date(r.scheduledFor)) && !r.completedAt
+    ).length
+    setTodayRemindersCount(count)
+  }, [refreshKey])
 
   const handleRefresh = async () => {
     // Simulate API refresh
@@ -36,7 +47,7 @@ export default function DashboardPage() {
         </div>
 
       {/* Quick Actions */}
-      <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StaggerItem>
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center">
@@ -93,6 +104,25 @@ export default function DashboardPage() {
             </Link>
           </div>
         </StaggerItem>
+
+        <StaggerItem>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center">
+              <Bell className="h-8 w-8 text-indigo-600" />
+              <h3 className="ml-3 text-lg font-semibold text-gray-900">
+                Reminders
+              </h3>
+            </div>
+            <p className="mt-2 text-sm text-gray-700 font-medium">
+              Manage your relationship reminders
+            </p>
+            <Link href="/reminders" className="mt-4 inline-block">
+              <Button variant="outline" className="w-full">
+                View Reminders
+              </Button>
+            </Link>
+          </div>
+        </StaggerItem>
       </StaggerContainer>
 
       {/* Recent Activity */}
@@ -101,6 +131,10 @@ export default function DashboardPage() {
           Recent Activity
         </h2>
         <div className="space-y-3">
+          <div className="flex items-center text-sm text-gray-800 font-medium">
+            <Bell className="h-4 w-4 text-indigo-500 mr-2" />
+            <span>{todayRemindersCount} reminders scheduled for today</span>
+          </div>
           <div className="flex items-center text-sm text-gray-800 font-medium">
             <Heart className="h-4 w-4 text-pink-500 mr-2" />
             <span>Last check-in completed 3 days ago</span>

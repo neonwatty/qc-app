@@ -1,5 +1,6 @@
-import { User, Couple, Category, CheckIn, Note, Milestone } from '@/types'
+import { User, Couple, Category, CheckIn, Note, Milestone, Reminder } from '@/types'
 import { demoScenarios, demoPersonas, scenarioNoteTemplates, communicationStyles } from './demo-scenarios'
+import { getRelativeDate, getTodayAt, getTomorrowAt, getYesterdayAt, getThisWeek, getNextWeek } from './reminder-dates'
 
 export const mockCategories: Category[] = [
   {
@@ -1229,3 +1230,322 @@ export const updatedMockCouple: Couple = {
     lastCheckIn: new Date('2024-08-31')
   }
 }
+
+// Mock Reminders Data
+export const mockReminders: Reminder[] = [
+  // Daily Habits
+  {
+    id: 'reminder-1',
+    title: 'Daily Love Affirmation',
+    message: 'Tell Jordan you love them today! A simple "I love you" can make their whole day brighter. 💝',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getTodayAt(15, 0), // 3:00 PM today
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-01'),
+    updatedAt: new Date('2024-08-01')
+  },
+  {
+    id: 'reminder-2',
+    title: 'Good Morning Kiss',
+    message: 'Start the day with a kiss and a hug. Physical touch strengthens your bond!',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getTodayAt(7, 0), // 7:00 AM today
+    notificationChannel: 'in-app',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    completedAt: getTodayAt(7, 30), // Completed at 7:30 AM today
+    createdAt: new Date('2024-07-15'),
+    updatedAt: new Date('2024-09-07T07:30:00')
+  },
+  {
+    id: 'reminder-3',
+    title: 'Gratitude Practice',
+    message: 'Share one thing you\'re grateful for about Jordan today. It could be something small but meaningful.',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getTodayAt(20, 0), // 8:00 PM today
+    notificationChannel: 'both',
+    createdBy: mockUsers[1].id,
+    assignedTo: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-15'),
+    updatedAt: new Date('2024-08-15')
+  },
+  {
+    id: 'reminder-4',
+    title: 'Phone-Free Dinner',
+    message: 'Put your phones away during dinner tonight. Focus on each other and meaningful conversation.',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getTodayAt(19, 0), // 7:00 PM today
+    notificationChannel: 'push',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-20'),
+    updatedAt: new Date('2024-08-20')
+  },
+
+  // Check-ins
+  {
+    id: 'reminder-5',
+    title: 'Weekly Check-in',
+    message: 'Time for your weekly relationship check-in! Set aside 30 minutes to connect and reflect together.',
+    category: 'check-in',
+    frequency: 'weekly',
+    scheduledFor: getTomorrowAt(19, 0), // 7:00 PM tomorrow
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-01'),
+    updatedAt: new Date('2024-08-01')
+  },
+  {
+    id: 'reminder-6',
+    title: 'Monthly Deep Dive',
+    message: 'Schedule your monthly deep conversation about goals, dreams, and relationship growth.',
+    category: 'check-in',
+    frequency: 'monthly',
+    scheduledFor: getNextWeek(0, 14), // Next Sunday at 2:00 PM
+    notificationChannel: 'both',
+    createdBy: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-07-01'),
+    updatedAt: new Date('2024-07-01')
+  },
+
+  // Action Items
+  {
+    id: 'reminder-7',
+    title: 'Review Finances Together',
+    message: 'Follow up on your action item: Review monthly budget and savings goals with Jordan.',
+    category: 'action-item',
+    frequency: 'once',
+    scheduledFor: getThisWeek(3, 20), // This Wednesday at 8:00 PM
+    notificationChannel: 'push',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    relatedActionItemId: 'action-checkin-w01-1',
+    createdAt: new Date('2024-08-31'),
+    updatedAt: new Date('2024-08-31')
+  },
+  {
+    id: 'reminder-8',
+    title: 'Book Couples Therapy Session',
+    message: 'Remember to book your monthly couples therapy session for continued growth.',
+    category: 'action-item',
+    frequency: 'once',
+    scheduledFor: getThisWeek(2, 10), // This Tuesday at 10:00 AM
+    notificationChannel: 'both',
+    createdBy: mockUsers[1].id,
+    assignedTo: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-09-01'),
+    updatedAt: new Date('2024-09-01')
+  },
+  {
+    id: 'reminder-9',
+    title: 'Plan Vacation Together',
+    message: 'Sit down and plan your fall vacation. Research destinations and create a budget.',
+    category: 'action-item',
+    frequency: 'once',
+    scheduledFor: getThisWeek(4, 19), // This Thursday at 7:30 PM
+    notificationChannel: 'in-app',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-09-02'),
+    updatedAt: new Date('2024-09-02')
+  },
+
+  // Special Dates
+  {
+    id: 'reminder-10',
+    title: 'Anniversary Coming Up',
+    message: 'Your 6-month anniversary is in 2 days! Don\'t forget to plan something special for Jordan.',
+    category: 'special-date',
+    frequency: 'once',
+    scheduledFor: getThisWeek(5, 9), // This Friday at 9:00 AM
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-01'),
+    updatedAt: new Date('2024-08-01')
+  },
+  {
+    id: 'reminder-11',
+    title: 'Jordan\'s Birthday Week',
+    message: 'Jordan\'s birthday is next week! Time to finalize gift and celebration plans.',
+    category: 'special-date',
+    frequency: 'once',
+    scheduledFor: getNextWeek(6, 10), // Next Saturday at 10:00 AM
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-15'),
+    updatedAt: new Date('2024-08-15')
+  },
+  {
+    id: 'reminder-12',
+    title: 'First Date Anniversary',
+    message: 'Today marks one year since your first date! Recreate something special from that day.',
+    category: 'special-date',
+    frequency: 'once',
+    scheduledFor: getRelativeDate(14, 18), // In 2 weeks at 6:00 PM
+    notificationChannel: 'push',
+    createdBy: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-25'),
+    updatedAt: new Date('2024-08-25')
+  },
+
+  // Custom Reminders
+  {
+    id: 'reminder-13',
+    title: 'Date Night Planning',
+    message: 'Plan this week\'s date night! Take turns choosing the activity to keep things fresh and exciting.',
+    category: 'custom',
+    frequency: 'weekly',
+    scheduledFor: getThisWeek(2, 18), // This Tuesday at 6:00 PM
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    customSchedule: {
+      daysOfWeek: [1], // Monday
+      time: '18:00'
+    },
+    createdAt: new Date('2024-08-20'),
+    updatedAt: new Date('2024-08-20')
+  },
+  {
+    id: 'reminder-14',
+    title: 'Weekend Adventure',
+    message: 'Plan a weekend adventure or day trip together. Explore somewhere new!',
+    category: 'custom',
+    frequency: 'monthly',
+    scheduledFor: getNextWeek(6, 10), // Next Saturday at 10:00 AM
+    notificationChannel: 'push',
+    createdBy: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: true,
+    snoozeUntil: getNextWeek(6, 10), // Snoozed until next Saturday
+    createdAt: new Date('2024-08-05'),
+    updatedAt: new Date('2024-09-01')
+  },
+  {
+    id: 'reminder-15',
+    title: 'Love Language Practice',
+    message: 'Practice Jordan\'s love language today: Acts of Service. Do something helpful without being asked.',
+    category: 'custom',
+    frequency: 'weekly',
+    scheduledFor: getTomorrowAt(16, 0), // Tomorrow at 4:00 PM
+    notificationChannel: 'in-app',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-10'),
+    updatedAt: new Date('2024-08-10')
+  },
+  {
+    id: 'reminder-16',
+    title: 'Surprise Gesture',
+    message: 'Do something unexpected and sweet for Jordan today. Small surprises keep romance alive!',
+    category: 'custom',
+    frequency: 'weekly',
+    scheduledFor: getThisWeek(3, 14), // This Wednesday at 2:00 PM
+    notificationChannel: 'both',
+    createdBy: mockUsers[1].id,
+    assignedTo: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: false,
+    createdAt: new Date('2024-08-18'),
+    updatedAt: new Date('2024-08-18')
+  },
+  {
+    id: 'reminder-17',
+    title: 'Exercise Together',
+    message: 'Go for a walk, run, or workout together. Shared physical activity strengthens your bond.',
+    category: 'custom',
+    frequency: 'weekly',
+    scheduledFor: getTomorrowAt(8, 0), // Tomorrow at 8:00 AM
+    notificationChannel: 'push',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    customSchedule: {
+      daysOfWeek: [0, 3, 6], // Sunday, Wednesday, Saturday
+      time: '08:00'
+    },
+    createdAt: new Date('2024-07-20'),
+    updatedAt: new Date('2024-07-20')
+  },
+
+  // Completed Reminders (for demonstration)
+  {
+    id: 'reminder-18',
+    title: 'Morning Coffee Chat',
+    message: 'Start your day with 10 minutes of undivided attention over coffee.',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getTodayAt(8, 0), // 8:00 AM today
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    completedAt: getTodayAt(8, 30), // Completed at 8:30 AM
+    createdAt: new Date('2024-08-10'),
+    updatedAt: new Date('2024-09-07T08:30:00')
+  },
+  {
+    id: 'reminder-19',
+    title: 'Compliment Your Partner',
+    message: 'Give Jordan a genuine, specific compliment about something you appreciate.',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getTodayAt(12, 0), // Noon today
+    notificationChannel: 'in-app',
+    createdBy: mockUsers[1].id,
+    assignedTo: mockUsers[1].id,
+    isActive: true,
+    isSnoozed: false,
+    completedAt: getTodayAt(12, 15), // Completed at 12:15 PM
+    createdAt: new Date('2024-08-05'),
+    updatedAt: new Date('2024-09-07T12:15:00')
+  },
+  {
+    id: 'reminder-20',
+    title: 'Share Daily Highlight',
+    message: 'Share the best part of your day with each other before bed.',
+    category: 'habit',
+    frequency: 'daily',
+    scheduledFor: getYesterdayAt(22, 0), // Yesterday at 10:00 PM
+    notificationChannel: 'both',
+    createdBy: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    completedAt: getYesterdayAt(22, 30), // Completed yesterday at 10:30 PM
+    createdAt: new Date('2024-07-30'),
+    updatedAt: new Date('2024-09-06T22:30:00')
+  }
+]

@@ -65,6 +65,36 @@ export interface ActionItem {
   completedAt?: Date
 }
 
+export type ReminderCategory = 'habit' | 'check-in' | 'action-item' | 'special-date' | 'custom'
+export type ReminderFrequency = 'once' | 'daily' | 'weekly' | 'monthly' | 'custom'
+export type NotificationChannel = 'in-app' | 'push' | 'both' | 'none'
+
+export interface Reminder {
+  id: string
+  title: string
+  message: string
+  category: ReminderCategory
+  frequency: ReminderFrequency
+  scheduledFor: Date
+  notificationChannel: NotificationChannel
+  createdBy: string
+  assignedTo?: string
+  isActive: boolean
+  isSnoozed: boolean
+  snoozeUntil?: Date
+  completedAt?: Date
+  lastNotifiedAt?: Date
+  relatedCheckInId?: string
+  relatedActionItemId?: string
+  customSchedule?: {
+    daysOfWeek?: number[]
+    time?: string
+    dates?: Date[]
+  }
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface CheckIn {
   id: string
   coupleId: string

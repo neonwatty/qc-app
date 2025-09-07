@@ -11,7 +11,8 @@ import {
   Settings, 
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  Bell
 } from 'lucide-react'
 import { MotionBox, MotionButton } from '@/components/ui/motion'
 import { cn } from '@/lib/utils'
@@ -58,10 +59,18 @@ const navigationItems = [
     gradient: 'from-teal-500 to-cyan-500'
   },
   {
+    name: 'Reminders',
+    href: '/reminders',
+    icon: Bell,
+    mobileOrder: 6,
+    color: 'indigo',
+    gradient: 'from-indigo-500 to-purple-500'
+  },
+  {
     name: 'Settings',
     href: '/settings',
     icon: Settings,
-    mobileOrder: 6,
+    mobileOrder: 7,
     color: 'violet',
     gradient: 'from-violet-500 to-indigo-500'
   }
@@ -73,19 +82,9 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const isActive = (href: string) => {
-    // During SSR, don't mark anything as active to avoid hydration mismatch
-    if (!mounted) {
-      return false
-    }
-    
     // Exact match for home page
     if (href === '/') {
       return pathname === '/'
