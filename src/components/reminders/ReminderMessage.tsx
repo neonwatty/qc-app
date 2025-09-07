@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Bell, BellOff, Check, Clock, Calendar, ChevronDown, ChevronUp, Sparkles } from 'lucide-react'
+import { Bell, BellOff, Check, Clock, Calendar, ChevronDown, ChevronUp, Sparkles, Users, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -90,7 +90,9 @@ export function ReminderMessage({ reminder, onComplete, onSnooze, onReschedule, 
       <Card 
         className={`p-4 ${reminder.completedAt ? 'opacity-60' : ''} ${
           reminder.isSnoozed ? 'border-orange-200 bg-orange-50' : ''
-        } ${isPast(new Date(reminder.scheduledFor)) && !reminder.completedAt ? 'border-red-200 bg-red-50' : ''}`}
+        } ${isPast(new Date(reminder.scheduledFor)) && !reminder.completedAt ? 'border-red-200 bg-red-50' : ''} ${
+          reminder.requestStatus === 'accepted' ? 'border-purple-200' : ''
+        }`}
       >
         <div className="flex items-start gap-3">
           <div className="text-2xl mt-1">
@@ -140,6 +142,13 @@ export function ReminderMessage({ reminder, onComplete, onSnooze, onReschedule, 
                   Snoozed
                 </Badge>
               )}
+              
+              {reminder.requestStatus === 'accepted' && (
+                <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700 border-purple-200">
+                  <Users className="w-3 h-3 mr-1" />
+                  Deb request
+                </Badge>
+              )}
             </div>
 
             {expanded && (
@@ -156,6 +165,17 @@ export function ReminderMessage({ reminder, onComplete, onSnooze, onReschedule, 
                   )}
                   {reminder.customSchedule && (
                     <p><strong>Custom schedule:</strong> {reminder.customSchedule.time}</p>
+                  )}
+                  {reminder.requestMessage && (
+                    <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-100">
+                      <div className="flex items-start gap-2">
+                        <Heart className="w-4 h-4 text-purple-600 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-medium text-purple-700 mb-1">Deb's request:</p>
+                          <p className="text-sm italic text-gray-700">"{reminder.requestMessage}"</p>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
 

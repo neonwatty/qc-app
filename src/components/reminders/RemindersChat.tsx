@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Filter, Bell, Calendar, Search } from 'lucide-react'
+import { Plus, Filter, Bell, Calendar, Search, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { ReminderMessage } from './ReminderMessage'
 import { ReminderSchedule } from './ReminderSchedule'
 import { NotificationDemo } from './NotificationPreview'
+import { ReminderRequestModal } from './ReminderRequestModal'
+import { ReminderRequestNotification } from './ReminderRequestNotification'
 import { Reminder, ReminderCategory } from '@/types'
 import { format, isToday, isTomorrow, isThisWeek, isPast } from 'date-fns'
 
@@ -21,6 +23,7 @@ const filterOptions = [
   { id: 'all', label: 'All', icon: null },
   { id: 'today', label: 'Today', icon: Calendar },
   { id: 'upcoming', label: 'Upcoming', icon: Bell },
+  { id: 'requests', label: 'Requests', icon: Users },
   { id: 'completed', label: 'Completed', icon: null },
   { id: 'overdue', label: 'Overdue', icon: null }
 ]
@@ -40,6 +43,7 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
   const [categoryFilter, setCategoryFilter] = useState<ReminderCategory | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showRequestModal, setShowRequestModal] = useState(false)
 
   const handleComplete = (id: string) => {
     setReminders(prev => prev.map(r => 
@@ -60,7 +64,50 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
     ))
   }
 
-  const filteredReminders = reminders.filter(reminder => {
+  const handleAcceptRequest = (id: string) => {
+    setReminders(prev => prev.map(r => 
+      r.id === id ? { ...r, requestStatus: 'accepted', isActive: true, respondedAt: new Date() } : r
+    ))
+  }
+
+  const handleDeclineRequest = (id: string) => {
+    setReminders(prev => prev.filter(r => r.id !== id))
+  }
+
+  const handleModifyRequest = (id: string) => {
+    // In a real app, this would open an edit modal
+    console.log('Modify request:', id)
+  }
+
+  const handleNewRequest = (request: any) => {
+    // Simulate creating a new reminder request
+    const newReminder: Reminder = {
+      id: `reminder-request-${Date.now()}`,
+      title: request.title,
+      message: request.message,
+      category: 'custom',
+      frequency: request.frequency,
+      scheduledFor: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+      notificationChannel: 'both',
+      createdBy: request.requestedBy,
+      assignedTo: request.assignedTo,
+      isActive: false,
+      isSnoozed: false,
+      requestedBy: request.requestedBy,
+      requestStatus: 'pending',
+      requestMessage: request.requestMessage,
+      requestedAt: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    setReminders(prev => [newReminder, ...prev])
+  }
+
+  // Separate pending requests from regular reminders
+  const pendingRequests = reminders.filter(r => r.requestStatus === 'pending')
+  const activeReminders = reminders.filter(r => r.requestStatus !== 'pending')
+
+  const filteredReminders = activeReminders.filter(reminder => {
     // Apply time filter
     const reminderDate = new Date(reminder.scheduledFor)
     switch (filter) {
@@ -69,6 +116,9 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
         break
       case 'upcoming':
         if (isPast(reminderDate) || reminder.completedAt) return false
+        break
+      case 'requests':
+        if (!reminder.requestedBy || reminder.requestStatus !== 'accepted') return false
         break
       case 'completed':
         if (!reminder.completedAt) return false
@@ -103,17 +153,20 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
   })
 
   const getFilterCount = (filterId: string) => {
+    const active = reminders.filter(r => r.requestStatus !== 'pending')
     switch (filterId) {
       case 'all':
-        return reminders.length
+        return active.length
       case 'today':
-        return reminders.filter(r => isToday(new Date(r.scheduledFor)) && !r.completedAt).length
+        return active.filter(r => isToday(new Date(r.scheduledFor)) && !r.completedAt).length
       case 'upcoming':
-        return reminders.filter(r => !isPast(new Date(r.scheduledFor)) && !r.completedAt).length
+        return active.filter(r => !isPast(new Date(r.scheduledFor)) && !r.completedAt).length
+      case 'requests':
+        return active.filter(r => r.requestedBy && r.requestStatus === 'accepted').length
       case 'completed':
-        return reminders.filter(r => r.completedAt).length
+        return active.filter(r => r.completedAt).length
       case 'overdue':
-        return reminders.filter(r => isPast(new Date(r.scheduledFor)) && !r.completedAt).length
+        return active.filter(r => isPast(new Date(r.scheduledFor)) && !r.completedAt).length
       default:
         return 0
     }
@@ -128,13 +181,23 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
           <Card className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Relationship Reminders</h2>
-              <Button
-                onClick={() => setShowCreateForm(!showCreateForm)}
-                className="bg-pink-600 hover:bg-pink-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Reminder
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowRequestModal(true)}
+                  variant="outline"
+                  className="border-pink-600 text-pink-600 hover:bg-pink-50"
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Request from Partner
+                </Button>
+                <Button
+                  onClick={() => setShowCreateForm(!showCreateForm)}
+                  className="bg-pink-600 hover:bg-pink-700"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Reminder
+                </Button>
+              </div>
             </div>
 
             {/* Search */}
@@ -181,6 +244,21 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
               ))}
             </div>
           </Card>
+
+          {/* Pending Requests */}
+          {pendingRequests.length > 0 && (
+            <div className="space-y-2 mb-4">
+              {pendingRequests.map(request => (
+                <ReminderRequestNotification
+                  key={request.id}
+                  request={request}
+                  onAccept={handleAcceptRequest}
+                  onDecline={handleDeclineRequest}
+                  onModify={handleModifyRequest}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Messages */}
           <div className="space-y-2">
@@ -267,6 +345,13 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
           </Card>
         </div>
       </div>
+
+      {/* Request Modal */}
+      <ReminderRequestModal
+        isOpen={showRequestModal}
+        onClose={() => setShowRequestModal(false)}
+        onSubmit={handleNewRequest}
+      />
     </div>
   )
 }
