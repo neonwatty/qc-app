@@ -8,16 +8,16 @@ import { Button } from '@/components/ui/button'
 const Hero = () => {
   const features = [
     {
-      icon: Heart,
-      text: "Build stronger foundations"
+      icon: MessageCircle,
+      text: "Structured Sessions"
     },
     {
-      icon: MessageCircle,
-      text: "Debug communication"
+      icon: Heart,
+      text: "Relationship Reminders"
     },
     {
       icon: TrendingUp,
-      text: "Measure progress"
+      text: "Progress Tracking"
     }
   ]
 

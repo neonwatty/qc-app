@@ -1,11 +1,14 @@
 'use client'
 
 import React, { useState } from 'react'
-import { MessageCircle, Clock, Users, ArrowRight, Play } from 'lucide-react'
+import { MessageCircle, Clock, Users, ArrowRight, Play, Settings } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CardStack } from '@/components/ui/SwipeGestures'
+import { SessionSettingsProvider, useSessionSettings } from '@/contexts/SessionSettingsContext'
+import { SessionRulesCard } from '@/components/checkin/SessionRulesCard'
+import { SessionSettingsDemo } from '@/components/demo/SessionSettingsDemo'
 
 const checkInCategories = [
   {
@@ -38,9 +41,11 @@ const checkInCategories = [
   }
 ]
 
-export default function CheckInPage() {
+function CheckInPageContent() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [showCardStack, setShowCardStack] = useState(false)
+  const { getActiveSettings } = useSessionSettings()
+  const sessionSettings = getActiveSettings()
   
   // Convert categories to swipeable cards
   const categoryCards = checkInCategories.map(category => ({
@@ -88,6 +93,26 @@ export default function CheckInPage() {
           Take a few minutes to reflect on your relationship and share your thoughts together.
         </p>
       </div>
+
+      {/* Session Settings Demo */}
+      <SessionSettingsDemo />
+
+      {/* Session Rules */}
+      {sessionSettings && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-gray-900">Your Session Rules</h2>
+            <Link href="/settings">
+              <Button variant="ghost" size="sm" className="text-xs sm:text-sm">
+                <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span className="hidden sm:inline">Configure</span>
+                <span className="sm:hidden">Edit</span>
+              </Button>
+            </Link>
+          </div>
+          <SessionRulesCard settings={sessionSettings} compact />
+        </div>
+      )}
 
       {/* Quick Start */}
       <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg border border-pink-200 p-6">
@@ -238,5 +263,13 @@ export default function CheckInPage() {
         </div>
       </div>
     </MotionBox>
+  )
+}
+
+export default function CheckInPage() {
+  return (
+    <SessionSettingsProvider>
+      <CheckInPageContent />
+    </SessionSettingsProvider>
   )
 }
