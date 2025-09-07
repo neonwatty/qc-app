@@ -1,14 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { MessageCircle, Clock, Users, ArrowRight, Play, Settings } from 'lucide-react'
+import { MessageCircle, Clock, Users, ArrowRight, Play, Settings, Sparkles, FileText } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { CardStack } from '@/components/ui/SwipeGestures'
 import { SessionSettingsProvider, useSessionSettings } from '@/contexts/SessionSettingsContext'
 import { SessionRulesCard } from '@/components/checkin/SessionRulesCard'
 import { SessionSettingsDemo } from '@/components/demo/SessionSettingsDemo'
+import { BookendsProvider, useBookends } from '@/contexts/BookendsContext'
+import { PreparationModal } from '@/components/bookends/PreparationModal'
+import { ReflectionForm } from '@/components/bookends/ReflectionForm'
 
 const checkInCategories = [
   {
@@ -46,6 +50,7 @@ function CheckInPageContent() {
   const [showCardStack, setShowCardStack] = useState(false)
   const { getActiveSettings } = useSessionSettings()
   const sessionSettings = getActiveSettings()
+  const { preparation, openPreparationModal, openReflectionModal } = useBookends()
   
   // Convert categories to swipeable cards
   const categoryCards = checkInCategories.map(category => ({
@@ -124,8 +129,24 @@ function CheckInPageContent() {
             <p className="text-gray-600 mt-1">
               Start with our guided quick check-in
             </p>
+            {preparation?.myTopics?.length ? (
+              <Badge className="mt-2 bg-pink-100 text-pink-700 border-pink-300">
+                <Sparkles className="h-3 w-3 mr-1" />
+                {preparation.myTopics.length} topics prepared
+              </Badge>
+            ) : null}
           </div>
           <div className="flex gap-2 flex-wrap">
+            {!preparation?.myTopics?.length && (
+              <Button 
+                variant="outline" 
+                onClick={openPreparationModal}
+                className="text-sm sm:text-base"
+              >
+                <FileText className="h-4 w-4 mr-1 sm:mr-2" />
+                <span className="hidden xs:inline">Prepare </span>Topics
+              </Button>
+            )}
             <Button className="bg-pink-600 hover:bg-pink-700 text-sm sm:text-base">
               <Play className="h-4 w-4 mr-1 sm:mr-2" />
               <span className="hidden xs:inline">Start </span>Now
@@ -262,6 +283,23 @@ function CheckInPageContent() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <PreparationModal />
+      <ReflectionForm sessionId="demo-session" />
+
+      {/* Demo Reflection Button (for testing) */}
+      <div className="fixed bottom-20 right-4 z-40">
+        <Button
+          onClick={openReflectionModal}
+          size="sm"
+          variant="outline"
+          className="shadow-lg"
+        >
+          <Sparkles className="h-4 w-4 mr-2" />
+          Test Reflection
+        </Button>
+      </div>
     </MotionBox>
   )
 }
@@ -269,7 +307,9 @@ function CheckInPageContent() {
 export default function CheckInPage() {
   return (
     <SessionSettingsProvider>
-      <CheckInPageContent />
+      <BookendsProvider>
+        <CheckInPageContent />
+      </BookendsProvider>
     </SessionSettingsProvider>
   )
 }

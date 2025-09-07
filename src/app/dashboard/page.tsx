@@ -14,8 +14,11 @@ import { PullToRefresh } from '@/components/ui/PullToRefresh'
 import { MobileActionBar } from '@/components/ui/PrimaryActionFAB'
 import { simplifiedMockReminders } from '@/lib/mock-reminders'
 import { isToday } from 'date-fns'
+import { BookendsProvider } from '@/contexts/BookendsContext'
+import { PrepBanner } from '@/components/bookends/PrepBanner'
+import { PreparationModal } from '@/components/bookends/PreparationModal'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [todayRemindersCount, setTodayRemindersCount] = useState(0)
 
@@ -45,6 +48,12 @@ export default function DashboardPage() {
             Your relationship command center
           </p>
         </div>
+
+      {/* Session Preparation Banner */}
+      <PrepBanner />
+      
+      {/* Preparation Modal */}
+      <PreparationModal />
 
       {/* Quick Actions */}
       <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -163,5 +172,13 @@ export default function DashboardPage() {
         <MobileActionBar />
       </MotionBox>
     </PullToRefresh>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <BookendsProvider>
+      <DashboardContent />
+    </BookendsProvider>
   )
 }

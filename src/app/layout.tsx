@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/Header'
 import { Navigation } from '@/components/layout/Navigation'
 import PageTransition from '@/components/ui/PageTransition'
 import SwipeNavigation from '@/components/ui/SwipeGestures'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -110,6 +111,16 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${inter.className} gradient-romantic min-h-screen antialiased touch-manipulation`}>
+          <Toaster 
+            position="top-center" 
+            toastOptions={{
+              style: {
+                background: '#fff',
+                color: '#333',
+                border: '1px solid #e5e5e5',
+              },
+            }}
+          />
           <div className="flex min-h-screen lg:h-screen safe-area-inset">
             {/* Desktop Sidebar Navigation */}
             <Navigation />
