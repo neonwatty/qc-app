@@ -11,12 +11,11 @@ import { Reminder } from '@/types'
 
 export default function RemindersPage() {
   const router = useRouter()
-  const [reminders, setReminders] = useState<Reminder[]>([])
+  const [reminders, setReminders] = useState<Reminder[]>(mockReminders)
 
   useEffect(() => {
     // For demo purposes, always use the latest mock data
     // In a real app, you would load from localStorage or API
-    setReminders(mockReminders)
     localStorage.setItem('qc-reminders', JSON.stringify(mockReminders))
   }, [])
 

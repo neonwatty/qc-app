@@ -1,5 +1,6 @@
 import { User, Couple, Category, CheckIn, Note, Milestone, Reminder } from '@/types'
 import { demoScenarios, demoPersonas, scenarioNoteTemplates, communicationStyles } from './demo-scenarios'
+import { getRelativeDate, getTodayAt, getTomorrowAt, getYesterdayAt, getThisWeek, getNextWeek } from './reminder-dates'
 
 export const mockCategories: Category[] = [
   {
@@ -1239,7 +1240,7 @@ export const mockReminders: Reminder[] = [
     message: 'Tell Jordan you love them today! A simple "I love you" can make their whole day brighter. 💝',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-07T15:00:00'),
+    scheduledFor: getTodayAt(15, 0), // 3:00 PM today
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
@@ -1254,13 +1255,13 @@ export const mockReminders: Reminder[] = [
     message: 'Start the day with a kiss and a hug. Physical touch strengthens your bond!',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-07T07:00:00'),
+    scheduledFor: getTodayAt(7, 0), // 7:00 AM today
     notificationChannel: 'in-app',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
     isActive: true,
     isSnoozed: false,
-    completedAt: new Date('2024-09-07T07:30:00'),
+    completedAt: getTodayAt(7, 30), // Completed at 7:30 AM today
     createdAt: new Date('2024-07-15'),
     updatedAt: new Date('2024-09-07T07:30:00')
   },
@@ -1270,7 +1271,7 @@ export const mockReminders: Reminder[] = [
     message: 'Share one thing you\'re grateful for about Jordan today. It could be something small but meaningful.',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-07T20:00:00'),
+    scheduledFor: getTodayAt(20, 0), // 8:00 PM today
     notificationChannel: 'both',
     createdBy: mockUsers[1].id,
     assignedTo: mockUsers[1].id,
@@ -1285,7 +1286,7 @@ export const mockReminders: Reminder[] = [
     message: 'Put your phones away during dinner tonight. Focus on each other and meaningful conversation.',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-07T19:00:00'),
+    scheduledFor: getTodayAt(19, 0), // 7:00 PM today
     notificationChannel: 'push',
     createdBy: mockUsers[0].id,
     isActive: true,
@@ -1301,7 +1302,7 @@ export const mockReminders: Reminder[] = [
     message: 'Time for your weekly relationship check-in! Set aside 30 minutes to connect and reflect together.',
     category: 'check-in',
     frequency: 'weekly',
-    scheduledFor: new Date('2024-09-08T19:00:00'),
+    scheduledFor: getTomorrowAt(19, 0), // 7:00 PM tomorrow
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     isActive: true,
@@ -1315,7 +1316,7 @@ export const mockReminders: Reminder[] = [
     message: 'Schedule your monthly deep conversation about goals, dreams, and relationship growth.',
     category: 'check-in',
     frequency: 'monthly',
-    scheduledFor: new Date('2024-09-15T14:00:00'),
+    scheduledFor: getNextWeek(0, 14), // Next Sunday at 2:00 PM
     notificationChannel: 'both',
     createdBy: mockUsers[1].id,
     isActive: true,
@@ -1331,7 +1332,7 @@ export const mockReminders: Reminder[] = [
     message: 'Follow up on your action item: Review monthly budget and savings goals with Jordan.',
     category: 'action-item',
     frequency: 'once',
-    scheduledFor: new Date('2024-09-10T20:00:00'),
+    scheduledFor: getThisWeek(3, 20), // This Wednesday at 8:00 PM
     notificationChannel: 'push',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
@@ -1347,7 +1348,7 @@ export const mockReminders: Reminder[] = [
     message: 'Remember to book your monthly couples therapy session for continued growth.',
     category: 'action-item',
     frequency: 'once',
-    scheduledFor: new Date('2024-09-09T10:00:00'),
+    scheduledFor: getThisWeek(2, 10), // This Tuesday at 10:00 AM
     notificationChannel: 'both',
     createdBy: mockUsers[1].id,
     assignedTo: mockUsers[1].id,
@@ -1362,7 +1363,7 @@ export const mockReminders: Reminder[] = [
     message: 'Sit down and plan your fall vacation. Research destinations and create a budget.',
     category: 'action-item',
     frequency: 'once',
-    scheduledFor: new Date('2024-09-11T19:30:00'),
+    scheduledFor: getThisWeek(4, 19), // This Thursday at 7:30 PM
     notificationChannel: 'in-app',
     createdBy: mockUsers[0].id,
     isActive: true,
@@ -1378,7 +1379,7 @@ export const mockReminders: Reminder[] = [
     message: 'Your 6-month anniversary is in 2 days! Don\'t forget to plan something special for Jordan.',
     category: 'special-date',
     frequency: 'once',
-    scheduledFor: new Date('2024-09-12T09:00:00'),
+    scheduledFor: getThisWeek(5, 9), // This Friday at 9:00 AM
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     isActive: true,
@@ -1392,7 +1393,7 @@ export const mockReminders: Reminder[] = [
     message: 'Jordan\'s birthday is next week! Time to finalize gift and celebration plans.',
     category: 'special-date',
     frequency: 'once',
-    scheduledFor: new Date('2024-09-20T10:00:00'),
+    scheduledFor: getNextWeek(6, 10), // Next Saturday at 10:00 AM
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
@@ -1407,7 +1408,7 @@ export const mockReminders: Reminder[] = [
     message: 'Today marks one year since your first date! Recreate something special from that day.',
     category: 'special-date',
     frequency: 'once',
-    scheduledFor: new Date('2024-09-25T18:00:00'),
+    scheduledFor: getRelativeDate(14, 18), // In 2 weeks at 6:00 PM
     notificationChannel: 'push',
     createdBy: mockUsers[1].id,
     isActive: true,
@@ -1423,7 +1424,7 @@ export const mockReminders: Reminder[] = [
     message: 'Plan this week\'s date night! Take turns choosing the activity to keep things fresh and exciting.',
     category: 'custom',
     frequency: 'weekly',
-    scheduledFor: new Date('2024-09-09T18:00:00'),
+    scheduledFor: getThisWeek(2, 18), // This Tuesday at 6:00 PM
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     isActive: true,
@@ -1441,12 +1442,12 @@ export const mockReminders: Reminder[] = [
     message: 'Plan a weekend adventure or day trip together. Explore somewhere new!',
     category: 'custom',
     frequency: 'monthly',
-    scheduledFor: new Date('2024-09-14T10:00:00'),
+    scheduledFor: getNextWeek(6, 10), // Next Saturday at 10:00 AM
     notificationChannel: 'push',
     createdBy: mockUsers[1].id,
     isActive: true,
     isSnoozed: true,
-    snoozeUntil: new Date('2024-09-14T10:00:00'),
+    snoozeUntil: getNextWeek(6, 10), // Snoozed until next Saturday
     createdAt: new Date('2024-08-05'),
     updatedAt: new Date('2024-09-01')
   },
@@ -1456,7 +1457,7 @@ export const mockReminders: Reminder[] = [
     message: 'Practice Jordan\'s love language today: Acts of Service. Do something helpful without being asked.',
     category: 'custom',
     frequency: 'weekly',
-    scheduledFor: new Date('2024-09-08T16:00:00'),
+    scheduledFor: getTomorrowAt(16, 0), // Tomorrow at 4:00 PM
     notificationChannel: 'in-app',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
@@ -1471,7 +1472,7 @@ export const mockReminders: Reminder[] = [
     message: 'Do something unexpected and sweet for Jordan today. Small surprises keep romance alive!',
     category: 'custom',
     frequency: 'weekly',
-    scheduledFor: new Date('2024-09-10T14:00:00'),
+    scheduledFor: getThisWeek(3, 14), // This Wednesday at 2:00 PM
     notificationChannel: 'both',
     createdBy: mockUsers[1].id,
     assignedTo: mockUsers[1].id,
@@ -1486,7 +1487,7 @@ export const mockReminders: Reminder[] = [
     message: 'Go for a walk, run, or workout together. Shared physical activity strengthens your bond.',
     category: 'custom',
     frequency: 'weekly',
-    scheduledFor: new Date('2024-09-08T08:00:00'),
+    scheduledFor: getTomorrowAt(8, 0), // Tomorrow at 8:00 AM
     notificationChannel: 'push',
     createdBy: mockUsers[0].id,
     isActive: true,
@@ -1506,13 +1507,13 @@ export const mockReminders: Reminder[] = [
     message: 'Start your day with 10 minutes of undivided attention over coffee.',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-07T08:00:00'),
+    scheduledFor: getTodayAt(8, 0), // 8:00 AM today
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
     isActive: true,
     isSnoozed: false,
-    completedAt: new Date('2024-09-07T08:30:00'),
+    completedAt: getTodayAt(8, 30), // Completed at 8:30 AM
     createdAt: new Date('2024-08-10'),
     updatedAt: new Date('2024-09-07T08:30:00')
   },
@@ -1522,13 +1523,13 @@ export const mockReminders: Reminder[] = [
     message: 'Give Jordan a genuine, specific compliment about something you appreciate.',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-07T12:00:00'),
+    scheduledFor: getTodayAt(12, 0), // Noon today
     notificationChannel: 'in-app',
     createdBy: mockUsers[1].id,
     assignedTo: mockUsers[1].id,
     isActive: true,
     isSnoozed: false,
-    completedAt: new Date('2024-09-07T12:15:00'),
+    completedAt: getTodayAt(12, 15), // Completed at 12:15 PM
     createdAt: new Date('2024-08-05'),
     updatedAt: new Date('2024-09-07T12:15:00')
   },
@@ -1538,12 +1539,12 @@ export const mockReminders: Reminder[] = [
     message: 'Share the best part of your day with each other before bed.',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date('2024-09-06T22:00:00'),
+    scheduledFor: getYesterdayAt(22, 0), // Yesterday at 10:00 PM
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     isActive: true,
     isSnoozed: false,
-    completedAt: new Date('2024-09-06T22:30:00'),
+    completedAt: getYesterdayAt(22, 30), // Completed yesterday at 10:30 PM
     createdAt: new Date('2024-07-30'),
     updatedAt: new Date('2024-09-06T22:30:00')
   }
