@@ -94,14 +94,6 @@ const FeatureGrid = () => {
           whileInView="animate"
           viewport={{ once: true, margin: "-100px" }}
         >
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
-            variants={staggerFadeUp}
-          >
-            <Sparkles className="w-4 h-4" />
-            Tools that actually work
-          </motion.div>
-
           <motion.h2
             className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6"
             variants={staggerFadeUp}
