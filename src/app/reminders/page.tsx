@@ -14,14 +14,10 @@ export default function RemindersPage() {
   const [reminders, setReminders] = useState<Reminder[]>([])
 
   useEffect(() => {
-    // Load reminders from localStorage or use mock data
-    const storedReminders = localStorage.getItem('qc-reminders')
-    if (storedReminders) {
-      setReminders(JSON.parse(storedReminders))
-    } else {
-      setReminders(mockReminders)
-      localStorage.setItem('qc-reminders', JSON.stringify(mockReminders))
-    }
+    // For demo purposes, always use the latest mock data
+    // In a real app, you would load from localStorage or API
+    setReminders(mockReminders)
+    localStorage.setItem('qc-reminders', JSON.stringify(mockReminders))
   }, [])
 
   return (
