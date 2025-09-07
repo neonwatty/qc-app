@@ -19,10 +19,10 @@ export interface DemoScenario {
 // Enhanced user personas with diverse backgrounds
 export const demoPersonas = {
   // Scenario 1: Young Professional Couple
-  sarah: {
-    id: 'sarah',
-    name: 'Sarah Chen',
-    email: 'sarah@example.com',
+  deb: {
+    id: 'deb',
+    name: 'Deb Chen',
+    email: 'deb@example.com',
     avatar: '👩🏻‍💼',
     age: 28,
     occupation: 'Software Engineer',
@@ -31,10 +31,10 @@ export const demoPersonas = {
     interests: ['hiking', 'cooking', 'tech', 'fitness']
   } as User & { age: number; occupation: string; personalityTraits: string[]; communicationStyle: string; interests: string[] },
 
-  marcus: {
-    id: 'marcus',
-    name: 'Marcus Johnson',
-    email: 'marcus@example.com',
+  jeremy: {
+    id: 'jeremy',
+    name: 'Jeremy Johnson',
+    email: 'jeremy@example.com',
     avatar: '👨🏾‍🎨',
     age: 30,
     occupation: 'Graphic Designer',

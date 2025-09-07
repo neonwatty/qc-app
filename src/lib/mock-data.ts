@@ -70,25 +70,25 @@ export const mockCategories: Category[] = [
   }
 ]
 
-// Use diverse personas from demo scenarios - defaulting to Sarah & Marcus
+// Use diverse personas from demo scenarios - defaulting to Deb & Jeremy
 export const mockUsers: User[] = [
   {
-    ...demoPersonas.sarah,
-    partnerId: demoPersonas.marcus.id,
+    ...demoPersonas.deb,
+    partnerId: demoPersonas.jeremy.id,
     createdAt: new Date('2024-03-01'),
     updatedAt: new Date('2024-08-31')
   },
   {
-    ...demoPersonas.marcus,
-    partnerId: demoPersonas.sarah.id,
+    ...demoPersonas.jeremy,
+    partnerId: demoPersonas.deb.id,
     createdAt: new Date('2024-03-01'),
     updatedAt: new Date('2024-08-31')
   }
 ]
 
 export const mockCouple: Couple = {
-  id: 'couple-sarah-marcus',
-  name: 'Sarah & Marcus',
+  id: 'couple-deb-jeremy',
+  name: 'Deb & Jeremy',
   partners: mockUsers,
   createdAt: new Date('2024-03-01'),
   settings: {
@@ -143,10 +143,10 @@ const generateCheckInHistory = (): CheckIn[] => {
   
   // Generate timeline events that affect check-ins
   const timelineEvents = [
-    { week: 3, event: 'work-stress', description: 'Sarah had a big project deadline' },
+    { week: 3, event: 'work-stress', description: 'Deb had a big project deadline' },
     { week: 8, event: 'vacation', description: 'Weekend getaway to Napa Valley' },
-    { week: 12, event: 'family-visit', description: 'Marcus\'s parents visited for a week' },
-    { week: 16, event: 'promotion', description: 'Sarah got promoted at work' },
+    { week: 12, event: 'family-visit', description: 'Jeremy\'s parents visited for a week' },
+    { week: 16, event: 'promotion', description: 'Deb got promoted at work' },
     { week: 20, event: 'moved-in', description: 'Moved in together officially' },
     { week: 23, event: 'adopted-pet', description: 'Adopted rescue dog Milo' },
     { week: 25, event: 'relationship-milestone', description: '2.5 year anniversary' }
@@ -171,8 +171,8 @@ const generateCheckInHistory = (): CheckIn[] => {
     
     const checkIn: CheckIn = {
       id: `checkin-${i + 1}`,
-      coupleId: 'couple-sarah-marcus',
-      participants: [demoPersonas.sarah.id, demoPersonas.marcus.id],
+      coupleId: 'couple-deb-jeremy',
+      participants: [demoPersonas.deb.id, demoPersonas.jeremy.id],
       startedAt: checkInDate,
       completedAt: new Date(checkInDate.getTime() + sessionDuration),
       status: 'completed',
@@ -270,7 +270,7 @@ const generateNotesForCheckIn = (checkInId: string, categoryIds: string[], weekN
     if (!category) return
     
     // Shared note - always present
-    const sharedAuthor = Math.random() > 0.5 ? demoPersonas.sarah.id : demoPersonas.marcus.id
+    const sharedAuthor = Math.random() > 0.5 ? demoPersonas.deb.id : demoPersonas.jeremy.id
     notes.push({
       id: `note-${checkInId}-${categoryId}-shared`,
       content: generateContextualNoteContent(category.name, 'shared', weekNumber, event, sharedAuthor),
@@ -282,13 +282,13 @@ const generateNotesForCheckIn = (checkInId: string, categoryIds: string[], weekN
       updatedAt: new Date()
     })
     
-    // Sarah's private notes (analytical style)
+    // Deb's private notes (analytical style)
     if (Math.random() > 0.5) {
       notes.push({
         id: `note-${checkInId}-${categoryId}-private-sarah`,
-        content: generateContextualNoteContent(category.name, 'private', weekNumber, event, demoPersonas.sarah.id),
+        content: generateContextualNoteContent(category.name, 'private', weekNumber, event, demoPersonas.deb.id),
         privacy: 'private',
-        authorId: demoPersonas.sarah.id,
+        authorId: demoPersonas.deb.id,
         categoryId,
         checkInId,
         createdAt: new Date(),
@@ -296,13 +296,13 @@ const generateNotesForCheckIn = (checkInId: string, categoryIds: string[], weekN
       })
     }
     
-    // Marcus's private notes (expressive style)
+    // Jeremy's private notes (expressive style)
     if (Math.random() > 0.6) {
       notes.push({
         id: `note-${checkInId}-${categoryId}-private-marcus`,
-        content: generateContextualNoteContent(category.name, 'private', weekNumber, event, demoPersonas.marcus.id),
+        content: generateContextualNoteContent(category.name, 'private', weekNumber, event, demoPersonas.jeremy.id),
         privacy: 'private',
-        authorId: demoPersonas.marcus.id,
+        authorId: demoPersonas.jeremy.id,
         categoryId,
         checkInId,
         createdAt: new Date(),
@@ -429,7 +429,7 @@ const generateActionItemsForCheckIn = (checkInId: string, event?: any) => {
       id: `action-${checkInId}-${i + 1}`,
       title: template,
       description: descriptions[Math.floor(Math.random() * descriptions.length)],
-      assignedTo: Math.random() > 0.5 ? demoPersonas.sarah.id : demoPersonas.marcus.id,
+      assignedTo: Math.random() > 0.5 ? demoPersonas.deb.id : demoPersonas.jeremy.id,
       dueDate: new Date(Date.now() + (Math.floor(Math.random() * 7) + 3) * 24 * 60 * 60 * 1000), // 3-10 days
       completed: Math.random() > 0.25, // 75% completion rate
       checkInId,
@@ -449,7 +449,7 @@ const generateContextualNoteContent = (
   event?: any, 
   authorId?: string
 ): string => {
-  const isSarah = authorId === demoPersonas.sarah.id
+  const isDeb = authorId === demoPersonas.deb.id
   const isShared = privacy === 'shared'
   
   // Get base templates from scenario-specific content
@@ -458,22 +458,22 @@ const generateContextualNoteContent = (
   
   // Event-specific content
   if (event) {
-    return generateEventSpecificNote(categoryName, privacy, event, isSarah)
+    return generateEventSpecificNote(categoryName, privacy, event, isDeb)
   }
   
   // Relationship progression-based content
   if (weekNumber < 8) {
-    return generateEarlyRelationshipNote(categoryName, privacy, isSarah)
+    return generateEarlyRelationshipNote(categoryName, privacy, isDeb)
   } else if (weekNumber < 16) {
-    return generateBuildingTogetherNote(categoryName, privacy, isSarah)
+    return generateBuildingTogetherNote(categoryName, privacy, isDeb)
   } else if (weekNumber < 24) {
-    return generateSeriousCommitmentNote(categoryName, privacy, isSarah)
+    return generateSeriousCommitmentNote(categoryName, privacy, isDeb)
   } else {
-    return generateEstablishedCoupleNote(categoryName, privacy, isSarah)
+    return generateEstablishedCoupleNote(categoryName, privacy, isDeb)
   }
 }
 
-const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'private', event: any, isSarah: boolean): string => {
+const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'private', event: any, isDeb: boolean): string => {
   const eventNotes = {
     'work-stress': {
       Communication: {
@@ -482,12 +482,12 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
           'Had to really work on communicating needs when we\'re both exhausted',
           'Learning to give space when one person is overwhelmed with deadlines'
         ],
-        private: isSarah ? [
-          'Really appreciated Marcus giving me space to vent about work without trying to fix everything',
+        private: isDeb ? [
+          'Really appreciated Jeremy giving me space to vent about work without trying to fix everything',
           'Noticed I get more irritable when work stress builds up - need to communicate this better',
-          'Grateful that Marcus checks in on how my project is going'
+          'Grateful that Jeremy checks in on how my project is going'
         ] : [
-          'Trying to be supportive without being overwhelming when Sarah\'s stressed',
+          'Trying to be supportive without being overwhelming when Deb\'s stressed',
           'Sometimes feel shut out when work takes over, but understanding it\'s temporary',
           'Learning when to offer solutions vs just listening'
         ]
@@ -498,14 +498,14 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
           'Even short check-ins over coffee mean a lot when schedules are crazy',
           'Looking forward to celebrating when this project deadline passes'
         ],
-        private: isSarah ? [
-          'Miss our longer conversations but appreciate Marcus adapting to my schedule',
+        private: isDeb ? [
+          'Miss our longer conversations but appreciate Jeremy adapting to my schedule',
           'Quick morning hugs before work have been keeping me grounded',
-          'Need to make sure I don\'t take Marcus for granted during busy times'
+          'Need to make sure I don\'t take Jeremy for granted during busy times'
         ] : [
-          'Been doing more cooking and household tasks to support Sarah through her deadline',
+          'Been doing more cooking and household tasks to support Deb through her deadline',
           'Missing our usual weekend adventures but know this is temporary',
-          'Love seeing Sarah in her element even when she\'s stressed'
+          'Love seeing Deb in her element even when she\'s stressed'
         ]
       }
     },
@@ -516,12 +516,12 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
           'Loved having uninterrupted time to really listen to each other',
           'Talked about future travel dreams and made some exciting plans'
         ],
-        private: isSarah ? [
+        private: isDeb ? [
           'Felt so connected during our long talks on the hiking trail',
-          'Marcus was so present and engaged - no phone distractions',
+          'Jeremy was so present and engaged - no phone distractions',
           'Appreciated how we could just be silly and playful together'
         ] : [
-          'Sarah seemed so relaxed and happy - love seeing this side of her',
+          'Deb seemed so relaxed and happy - love seeing this side of her',
           'Our conversations flowed so naturally without work stress',
           'Realized how much I missed having her full attention'
         ]
@@ -532,12 +532,12 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
           'Loved trying new activities together - wine tasting was so fun!',
           'Want to make these weekend escapes a regular tradition'
         ],
-        private: isSarah ? [
+        private: isDeb ? [
           'The sunset dinner was incredibly romantic - felt like early dating again',
-          'Marcus planned such thoughtful surprises throughout the weekend',
+          'Jeremy planned such thoughtful surprises throughout the weekend',
           'Already looking forward to our next adventure together'
         ] : [
-          'Watching Sarah light up during the wine tour made my heart so full',
+          'Watching Deb light up during the wine tour made my heart so full',
           'Our spontaneous dance party in the hotel room was pure joy',
           'These unplanned moments of connection are what I treasure most'
         ]
@@ -550,14 +550,14 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
           'Getting better at talking through household decisions together',
           'Navigating different morning routines and finding our rhythm'
         ],
-        private: isSarah ? [
+        private: isDeb ? [
           'Adjusting to having less alone time but loving the constant connection',
-          'Marcus is so respectful of my work-from-home space setup',
+          'Jeremy is so respectful of my work-from-home space setup',
           'Learning to communicate when I need quiet time to recharge'
         ] : [
-          'Sarah\'s organizational systems are helping me be more structured',
+          'Deb\'s organizational systems are helping me be more structured',
           'Love the casual conversations that happen when we\'re just sharing space',
-          'Learning Sarah\'s subtle cues for when she needs space vs connection'
+          'Learning Deb\'s subtle cues for when she needs space vs connection'
         ]
       },
       Intimacy: {
@@ -566,12 +566,12 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
           'Morning coffee together has become our favorite intimate ritual',
           'Emotional intimacy has deepened with all the small daily moments'
         ],
-        private: isSarah ? [
-          'Love falling asleep and waking up next to Marcus every day',
+        private: isDeb ? [
+          'Love falling asleep and waking up next to Jeremy every day',
           'Even mundane tasks like grocery shopping feel romantic now',
           'Feeling so safe and secure in this next step we\'ve taken'
         ] : [
-          'Sarah\'s little habits and quirks make me fall more in love daily',
+          'Deb\'s little habits and quirks make me fall more in love daily',
           'The way she hums while cooking dinner melts my heart every time',
           'Never imagined how intimate it would feel to truly share a home'
         ]
@@ -581,14 +581,14 @@ const generateEventSpecificNote = (categoryName: string, privacy: 'shared' | 'pr
   
   const categoryNotes = eventNotes[event.event as keyof typeof eventNotes]
   if (!categoryNotes || !categoryNotes[categoryName as keyof typeof categoryNotes]) {
-    return generateBasicNote(categoryName, privacy, isSarah)
+    return generateBasicNote(categoryName, privacy, isDeb)
   }
   
   const notes = categoryNotes[categoryName as keyof typeof categoryNotes][privacy]
   return notes[Math.floor(Math.random() * notes.length)]
 }
 
-const generateEarlyRelationshipNote = (categoryName: string, privacy: 'shared' | 'private', isSarah: boolean): string => {
+const generateEarlyRelationshipNote = (categoryName: string, privacy: 'shared' | 'private', isDeb: boolean): string => {
   // Early relationship notes (weeks 1-8)
   const templates = {
     Communication: {
@@ -597,13 +597,13 @@ const generateEarlyRelationshipNote = (categoryName: string, privacy: 'shared' |
         'Had our first deeper conversation about family backgrounds and values',
         'Getting better at being vulnerable and sharing what\'s really on our minds'
       ],
-      private: isSarah ? [
-        'Marcus has such an expressive way of sharing feelings - so different from me',
+      private: isDeb ? [
+        'Jeremy has such an expressive way of sharing feelings - so different from me',
         'Learning to open up more instead of just analyzing everything internally',
-        'Love how curious Marcus is about my thoughts and perspectives'
+        'Love how curious Jeremy is about my thoughts and perspectives'
       ] : [
-        'Sarah\'s thoughtful questions help me process my emotions better',
-        'Appreciate how Sarah really listens before responding',
+        'Deb\'s thoughtful questions help me process my emotions better',
+        'Appreciate how Deb really listens before responding',
         'Sometimes feel like I share too much too fast - working on pacing'
       ]
     },
@@ -613,13 +613,13 @@ const generateEarlyRelationshipNote = (categoryName: string, privacy: 'shared' |
         'Discovered we both love trying new restaurants and exploring the city',
         'Weekend adventures are becoming our favorite tradition'
       ],
-      private: isSarah ? [
-        'Marcus brings out my spontaneous side in the best way',
-        'Love how present Marcus is during our dates - no distractions',
+      private: isDeb ? [
+        'Jeremy brings out my spontaneous side in the best way',
+        'Love how present Jeremy is during our dates - no distractions',
         'Starting to crave our time together when we\'re apart'
       ] : [
-        'Sarah\'s planning skills make our dates so much more interesting',
-        'The way Sarah gets excited about little discoveries makes me smile',
+        'Deb\'s planning skills make our dates so much more interesting',
+        'The way Deb gets excited about little discoveries makes me smile',
         'Already thinking about her when we\'re not together'
       ]
     },
@@ -629,31 +629,31 @@ const generateEarlyRelationshipNote = (categoryName: string, privacy: 'shared' |
         'Emotional intimacy is growing with each vulnerable conversation',
         'Learning what makes each other feel loved and appreciated'
       ],
-      private: isSarah ? [
-        'Marcus\'s gentle approach to physical intimacy makes me feel so safe',
-        'Surprised by how easy it is to be affectionate with Marcus',
+      private: isDeb ? [
+        'Jeremy\'s gentle approach to physical intimacy makes me feel so safe',
+        'Surprised by how easy it is to be affectionate with Jeremy',
         'Feeling more confident expressing my needs and desires'
       ] : [
-        'Sarah\'s thoughtful approach to intimacy is teaching me patience',
-        'Love the little ways Sarah shows affection - holding hands, gentle touches',
+        'Deb\'s thoughtful approach to intimacy is teaching me patience',
+        'Love the little ways Deb shows affection - holding hands, gentle touches',
         'Building emotional intimacy feels just as important as physical'
       ]
     }
   }
   
   const categoryNotes = templates[categoryName as keyof typeof templates]
-  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isSarah)
+  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isDeb)
   
   const notes = categoryNotes[privacy]
   return notes[Math.floor(Math.random() * notes.length)]
 }
 
-const generateBasicNote = (categoryName: string, privacy: 'shared' | 'private', isSarah: boolean): string => {
+const generateBasicNote = (categoryName: string, privacy: 'shared' | 'private', isDeb: boolean): string => {
   return `Reflecting on our ${categoryName.toLowerCase()} this week - grateful for how we\'re growing together.`
 }
 
 // Complete implementation for relationship stages
-const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 'private', isSarah: boolean): string => {
+const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 'private', isDeb: boolean): string => {
   // Building together phase (weeks 8-16)
   const templates = {
     Communication: {
@@ -663,15 +663,15 @@ const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 
         'Starting to develop our own language and inside jokes that make us feel like a team',
         'Learning to balance honesty with kindness in our daily interactions'
       ],
-      private: isSarah ? [
-        'Marcus\'s expressive style is teaching me to be more open about my feelings',
-        'I appreciate how Marcus gives me time to process before expecting responses',
+      private: isDeb ? [
+        'Jeremy\'s expressive style is teaching me to be more open about my feelings',
+        'I appreciate how Jeremy gives me time to process before expecting responses',
         'Learning that my analytical approach can sometimes feel cold - working on warmth',
         'Love how we can communicate so much with just a look or gesture now'
       ] : [
-        'Sarah\'s thoughtful communication style is helping me be more intentional with words',
-        'Appreciating how Sarah processes things - her insights are always worth waiting for',
-        'Learning to read Sarah\'s subtle cues better - she doesn\'t always need me to fill silence',
+        'Deb\'s thoughtful communication style is helping me be more intentional with words',
+        'Appreciating how Deb processes things - her insights are always worth waiting for',
+        'Learning to read Deb\'s subtle cues better - she doesn\'t always need me to fill silence',
         'Our check-ins are becoming one of my favorite conversations each week'
       ]
     },
@@ -682,16 +682,16 @@ const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 
         'Balancing couple time with friend time and individual pursuits feels healthy',
         'Our weekend routines are becoming some of my favorite relationship traditions'
       ],
-      private: isSarah ? [
-        'Love how comfortable silence can be with Marcus - we don\'t need to fill every moment',
-        'Marcus makes even mundane activities feel special and fun',
+      private: isDeb ? [
+        'Love how comfortable silence can be with Jeremy - we don\'t need to fill every moment',
+        'Jeremy makes even mundane activities feel special and fun',
         'Really value the mix of adventure and cozy home time we\'ve created',
         'Looking forward to planning bigger adventures together - maybe a real vacation'
       ] : [
-        'Sarah brings such thoughtful planning to our time together - I love her itineraries',
-        'The way Sarah gets excited about small details makes everything more meaningful',
+        'Deb brings such thoughtful planning to our time together - I love her itineraries',
+        'The way Deb gets excited about small details makes everything more meaningful',
         'Love that we can be spontaneous but also make solid plans together',
-        'Our shared interests are expanding - Sarah got me into hiking, I got her into concerts'
+        'Our shared interests are expanding - Deb got me into hiking, I got her into concerts'
       ]
     },
     Intimacy: {
@@ -701,13 +701,13 @@ const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 
         'Vulnerability is becoming easier - we\'re creating real safety together',
         'Intimacy isn\'t just physical - it\'s in the daily moments of care and attention'
       ],
-      private: isSarah ? [
+      private: isDeb ? [
         'Feeling more confident expressing my physical needs and desires',
-        'Marcus\'s patience and attentiveness make intimacy feel safe and joyful',
+        'Jeremy\'s patience and attentiveness make intimacy feel safe and joyful',
         'Love how emotional intimacy makes physical connection more meaningful',
         'Learning to be present instead of analyzing every moment'
       ] : [
-        'Sarah\'s growing confidence in intimacy is beautiful to witness',
+        'Deb\'s growing confidence in intimacy is beautiful to witness',
         'The emotional connection we\'re building makes everything else deeper',
         'Love how we can be both passionate and tender with each other',
         'Physical affection is becoming such a natural part of our daily life'
@@ -720,14 +720,14 @@ const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 
         'Learning that healthy relationships help you become your best self',
         'Our different strengths complement each other in really beautiful ways'
       ],
-      private: isSarah ? [
-        'Marcus encourages my career ambitions while helping me not lose myself in work',
+      private: isDeb ? [
+        'Jeremy encourages my career ambitions while helping me not lose myself in work',
         'Learning to balance my independent nature with being part of a team',
         'Growing in my ability to be spontaneous and go with the flow',
         'Proud of how I\'m becoming more emotionally expressive'
       ] : [
-        'Sarah is helping me become more organized and intentional about my goals',
-        'Learning to give Sarah space to process while still being supportive',
+        'Deb is helping me become more organized and intentional about my goals',
+        'Learning to give Deb space to process while still being supportive',
         'Growing in my patience and learning to appreciate different paces',
         'Love how we inspire each other to try new things and take healthy risks'
       ]
@@ -735,13 +735,13 @@ const generateBuildingTogetherNote = (categoryName: string, privacy: 'shared' | 
   }
   
   const categoryNotes = templates[categoryName as keyof typeof templates]
-  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isSarah)
+  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isDeb)
   
   const notes = categoryNotes[privacy]
   return notes[Math.floor(Math.random() * notes.length)]
 }
 
-const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' | 'private', isSarah: boolean): string => {
+const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' | 'private', isDeb: boolean): string => {
   // Serious commitment phase (weeks 16-24)
   const templates = {
     Communication: {
@@ -751,15 +751,15 @@ const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' |
         'Talking about bigger life decisions feels natural and collaborative',
         'We\'ve learned to address issues quickly instead of letting them fester'
       ],
-      private: isSarah ? [
+      private: isDeb ? [
         'Feel confident bringing up difficult topics - we can handle anything together',
-        'Marcus really listens when I share my concerns about our future',
+        'Jeremy really listens when I share my concerns about our future',
         'Love how we can dream together about what we want our life to look like',
         'Our communication about money and practical matters has gotten so much better'
       ] : [
-        'Sarah makes me feel heard even when we disagree about important things',
+        'Deb makes me feel heard even when we disagree about important things',
         'We\'ve gotten really good at finding compromise on big decisions',
-        'I can be completely honest with Sarah about my fears and dreams',
+        'I can be completely honest with Deb about my fears and dreams',
         'The way we talk through problems makes me feel like we can handle anything'
       ]
     },
@@ -770,13 +770,13 @@ const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' |
         'Shared activities are becoming traditions - we have \'our things\' now',
         'Even busy weeks include meaningful moments of connection'
       ],
-      private: isSarah ? [
-        'Marcus is so good at making sure we prioritize us even during stressful periods',
+      private: isDeb ? [
+        'Jeremy is so good at making sure we prioritize us even during stressful periods',
         'Our weekend morning coffee talks have become sacred time',
         'Love planning future adventures and trips together - dreaming is bonding',
         'Quality time doesn\'t always need to be elaborate - simple moments matter most'
       ] : [
-        'Sarah\'s planning skills make our time together feel special and thoughtful',
+        'Deb\'s planning skills make our time together feel special and thoughtful',
         'Love how we\'ve created traditions that are uniquely ours',
         'Even when we\'re busy, we find ways to connect that feel meaningful',
         'Looking forward to having more time together as we get more settled'
@@ -789,14 +789,14 @@ const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' |
         'Emotional and physical intimacy feel completely integrated now',
         'Trust has reached a level where vulnerability feels safe and natural'
       ],
-      private: isSarah ? [
-        'Feel completely safe being my authentic self with Marcus',
+      private: isDeb ? [
+        'Feel completely safe being my authentic self with Jeremy',
         'Physical intimacy reflects our emotional connection beautifully',
         'Love how we can be playful and serious, passionate and tender',
         'Never felt this level of acceptance and desire at the same time'
       ] : [
         'The depth of trust we\'ve built makes everything more passionate',
-        'Sarah\'s confidence and openness continue to amaze me',
+        'Deb\'s confidence and openness continue to amaze me',
         'Intimacy isn\'t just about sex - it\'s about being completely known',
         'Love how we can communicate our needs without awkwardness'
       ]
@@ -808,14 +808,14 @@ const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' |
         'Ready to take the next steps because our foundation feels so solid',
         'Learning that commitment enhances freedom rather than limiting it'
       ],
-      private: isSarah ? [
-        'Ready to build a life with Marcus - it doesn\'t feel scary anymore',
-        'My career goals feel more achievable with Marcus\'s support',
-        'Growing into the person I want to be, and Marcus loves all of it',
+      private: isDeb ? [
+        'Ready to build a life with Jeremy - it doesn\'t feel scary anymore',
+        'My career goals feel more achievable with Jeremy\'s support',
+        'Growing into the person I want to be, and Jeremy loves all of it',
         'Excited about the future we\'re creating together'
       ] : [
         'Never imagined I could feel this secure and excited about commitment',
-        'Sarah believes in my dreams even when I doubt myself',
+        'Deb believes in my dreams even when I doubt myself',
         'Growing in my ability to be dependable while staying creative',
         'Ready for whatever comes next because we\'re a real team now'
       ]
@@ -823,13 +823,13 @@ const generateSeriousCommitmentNote = (categoryName: string, privacy: 'shared' |
   }
   
   const categoryNotes = templates[categoryName as keyof typeof templates]
-  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isSarah)
+  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isDeb)
   
   const notes = categoryNotes[privacy]
   return notes[Math.floor(Math.random() * notes.length)]
 }
 
-const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' | 'private', isSarah: boolean): string => {
+const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' | 'private', isDeb: boolean): string => {
   // Established couple phase (weeks 24+)
   const templates = {
     Communication: {
@@ -839,16 +839,16 @@ const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' |
         'Check-ins feel like a celebration of how far we\'ve come together',
         'We\'ve developed our own relationship language and ways of connecting'
       ],
-      private: isSarah ? [
-        'Communication with Marcus feels effortless most of the time',
+      private: isDeb ? [
+        'Communication with Jeremy feels effortless most of the time',
         'Love how we can have serious talks that end with laughter',
         'Feel completely heard and understood in this relationship',
-        'Marcus knows how to reach me even when I\'m stressed or withdrawn'
+        'Jeremy knows how to reach me even when I\'m stressed or withdrawn'
       ] : [
-        'Sarah and I just get each other now - communication flows so naturally',
+        'Deb and I just get each other now - communication flows so naturally',
         'Even our disagreements feel productive and loving',
         'Love how we can talk for hours or sit in comfortable silence',
-        'Sarah\'s way of listening makes me feel valued and understood'
+        'Deb\'s way of listening makes me feel valued and understood'
       ]
     },
     'Quality Time': {
@@ -858,13 +858,13 @@ const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' |
         'We balance together time and individual time really well now',
         'Even ordinary moments feel special when we\'re together'
       ],
-      private: isSarah ? [
+      private: isDeb ? [
         'Love how we can enjoy both adventure and quiet domestic life',
-        'Marcus makes everyday life feel romantic and meaningful',
+        'Jeremy makes everyday life feel romantic and meaningful',
         'Our weekend traditions are some of my favorite parts of the week',
         'Looking forward to many more adventures and quiet moments together'
       ] : [
-        'Sarah brings such intentionality to our time together',
+        'Deb brings such intentionality to our time together',
         'Love that we can be completely ourselves and still choose each other',
         'Our life together feels like the best kind of partnership',
         'Excited about all the experiences and seasons still ahead of us'
@@ -877,16 +877,16 @@ const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' |
         'Physical and emotional intimacy continue to deepen over time',
         'The trust and acceptance we have is the foundation for everything else'
       ],
-      private: isSarah ? [
+      private: isDeb ? [
         'Never felt this combination of safety and passion in a relationship',
-        'Marcus sees all of me and loves what he sees - it\'s incredible',
+        'Jeremy sees all of me and loves what he sees - it\'s incredible',
         'Our physical connection reflects the emotional bond we\'ve built',
         'Feel completely free to be myself in every way'
       ] : [
         'The level of trust and passion we\'ve built is beyond anything I imagined',
-        'Sarah\'s confidence and openness inspire me to be my best self',
+        'Deb\'s confidence and openness inspire me to be my best self',
         'Love how intimate moments can be tender or playful or intense',
-        'Never get tired of discovering new things about Sarah'
+        'Never get tired of discovering new things about Deb'
       ]
     },
     Growth: {
@@ -896,13 +896,13 @@ const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' |
         'Ready for whatever life brings because we\'ve proven we can handle it together',
         'The future looks bright because we\'ve built such a strong foundation'
       ],
-      private: isSarah ? [
-        'Marcus makes me want to be my best self while accepting me as I am',
+      private: isDeb ? [
+        'Jeremy makes me want to be my best self while accepting me as I am',
         'Excited about growing old together and seeing what life brings',
         'Our relationship is my safe harbor and my greatest adventure',
         'Ready to take on new challenges because I know we\'re solid'
       ] : [
-        'Sarah inspires me to be better while loving me exactly as I am',
+        'Deb inspires me to be better while loving me exactly as I am',
         'Can\'t wait to see what we build together in the years ahead',
         'This relationship has taught me what real partnership looks like',
         'Feel so grateful we found each other and chose to build this together'
@@ -911,7 +911,7 @@ const generateEstablishedCoupleNote = (categoryName: string, privacy: 'shared' |
   }
   
   const categoryNotes = templates[categoryName as keyof typeof templates]
-  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isSarah)
+  if (!categoryNotes) return generateBasicNote(categoryName, privacy, isDeb)
   
   const notes = categoryNotes[privacy]
   return notes[Math.floor(Math.random() * notes.length)]

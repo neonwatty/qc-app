@@ -91,6 +91,12 @@ export interface Reminder {
     time?: string
     dates?: Date[]
   }
+  // Request-related fields for partner collaboration
+  requestedBy?: string
+  requestStatus?: 'pending' | 'accepted' | 'declined' | 'modified'
+  requestMessage?: string
+  requestedAt?: Date
+  respondedAt?: Date
   createdAt: Date
   updatedAt: Date
 }

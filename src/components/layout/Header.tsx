@@ -29,17 +29,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center -space-x-2">
                   {/* First user avatar */}
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-medium ring-2 ring-white">
-                    A
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-sm font-medium ring-2 ring-white">
+                    D
                   </div>
                   {/* Second user avatar */}
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center text-white text-sm font-medium ring-2 ring-white">
-                    B
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-medium ring-2 ring-white">
+                    J
                   </div>
                 </div>
                 <div className="hidden sm:block ml-2">
-                  <p className="text-sm font-medium text-gray-900">Alex & Blake</p>
-                  <p className="text-xs text-gray-500">Together since Jan 2023 (if they were real)</p>
+                  <p className="text-sm font-medium text-gray-900">Deb & Jeremy</p>
+                  <p className="text-xs text-gray-500">Together since March 2024</p>
                 </div>
               </div>
           </div>

@@ -2,13 +2,34 @@ import { Reminder } from '@/types'
 import { mockUsers } from './mock-data'
 import { getRelativeDate, getTodayAt, getTomorrowAt, getThisWeek } from './reminder-dates'
 
-// Mock Reminders Data - Simplified for proof-of-concept (5 reminders total)
+// Mock Reminders Data - Simplified for proof-of-concept with partner requests
 export const simplifiedMockReminders: Reminder[] = [
+  // Partner Request - Accepted (shows with special indicator)
+  {
+    id: 'reminder-accepted-1',
+    title: 'Pick up flowers for Deb',
+    message: 'Deb loves fresh flowers - grab their favorites (sunflowers) on the way home!',
+    category: 'custom',
+    frequency: 'weekly',
+    scheduledFor: getTodayAt(17, 30), // 5:30 PM today
+    notificationChannel: 'push',
+    createdBy: mockUsers[1].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    requestedBy: mockUsers[1].id,
+    requestStatus: 'accepted',
+    requestMessage: "Would love if you could surprise me with flowers sometimes 🌻",
+    requestedAt: getRelativeDate(-7, 14),
+    respondedAt: getRelativeDate(-7, 15),
+    createdAt: getRelativeDate(-7, 14),
+    updatedAt: getRelativeDate(-7, 15)
+  },
   // Today's Reminders (2)
   {
     id: 'reminder-1',
     title: 'Daily Love Affirmation',
-    message: 'Tell Jordan you love them today! A simple "I love you" can make their whole day brighter. 💝',
+    message: 'Tell Jeremy you love them today! A simple "I love you" can make their whole day brighter. 💝',
     category: 'habit',
     frequency: 'daily',
     scheduledFor: getTodayAt(18, 0), // 6:00 PM today
@@ -51,24 +72,26 @@ export const simplifiedMockReminders: Reminder[] = [
     updatedAt: getRelativeDate(-7)
   },
 
-  // This Week (1)
+  // This Week (1) - Another partner request
   {
     id: 'reminder-4',
-    title: 'Date Night Planning',
-    message: 'Plan this week\'s date night! Take turns choosing the activity to keep things fresh and exciting.',
+    title: 'Plan Weekend Adventure',
+    message: 'Research and book that hiking trail we talked about - Jeremy is excited to explore nature together!',
     category: 'custom',
-    frequency: 'weekly',
+    frequency: 'once',
     scheduledFor: getThisWeek(5, 18), // Friday at 6:00 PM
     notificationChannel: 'both',
-    createdBy: mockUsers[0].id,
+    createdBy: mockUsers[1].id,
+    assignedTo: mockUsers[0].id,
     isActive: true,
     isSnoozed: false,
-    customSchedule: {
-      daysOfWeek: [5], // Friday
-      time: '18:00'
-    },
-    createdAt: getRelativeDate(-45),
-    updatedAt: getRelativeDate(-2)
+    requestedBy: mockUsers[1].id,
+    requestStatus: 'accepted',
+    requestMessage: "Can you handle planning our weekend adventure? You always find the best trails! 🏔️",
+    requestedAt: getRelativeDate(-3, 10),
+    respondedAt: getRelativeDate(-3, 11),
+    createdAt: getRelativeDate(-3, 10),
+    updatedAt: getRelativeDate(-3, 11)
   },
 
   // Completed Today (1) - to show the feature works
