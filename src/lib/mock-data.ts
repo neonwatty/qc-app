@@ -1238,7 +1238,7 @@ export const mockReminders: Reminder[] = [
     message: 'Tell Jordan you love them today! A simple "I love you" can make their whole day brighter. 💝',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date(Date.now() + 3 * 60 * 60 * 1000), // 3 hours from now
+    scheduledFor: new Date('2024-09-07T15:00:00'), // Fixed time for demo
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
@@ -1297,7 +1297,7 @@ export const mockReminders: Reminder[] = [
     message: 'Share one thing you\'re grateful for about Jordan today. It could be something small but meaningful.',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date(Date.now() + 6 * 60 * 60 * 1000), // 6 hours from now
+    scheduledFor: new Date('2024-09-07T18:00:00'), // Fixed time for demo
     notificationChannel: 'in-app',
     createdBy: mockUsers[1].id,
     assignedTo: mockUsers[1].id,
@@ -1330,15 +1330,15 @@ export const mockReminders: Reminder[] = [
     message: 'Completed! You had a great morning coffee chat today. Keep up the connection! ☕',
     category: 'habit',
     frequency: 'daily',
-    scheduledFor: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+    scheduledFor: new Date('2024-09-07T08:00:00'), // Fixed time for demo
     notificationChannel: 'both',
     createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
     isActive: true,
     isSnoozed: false,
-    completedAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    completedAt: new Date('2024-09-07T09:00:00'),
     createdAt: new Date('2024-08-10'),
-    updatedAt: new Date()
+    updatedAt: new Date('2024-09-07T12:00:00')
   },
   {
     id: 'reminder-8',

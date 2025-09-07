@@ -82,19 +82,9 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ className = '' }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const isActive = (href: string) => {
-    // During SSR, don't mark anything as active to avoid hydration mismatch
-    if (!mounted) {
-      return false
-    }
-    
     // Exact match for home page
     if (href === '/') {
       return pathname === '/'
