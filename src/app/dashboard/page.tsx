@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Heart, MessageCircle, StickyNote, TrendingUp, Bell } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
@@ -12,9 +12,20 @@ import {
 import { QuickActions } from '@/components/dashboard/QuickActions'
 import { PullToRefresh } from '@/components/ui/PullToRefresh'
 import { MobileActionBar } from '@/components/ui/PrimaryActionFAB'
+import { mockReminders } from '@/lib/mock-data'
+import { isToday } from 'date-fns'
 
 export default function DashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0)
+  const [todayRemindersCount, setTodayRemindersCount] = useState(0)
+
+  useEffect(() => {
+    // Count today's active reminders
+    const count = mockReminders.filter(r => 
+      isToday(new Date(r.scheduledFor)) && !r.completedAt
+    ).length
+    setTodayRemindersCount(count)
+  }, [refreshKey])
 
   const handleRefresh = async () => {
     // Simulate API refresh
@@ -122,7 +133,7 @@ export default function DashboardPage() {
         <div className="space-y-3">
           <div className="flex items-center text-sm text-gray-800 font-medium">
             <Bell className="h-4 w-4 text-indigo-500 mr-2" />
-            <span>3 reminders scheduled for today</span>
+            <span>{todayRemindersCount} reminders scheduled for today</span>
           </div>
           <div className="flex items-center text-sm text-gray-800 font-medium">
             <Heart className="h-4 w-4 text-pink-500 mr-2" />
