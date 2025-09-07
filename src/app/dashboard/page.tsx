@@ -12,7 +12,7 @@ import {
 import { QuickActions } from '@/components/dashboard/QuickActions'
 import { PullToRefresh } from '@/components/ui/PullToRefresh'
 import { MobileActionBar } from '@/components/ui/PrimaryActionFAB'
-import { mockReminders } from '@/lib/mock-data'
+import { simplifiedMockReminders } from '@/lib/mock-reminders'
 import { isToday } from 'date-fns'
 
 export default function DashboardPage() {
@@ -21,7 +21,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     // Count today's active reminders
-    const count = mockReminders.filter(r => 
+    const count = simplifiedMockReminders.filter(r => 
       isToday(new Date(r.scheduledFor)) && !r.completedAt
     ).length
     setTodayRemindersCount(count)

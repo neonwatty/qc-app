@@ -5,18 +5,18 @@ import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RemindersChat } from '@/components/reminders/RemindersChat'
-import { mockReminders } from '@/lib/mock-data'
+import { simplifiedMockReminders } from '@/lib/mock-reminders'
 import { useRouter } from 'next/navigation'
 import { Reminder } from '@/types'
 
 export default function RemindersPage() {
   const router = useRouter()
-  const [reminders, setReminders] = useState<Reminder[]>(mockReminders)
+  const [reminders, setReminders] = useState<Reminder[]>(simplifiedMockReminders)
 
   useEffect(() => {
     // For demo purposes, always use the latest mock data
     // In a real app, you would load from localStorage or API
-    localStorage.setItem('qc-reminders', JSON.stringify(mockReminders))
+    localStorage.setItem('qc-reminders', JSON.stringify(simplifiedMockReminders))
   }, [])
 
   return (
