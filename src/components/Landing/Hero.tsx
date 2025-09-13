@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Heart, MessageCircle, TrendingUp, ArrowRight } from 'lucide-react'
 import { buttonTap, staggerContainer, staggerFadeUp, slideUp } from '@/lib/animations'
 import { Button } from '@/components/ui/button'
@@ -91,10 +92,10 @@ const Hero = () => {
               className="px-8 py-4 text-lg font-semibold group gradient-primary text-white border-0 shadow-lg shadow-rose-200/50 hover:shadow-xl hover:shadow-rose-300/50 transition-all"
               asChild
             >
-              <a href={ctaHref} className="flex items-center gap-2">
+              <Link href={ctaHref} className="flex items-center gap-2">
                 Start your journey
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </Link>
             </Button>
           </motion.div>
 
