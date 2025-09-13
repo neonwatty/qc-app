@@ -34,38 +34,50 @@ export default function OnboardingPage() {
     preferences: {},
     currentStep: 1
   })
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
-    const savedData = localStorage.getItem('qc-onboarding-data')
-    if (savedData) {
-      const parsed = JSON.parse(savedData)
-      setOnboardingData(parsed)
-      setCurrentStep(parsed.currentStep || 1)
-    }
+    if (initialized) return
 
     const isComplete = localStorage.getItem('qc-onboarding-complete')
     if (isComplete === 'true') {
       router.push('/dashboard')
+      return
     }
-  }, [router])
+
+    const savedData = localStorage.getItem('qc-onboarding-data')
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData)
+        setOnboardingData(parsed)
+        setCurrentStep(parsed.currentStep || 1)
+      } catch (e) {
+        // Invalid JSON, ignore
+      }
+    }
+    
+    setInitialized(true)
+  }, [router, initialized])
 
   const saveProgress = (data: Partial<OnboardingData>) => {
-    const updated = { ...onboardingData, ...data, currentStep }
+    const updated = { ...onboardingData, ...data }
     setOnboardingData(updated)
     localStorage.setItem('qc-onboarding-data', JSON.stringify(updated))
   }
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
-      setCurrentStep(currentStep + 1)
-      saveProgress({ currentStep: currentStep + 1 })
+      const newStep = currentStep + 1
+      setCurrentStep(newStep)
+      saveProgress({ currentStep: newStep })
     }
   }
 
   const handlePrevious = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
-      saveProgress({ currentStep: currentStep - 1 })
+      const newStep = currentStep - 1
+      setCurrentStep(newStep)
+      saveProgress({ currentStep: newStep })
     }
   }
 
