@@ -86,17 +86,37 @@ export interface Reminder {
   lastNotifiedAt?: Date
   relatedCheckInId?: string
   relatedActionItemId?: string
+  convertedFromRequestId?: string // Link to original request if converted
   customSchedule?: {
     daysOfWeek?: number[]
     time?: string
     dates?: Date[]
   }
-  // Request-related fields for partner collaboration
-  requestedBy?: string
-  requestStatus?: 'pending' | 'accepted' | 'declined' | 'modified'
-  requestMessage?: string
-  requestedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type RequestCategory = 'activity' | 'task' | 'reminder' | 'conversation' | 'date-night' | 'custom'
+export type RequestPriority = 'low' | 'medium' | 'high'
+export type RequestStatus = 'pending' | 'accepted' | 'declined' | 'converted'
+
+export interface RelationshipRequest {
+  id: string
+  title: string
+  description: string
+  category: RequestCategory
+  requestedBy: string
+  requestedFor: string
+  priority: RequestPriority
+  suggestedDate?: Date
+  suggestedFrequency?: 'once' | 'recurring'
+  status: RequestStatus
+  response?: string
   respondedAt?: Date
+  convertedToReminderId?: string // Link to reminder if converted
+  tags?: string[]
+  relatedCheckInId?: string
+  attachments?: string[]
   createdAt: Date
   updatedAt: Date
 }
@@ -197,6 +217,60 @@ export interface Couple {
     currentStreak: number
     lastCheckIn?: Date
   }
+}
+
+export type LoveLanguageCategory = 'words' | 'acts' | 'gifts' | 'time' | 'touch' | 'custom'
+export type LoveLanguagePrivacy = 'private' | 'shared'
+export type LoveLanguageImportance = 'low' | 'medium' | 'high' | 'essential'
+
+export interface LoveLanguage {
+  id: string
+  userId: string
+  title: string
+  description: string
+  examples: string[]
+  category: LoveLanguageCategory
+  privacy: LoveLanguagePrivacy
+  importance: LoveLanguageImportance
+  tags?: string[]
+  createdAt: Date
+  updatedAt: Date
+  lastDiscussedAt?: Date
+}
+
+export type LoveActionStatus = 'suggested' | 'planned' | 'completed' | 'recurring'
+export type LoveActionSuggestedBy = 'self' | 'partner' | 'ai'
+export type LoveActionFrequency = 'once' | 'weekly' | 'monthly' | 'surprise'
+export type LoveActionDifficulty = 'easy' | 'moderate' | 'challenging'
+
+export interface LoveAction {
+  id: string
+  title: string
+  description: string
+  linkedLanguageId: string
+  linkedLanguageTitle?: string
+  suggestedBy: LoveActionSuggestedBy
+  suggestedById?: string
+  status: LoveActionStatus
+  frequency?: LoveActionFrequency
+  completedCount: number
+  lastCompletedAt?: Date
+  plannedFor?: Date
+  difficulty: LoveActionDifficulty
+  notes?: string
+  forUserId: string
+  createdBy: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface LoveLanguageDiscovery {
+  id: string
+  userId: string
+  checkInId?: string
+  discovery: string
+  convertedToLanguageId?: string
+  createdAt: Date
 }
 
 export interface AppState {

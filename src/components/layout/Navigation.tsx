@@ -12,7 +12,9 @@ import {
   Menu,
   X,
   Sparkles,
-  Bell
+  Bell,
+  Heart,
+  HeartHandshake
 } from 'lucide-react'
 import { MotionBox, MotionButton } from '@/components/ui/motion'
 import { cn } from '@/lib/utils'
@@ -67,10 +69,26 @@ const navigationItems = [
     gradient: 'from-indigo-500 to-purple-500'
   },
   {
+    name: 'Love Languages',
+    href: '/love-languages',
+    icon: Heart,
+    mobileOrder: 7,
+    color: 'red',
+    gradient: 'from-red-500 to-pink-500'
+  },
+  {
+    name: 'Requests',
+    href: '/requests',
+    icon: HeartHandshake,
+    mobileOrder: 8,
+    color: 'rose',
+    gradient: 'from-rose-500 to-pink-500'
+  },
+  {
     name: 'Settings',
     href: '/settings',
     icon: Settings,
-    mobileOrder: 7,
+    mobileOrder: 9,
     color: 'violet',
     gradient: 'from-violet-500 to-indigo-500'
   }

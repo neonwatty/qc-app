@@ -6,6 +6,7 @@ import { Navigation } from '@/components/layout/Navigation'
 import PageTransition from '@/components/ui/PageTransition'
 import SwipeNavigation from '@/components/ui/SwipeGestures'
 import { Toaster } from 'sonner'
+import { Providers } from '@/components/providers/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -111,6 +112,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${inter.className} gradient-romantic min-h-screen antialiased touch-manipulation`}>
+        <Providers>
           <Toaster 
             position="top-center" 
             toastOptions={{
@@ -146,7 +148,7 @@ export default function RootLayout({
               </main>
             </div>
           </div>
-        
+        </Providers>
       </body>
     </html>
   )

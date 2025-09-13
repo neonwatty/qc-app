@@ -127,3 +127,24 @@ export const storage = {
     })
   }
 }
+
+// Generic storage functions for context providers
+export function loadFromStorage<T>(key: string): T | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const data = localStorage.getItem(key)
+    return data ? JSON.parse(data) : null
+  } catch (error) {
+    console.error(`Error loading from storage (${key}):`, error)
+    return null
+  }
+}
+
+export function saveToStorage<T>(key: string, data: T): void {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(key, JSON.stringify(data))
+  } catch (error) {
+    console.error(`Error saving to storage (${key}):`, error)
+  }
+}

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Heart, MessageCircle, StickyNote, TrendingUp, Bell } from 'lucide-react'
+import { Heart, MessageCircle, StickyNote, TrendingUp, Bell, Inbox } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -13,14 +13,17 @@ import { QuickActions } from '@/components/dashboard/QuickActions'
 import { PullToRefresh } from '@/components/ui/PullToRefresh'
 import { MobileActionBar } from '@/components/ui/PrimaryActionFAB'
 import { simplifiedMockReminders } from '@/lib/mock-reminders'
+import { mockRelationshipRequests } from '@/lib/mock-requests'
 import { isToday } from 'date-fns'
 import { BookendsProvider } from '@/contexts/BookendsContext'
 import { PrepBanner } from '@/components/bookends/PrepBanner'
 import { PreparationModal } from '@/components/bookends/PreparationModal'
+import { LoveLanguagesWidget } from '@/components/dashboard/LoveLanguagesWidget'
 
 function DashboardContent() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [todayRemindersCount, setTodayRemindersCount] = useState(0)
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
 
   useEffect(() => {
     // Count today's active reminders
@@ -28,6 +31,13 @@ function DashboardContent() {
       isToday(new Date(r.scheduledFor)) && !r.completedAt
     ).length
     setTodayRemindersCount(count)
+
+    // Count pending requests for current user (Deb)
+    const currentUserId = 'user-1' // Deb's ID
+    const pendingCount = mockRelationshipRequests.filter(r => 
+      r.requestedFor === currentUserId && r.status === 'pending'
+    ).length
+    setPendingRequestsCount(pendingCount)
   }, [refreshKey])
 
   const handleRefresh = async () => {
@@ -123,7 +133,7 @@ function DashboardContent() {
               </h3>
             </div>
             <p className="mt-2 text-sm text-gray-700 font-medium">
-              Manage your relationship reminders
+              Manage your personal reminders
             </p>
             <Link href="/reminders" className="mt-4 inline-block">
               <Button variant="outline" className="w-full">
@@ -132,9 +142,40 @@ function DashboardContent() {
             </Link>
           </div>
         </StaggerItem>
+        <StaggerItem>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center">
+              <Inbox className="h-8 w-8 text-purple-600" />
+              <h3 className="ml-3 text-lg font-semibold text-gray-900">
+                Requests
+                {pendingRequestsCount > 0 && (
+                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {pendingRequestsCount} pending
+                  </span>
+                )}
+              </h3>
+            </div>
+            <p className="mt-2 text-sm text-gray-700 font-medium">
+              Partner requests and suggestions
+            </p>
+            <Link href="/requests" className="mt-4 inline-block">
+              <Button variant="outline" className="w-full">
+                View Requests
+              </Button>
+            </Link>
+          </div>
+        </StaggerItem>
+
       </StaggerContainer>
 
-      {/* Recent Activity */}
+      {/* Love Languages Widget */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <LoveLanguagesWidget />
+        </div>
+        
+        {/* Recent Activity */}
+        <div className="sm:col-span-2">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Recent Activity
@@ -143,6 +184,10 @@ function DashboardContent() {
           <div className="flex items-center text-sm text-gray-800 font-medium">
             <Bell className="h-4 w-4 text-indigo-500 mr-2" />
             <span>{todayRemindersCount} reminders scheduled for today</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-800 font-medium">
+            <Inbox className="h-4 w-4 text-purple-500 mr-2" />
+            <span>{pendingRequestsCount} pending partner requests</span>
           </div>
           <div className="flex items-center text-sm text-gray-800 font-medium">
             <Heart className="h-4 w-4 text-pink-500 mr-2" />
@@ -156,6 +201,8 @@ function DashboardContent() {
             <TrendingUp className="h-4 w-4 text-green-500 mr-2" />
             <span>Milestone: 6 months of regular check-ins!</span>
           </div>
+        </div>
+      </div>
         </div>
       </div>
 

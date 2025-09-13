@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Filter, Bell, Calendar, Search, Users } from 'lucide-react'
+import { Plus, Filter, Bell, Calendar, Search, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
@@ -10,8 +10,6 @@ import { Badge } from '@/components/ui/badge'
 import { ReminderMessage } from './ReminderMessage'
 import { ReminderSchedule } from './ReminderSchedule'
 import { NotificationDemo } from './NotificationPreview'
-import { ReminderRequestModal } from './ReminderRequestModal'
-import { ReminderRequestNotification } from './ReminderRequestNotification'
 import { Reminder, ReminderCategory } from '@/types'
 import { format, isToday, isTomorrow, isThisWeek, isPast } from 'date-fns'
 
@@ -23,8 +21,7 @@ const filterOptions = [
   { id: 'all', label: 'All', icon: null },
   { id: 'today', label: 'Today', icon: Calendar },
   { id: 'upcoming', label: 'Upcoming', icon: Bell },
-  { id: 'requests', label: 'Requests', icon: Users },
-  { id: 'completed', label: 'Completed', icon: null },
+  { id: 'completed', label: 'Completed', icon: Check },
   { id: 'overdue', label: 'Overdue', icon: null }
 ]
 
@@ -43,7 +40,6 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
   const [categoryFilter, setCategoryFilter] = useState<ReminderCategory | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [showRequestModal, setShowRequestModal] = useState(false)
 
   const handleComplete = (id: string) => {
     setReminders(prev => prev.map(r => 
@@ -64,50 +60,27 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
     ))
   }
 
-  const handleAcceptRequest = (id: string) => {
-    setReminders(prev => prev.map(r => 
-      r.id === id ? { ...r, requestStatus: 'accepted', isActive: true, respondedAt: new Date() } : r
-    ))
-  }
-
-  const handleDeclineRequest = (id: string) => {
-    setReminders(prev => prev.filter(r => r.id !== id))
-  }
-
-  const handleModifyRequest = (id: string) => {
-    // In a real app, this would open an edit modal
-    console.log('Modify request:', id)
-  }
-
-  const handleNewRequest = (request: any) => {
-    // Simulate creating a new reminder request
+  const handleCreateReminder = (reminder: any) => {
+    // Create a new personal reminder
     const newReminder: Reminder = {
-      id: `reminder-request-${Date.now()}`,
-      title: request.title,
-      message: request.message,
-      category: 'custom',
-      frequency: request.frequency,
-      scheduledFor: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
-      notificationChannel: 'both',
-      createdBy: request.requestedBy,
-      assignedTo: request.assignedTo,
-      isActive: false,
+      id: `reminder-${Date.now()}`,
+      title: reminder.title,
+      message: reminder.message,
+      category: reminder.category || 'custom',
+      frequency: reminder.frequency || 'once',
+      scheduledFor: reminder.scheduledFor || new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow by default
+      notificationChannel: reminder.notificationChannel || 'both',
+      createdBy: reminder.createdBy || 'user-1', // Current user
+      assignedTo: reminder.assignedTo || 'user-1',
+      isActive: true,
       isSnoozed: false,
-      requestedBy: request.requestedBy,
-      requestStatus: 'pending',
-      requestMessage: request.requestMessage,
-      requestedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date()
     }
     setReminders(prev => [newReminder, ...prev])
   }
 
-  // Separate pending requests from regular reminders
-  const pendingRequests = reminders.filter(r => r.requestStatus === 'pending')
-  const activeReminders = reminders.filter(r => r.requestStatus !== 'pending')
-
-  const filteredReminders = activeReminders.filter(reminder => {
+  const filteredReminders = reminders.filter(reminder => {
     // Apply time filter
     const reminderDate = new Date(reminder.scheduledFor)
     switch (filter) {
@@ -116,9 +89,6 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
         break
       case 'upcoming':
         if (isPast(reminderDate) || reminder.completedAt) return false
-        break
-      case 'requests':
-        if (!reminder.requestedBy || reminder.requestStatus !== 'accepted') return false
         break
       case 'completed':
         if (!reminder.completedAt) return false

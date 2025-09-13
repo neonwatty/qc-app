@@ -2,29 +2,8 @@ import { Reminder } from '@/types'
 import { mockUsers } from './mock-data'
 import { getRelativeDate, getTodayAt, getTomorrowAt, getThisWeek } from './reminder-dates'
 
-// Mock Reminders Data - Simplified for proof-of-concept with partner requests
+// Mock Reminders Data - Personal reminders only
 export const simplifiedMockReminders: Reminder[] = [
-  // Partner Request - Accepted (shows with special indicator)
-  {
-    id: 'reminder-accepted-1',
-    title: 'Pick up flowers for Deb',
-    message: 'Deb loves fresh flowers - grab their favorites (sunflowers) on the way home!',
-    category: 'custom',
-    frequency: 'weekly',
-    scheduledFor: getTodayAt(17, 30), // 5:30 PM today
-    notificationChannel: 'push',
-    createdBy: mockUsers[1].id,
-    assignedTo: mockUsers[0].id,
-    isActive: true,
-    isSnoozed: false,
-    requestedBy: mockUsers[1].id,
-    requestStatus: 'accepted',
-    requestMessage: "Would love if you could surprise me with flowers sometimes 🌻",
-    requestedAt: getRelativeDate(-7, 14),
-    respondedAt: getRelativeDate(-7, 15),
-    createdAt: getRelativeDate(-7, 14),
-    updatedAt: getRelativeDate(-7, 15)
-  },
   // Today's Reminders (2)
   {
     id: 'reminder-1',
@@ -72,26 +51,40 @@ export const simplifiedMockReminders: Reminder[] = [
     updatedAt: getRelativeDate(-7)
   },
 
-  // This Week (1) - Another partner request
+  // This Week (1)
   {
     id: 'reminder-4',
     title: 'Plan Weekend Adventure',
-    message: 'Research and book that hiking trail we talked about - Jeremy is excited to explore nature together!',
+    message: 'Research and book that hiking trail we talked about!',
     category: 'custom',
     frequency: 'once',
     scheduledFor: getThisWeek(5, 18), // Friday at 6:00 PM
     notificationChannel: 'both',
-    createdBy: mockUsers[1].id,
+    createdBy: mockUsers[0].id,
     assignedTo: mockUsers[0].id,
     isActive: true,
     isSnoozed: false,
-    requestedBy: mockUsers[1].id,
-    requestStatus: 'accepted',
-    requestMessage: "Can you handle planning our weekend adventure? You always find the best trails! 🏔️",
-    requestedAt: getRelativeDate(-3, 10),
-    respondedAt: getRelativeDate(-3, 11),
-    createdAt: getRelativeDate(-3, 10),
+    convertedFromRequestId: 'request-4', // This was converted from a partner request
+    createdAt: getRelativeDate(-3, 11),
     updatedAt: getRelativeDate(-3, 11)
+  },
+
+  // Another personal reminder
+  {
+    id: 'reminder-6',
+    title: 'Pick up flowers',
+    message: 'Get sunflowers on the way home - they always brighten the day!',
+    category: 'custom',
+    frequency: 'weekly',
+    scheduledFor: getTodayAt(17, 30), // 5:30 PM today
+    notificationChannel: 'push',
+    createdBy: mockUsers[0].id,
+    assignedTo: mockUsers[0].id,
+    isActive: true,
+    isSnoozed: false,
+    convertedFromRequestId: 'request-6', // This was converted from a partner request
+    createdAt: getRelativeDate(-10),
+    updatedAt: getRelativeDate(-10)
   },
 
   // Completed Today (1) - to show the feature works

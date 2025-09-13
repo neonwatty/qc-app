@@ -43,7 +43,7 @@ const Hero = () => {
 
         {/* Subtitle */}
         <motion.p
-          className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
+          className="text-lg sm:text-xl text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed"
           variants={staggerFadeUp}
         >
           Simple tools to engineer a stronger relationship.
@@ -59,7 +59,7 @@ const Hero = () => {
             return (
               <motion.div
                 key={index}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-rose-200/50 text-sm font-medium hover:shadow-lg hover:border-rose-300/50 transition-all cursor-pointer backdrop-blur-sm"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-rose-200/50 text-sm font-medium text-gray-900 hover:shadow-lg hover:border-rose-300/50 transition-all cursor-pointer backdrop-blur-sm"
                 variants={staggerFadeUp}
                 whileHover={{ scale: 1.05 }}
               >
