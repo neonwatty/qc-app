@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Settings, User, Bell, Shield, Palette, Clock, Heart, Save, Grid3x3, Users } from 'lucide-react'
+import { Settings, User, Bell, Shield, Palette, Clock, Heart, Save, Grid3x3, Users, RefreshCw } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { Button } from '@/components/ui/button'
 import { CategoryManager } from '@/components/Settings/CategoryManager'
@@ -65,6 +66,7 @@ const settingSections: SettingsSection[] = [
 ]
 
 export default function SettingsPage() {
+  const router = useRouter()
   const [activeSection, setActiveSection] = useState<string>('profile')
   const [hasChanges, setHasChanges] = useState(false)
 
@@ -90,6 +92,15 @@ export default function SettingsPage() {
   const saveSettings = () => {
     // Handle saving settings
     setHasChanges(false)
+  }
+
+  const handleRedoOnboarding = () => {
+    // Clear onboarding completion flag
+    localStorage.removeItem('qc-onboarding-complete')
+    localStorage.removeItem('qc-onboarding-data')
+    localStorage.removeItem('qc-onboarding-skipped')
+    // Redirect to onboarding
+    router.push('/onboarding')
   }
 
   return (
@@ -167,6 +178,28 @@ export default function SettingsPage() {
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">
                     Profile & Relationship
                   </h2>
+
+                  {/* Redo Onboarding Button */}
+                  <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <div className="flex items-start space-x-3">
+                      <RefreshCw className="h-5 w-5 text-purple-600 mt-1" />
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900">Redo Onboarding</h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Go through the personalization process again to update your preferences
+                        </p>
+                        <Button
+                          onClick={handleRedoOnboarding}
+                          variant="outline"
+                          size="sm"
+                          className="mt-3"
+                        >
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          Start Onboarding
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="grid gap-6 sm:grid-cols-2">
                     <div>
