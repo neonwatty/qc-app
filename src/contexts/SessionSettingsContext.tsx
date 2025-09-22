@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { SessionSettings, SessionSettingsProposal, SessionSettingsTemplate, SessionTemplate, Couple } from '@/types'
+import { sessionSettingsService } from '@/services/session-settings.service'
 
 interface SessionSettingsContextType {
   currentSettings: SessionSettings | null
@@ -98,91 +99,84 @@ export function SessionSettingsProvider({
   const [currentSettings, setCurrentSettings] = useState<SessionSettings | null>(null)
   const [pendingProposal, setPendingProposal] = useState<SessionSettingsProposal | null>(null)
 
-  // Load settings from localStorage on mount
+  // Load settings from API on mount
   useEffect(() => {
-    const loadedSettings = localStorage.getItem('sessionSettings')
-    if (loadedSettings) {
+    const loadSettings = async () => {
       try {
-        const parsed = JSON.parse(loadedSettings)
-        setCurrentSettings({
-          ...parsed,
-          agreedAt: new Date(parsed.agreedAt)
-        })
+        const [settings, proposal] = await Promise.all([
+          sessionSettingsService.getCurrentSettings(),
+          sessionSettingsService.getPendingProposal()
+        ])
+
+        if (settings) {
+          setCurrentSettings(settings)
+        } else if (couple) {
+          // Initialize with default settings for the couple
+          const initialSettings = {
+            ...defaultSettings,
+            coupleId: couple.id,
+            agreedBy: couple.partners.map(p => p.id)
+          }
+          const newSettings = await sessionSettingsService.updateSettings(initialSettings)
+          setCurrentSettings(newSettings)
+        } else {
+          setCurrentSettings({
+            ...defaultSettings,
+            coupleId: 'demo'
+          })
+        }
+
+        if (proposal) {
+          setPendingProposal(proposal)
+        }
       } catch (error) {
         console.error('Failed to load session settings:', error)
+        // Fallback to default settings
         setCurrentSettings({
           ...defaultSettings,
-          coupleId: couple?.id || 'demo'
+          coupleId: couple?.id || 'demo',
+          agreedBy: couple ? couple.partners.map(p => p.id) : []
         })
       }
-    } else if (couple) {
-      // Initialize with default settings for the couple
-      const initialSettings = {
-        ...defaultSettings,
-        coupleId: couple.id,
-        agreedBy: couple.partners.map(p => p.id)
-      }
-      setCurrentSettings(initialSettings)
-      localStorage.setItem('sessionSettings', JSON.stringify(initialSettings))
     }
 
-    // Load pending proposal
-    const loadedProposal = localStorage.getItem('pendingSessionProposal')
-    if (loadedProposal) {
-      try {
-        const parsed = JSON.parse(loadedProposal)
-        setPendingProposal({
-          ...parsed,
-          proposedAt: new Date(parsed.proposedAt),
-          reviewedAt: parsed.reviewedAt ? new Date(parsed.reviewedAt) : undefined
-        })
-      } catch (error) {
-        console.error('Failed to load pending proposal:', error)
-      }
-    }
+    loadSettings()
   }, [couple])
 
-  const proposeSettings = useCallback((settings: Partial<SessionSettings>) => {
+  const proposeSettings = useCallback(async (settings: Partial<SessionSettings>) => {
     if (!couple) return
 
-    const proposal: SessionSettingsProposal = {
-      id: `proposal-${Date.now()}`,
-      proposedBy: couple.partners[0].id, // In real app, would be current user
-      proposedAt: new Date(),
-      settings,
-      status: 'pending'
+    try {
+      const proposal = await sessionSettingsService.proposeSettings({ settings })
+      setPendingProposal(proposal)
+    } catch (error) {
+      console.error('Failed to propose settings:', error)
     }
-
-    setPendingProposal(proposal)
-    localStorage.setItem('pendingSessionProposal', JSON.stringify(proposal))
   }, [couple])
 
-  const acceptProposal = useCallback((proposalId: string) => {
+  const acceptProposal = useCallback(async (proposalId: string) => {
     if (!pendingProposal || pendingProposal.id !== proposalId || !couple) return
 
-    const newSettings: SessionSettings = {
-      ...defaultSettings,
-      ...currentSettings,
-      ...pendingProposal.settings,
-      id: `settings-${Date.now()}`,
-      coupleId: couple.id,
-      agreedAt: new Date(),
-      agreedBy: couple.partners.map(p => p.id),
-      version: (currentSettings?.version || 0) + 1
+    try {
+      const newSettings = await sessionSettingsService.reviewProposal(proposalId, { status: 'accepted' })
+      if (newSettings) {
+        setCurrentSettings(newSettings)
+        setPendingProposal(null)
+      }
+    } catch (error) {
+      console.error('Failed to accept proposal:', error)
     }
+  }, [pendingProposal, couple])
 
-    setCurrentSettings(newSettings)
-    setPendingProposal(null)
-    
-    localStorage.setItem('sessionSettings', JSON.stringify(newSettings))
-    localStorage.removeItem('pendingSessionProposal')
-  }, [pendingProposal, currentSettings, couple])
-
-  const rejectProposal = useCallback((proposalId: string) => {
+  const rejectProposal = useCallback(async (proposalId: string) => {
     if (!pendingProposal || pendingProposal.id !== proposalId) return
 
-    setPendingProposal(null)
-    localStorage.removeItem('pendingSessionProposal')
+    try {
+      await sessionSettingsService.reviewProposal(proposalId, { status: 'rejected' })
+      setPendingProposal(null)
+    } catch (error) {
+      console.error('Failed to reject proposal:', error)
+    }
   }, [pendingProposal])
 
   const applyTemplate = useCallback((templateType: SessionTemplate) => {
@@ -192,16 +186,18 @@ export function SessionSettingsProvider({
     proposeSettings(template.settings)
   }, [proposeSettings])
 
-  const updateCurrentSettings = useCallback((settings: Partial<SessionSettings>) => {
+  const updateCurrentSettings = useCallback(async (settings: Partial<SessionSettings>) => {
     if (!currentSettings) return
 
-    const updated = {
-      ...currentSettings,
-      ...settings
+    try {
+      const updatedSettings = await sessionSettingsService.updateSettings({
+        ...currentSettings,
+        ...settings
+      })
+      setCurrentSettings(updatedSettings)
+    } catch (error) {
+      console.error('Failed to update settings:', error)
     }
-
-    setCurrentSettings(updated)
-    localStorage.setItem('sessionSettings', JSON.stringify(updated))
   }, [currentSettings])
 
   const getActiveSettings = useCallback(() => {

@@ -1,14 +1,15 @@
 'use client'
 
 import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react'
-import { 
-  BookendsState, 
-  SessionPreparation, 
-  QuickReflection, 
+import {
+  BookendsState,
+  SessionPreparation,
+  QuickReflection,
   PreparationTopic,
-  PARTNER_TOPIC_TEMPLATES 
+  PARTNER_TOPIC_TEMPLATES
 } from '@/types/bookends'
 import { toast } from 'sonner'
+import { bookendsService } from '@/services/bookends.service'
 
 const STORAGE_KEY = 'qc_session_bookends'
 
@@ -182,46 +183,75 @@ const BookendsContext = createContext<BookendsContextValue | null>(null)
 export function BookendsProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(bookEndsReducer, initialState)
 
-  // Load from localStorage on mount
+  // Load from API on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
+    const loadData = async () => {
       try {
-        const parsed = JSON.parse(stored)
-        dispatch({ type: 'LOAD_STATE', payload: parsed })
+        const [preparation, partnerPrep, reflections] = await Promise.all([
+          bookendsService.getPreparation(),
+          bookendsService.getPartnerPreparation(),
+          bookendsService.getReflections()
+        ])
+
+        const currentReflection = reflections.length > 0 ? reflections[0] : null
+        const partnerReflection = preparation && partnerPrep && preparation.sessionId ?
+          await bookendsService.getPartnerReflection(preparation.sessionId) : null
+
+        dispatch({ type: 'LOAD_STATE', payload: {
+          preparation: preparation || null,
+          reflection: currentReflection,
+          partnerReflection,
+          reflectionStreak: reflections.length
+        }})
       } catch (error) {
-        console.error('Failed to load bookends state:', error)
+        console.error('Failed to load bookends data:', error)
       }
     }
+
+    loadData()
   }, [])
 
-  // Save to localStorage on state changes
-  useEffect(() => {
-    if (state.preparation || state.reflection) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        preparation: state.preparation,
-        reflection: state.reflection,
-        reflectionStreak: state.reflectionStreak,
-        hasSeenPrepReminder: state.hasSeenPrepReminder
-      }))
+  // API operations are handled within each action function, no need for auto-save
+
+  const addMyTopic = useCallback(async (content: string, isQuickTopic = false) => {
+    try {
+      const topic = await bookendsService.addTopic({ content, isQuickTopic })
+      dispatch({ type: 'ADD_MY_TOPIC', payload: { content, isQuickTopic } })
+      toast.success('Topic added')
+    } catch (error) {
+      console.error('Failed to add topic:', error)
+      toast.error('Failed to add topic')
     }
-  }, [state.preparation, state.reflection, state.reflectionStreak, state.hasSeenPrepReminder])
-
-  const addMyTopic = useCallback((content: string, isQuickTopic = false) => {
-    dispatch({ type: 'ADD_MY_TOPIC', payload: { content, isQuickTopic } })
-    toast.success('Topic added')
   }, [])
 
-  const removeMyTopic = useCallback((topicId: string) => {
-    dispatch({ type: 'REMOVE_MY_TOPIC', payload: { topicId } })
+  const removeMyTopic = useCallback(async (topicId: string) => {
+    try {
+      await bookendsService.removeTopic(topicId)
+      dispatch({ type: 'REMOVE_MY_TOPIC', payload: { topicId } })
+    } catch (error) {
+      console.error('Failed to remove topic:', error)
+      toast.error('Failed to remove topic')
+    }
   }, [])
 
-  const reorderMyTopics = useCallback((topics: PreparationTopic[]) => {
-    dispatch({ type: 'REORDER_MY_TOPICS', payload: { topics } })
+  const reorderMyTopics = useCallback(async (topics: PreparationTopic[]) => {
+    try {
+      await bookendsService.reorderTopics(topics)
+      dispatch({ type: 'REORDER_MY_TOPICS', payload: { topics } })
+    } catch (error) {
+      console.error('Failed to reorder topics:', error)
+      toast.error('Failed to reorder topics')
+    }
   }, [])
 
-  const clearPreparation = useCallback(() => {
-    dispatch({ type: 'CLEAR_PREPARATION' })
+  const clearPreparation = useCallback(async () => {
+    try {
+      await bookendsService.clearPreparation()
+      dispatch({ type: 'CLEAR_PREPARATION' })
+    } catch (error) {
+      console.error('Failed to clear preparation:', error)
+      toast.error('Failed to clear preparation')
+    }
   }, [])
 
   const openPreparationModal = useCallback(() => {
@@ -232,14 +262,21 @@ export function BookendsProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'CLOSE_PREPARATION_MODAL' })
   }, [])
 
-  const saveReflection = useCallback((reflection: Omit<QuickReflection, 'id' | 'createdAt'>) => {
-    const fullReflection: QuickReflection = {
-      ...reflection,
-      id: `reflection_${Date.now()}`,
-      createdAt: new Date()
+  const saveReflection = useCallback(async (reflection: Omit<QuickReflection, 'id' | 'createdAt'>) => {
+    try {
+      const savedReflection = await bookendsService.saveReflection({
+        sessionId: reflection.sessionId,
+        mood: reflection.feelingAfter > reflection.feelingBefore ? 'better' :
+              reflection.feelingAfter < reflection.feelingBefore ? 'worse' : 'same',
+        highlight: reflection.keyTakeaway,
+        gratitude: reflection.gratitude
+      })
+      dispatch({ type: 'SAVE_REFLECTION', payload: savedReflection })
+      toast.success('Reflection saved')
+    } catch (error) {
+      console.error('Failed to save reflection:', error)
+      toast.error('Failed to save reflection')
     }
-    dispatch({ type: 'SAVE_REFLECTION', payload: fullReflection })
-    toast.success('Reflection saved')
   }, [])
 
   const openReflectionModal = useCallback(() => {
@@ -251,7 +288,7 @@ export function BookendsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   // Mock partner actions for POC
-  const simulatePartnerTopics = useCallback(() => {
+  const simulatePartnerTopics = useCallback(async () => {
     // Simulate partner adding topics with a delay
     setTimeout(() => {
       const randomTopics = PARTNER_TOPIC_TEMPLATES
@@ -274,7 +311,7 @@ export function BookendsProvider({ children }: { children: React.ReactNode }) {
     }, 3000 + Math.random() * 2000) // 3-5 second delay
   }, [])
 
-  const simulatePartnerReflection = useCallback((sessionId: string) => {
+  const simulatePartnerReflection = useCallback(async (sessionId: string) => {
     // Simulate partner completing reflection
     setTimeout(() => {
       const mockReflection: QuickReflection = {

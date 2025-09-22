@@ -1,8 +1,8 @@
 'use client'
 
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useCallback } from 'react'
 import { LoveLanguage, LoveAction, LoveLanguageDiscovery } from '@/types'
-import { loadFromStorage, saveToStorage } from '@/lib/storage'
+import { loveLanguagesService } from '@/services/love-languages.service'
 
 interface LoveLanguagesState {
   languages: LoveLanguage[]
@@ -157,54 +157,82 @@ const STORAGE_KEY = 'qc-love-languages'
 export function LoveLanguagesProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(loveLanguagesReducer, initialState)
 
-  // Load data from localStorage on mount
+  // Load data from API on mount
   useEffect(() => {
-    const savedData = loadFromStorage<{
-      languages?: LoveLanguage[]
-      partnerLanguages?: LoveLanguage[]
-      actions?: LoveAction[]
-      discoveries?: LoveLanguageDiscovery[]
-    }>(STORAGE_KEY)
-    if (savedData) {
-      dispatch({ type: 'SET_LANGUAGES', payload: savedData.languages || [] })
-      dispatch({ type: 'SET_PARTNER_LANGUAGES', payload: savedData.partnerLanguages || [] })
-      dispatch({ type: 'SET_ACTIONS', payload: savedData.actions || [] })
-      dispatch({ type: 'SET_DISCOVERIES', payload: savedData.discoveries || [] })
-    } else {
-      // Initialize with demo data if no saved data
-      loadDemoData()
+    const loadData = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true })
+      try {
+        const [languages, partnerLanguages, actions, discoveries] = await Promise.all([
+          loveLanguagesService.getLanguages(),
+          loveLanguagesService.getPartnerLanguages(),
+          loveLanguagesService.getActions(),
+          loveLanguagesService.getDiscoveries()
+        ])
+
+        if (languages.length === 0 && actions.length === 0) {
+          // Initialize with demo data if no saved data
+          loadDemoData()
+        } else {
+          dispatch({ type: 'SET_LANGUAGES', payload: languages })
+          dispatch({ type: 'SET_PARTNER_LANGUAGES', payload: partnerLanguages })
+          dispatch({ type: 'SET_ACTIONS', payload: actions })
+          dispatch({ type: 'SET_DISCOVERIES', payload: discoveries })
+        }
+      } catch (error) {
+        console.error('Failed to load love languages data:', error)
+        dispatch({ type: 'SET_ERROR', payload: 'Failed to load data' })
+        // Fallback to demo data on error
+        loadDemoData()
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false })
+      }
+    }
+
+    loadData()
+  }, [])
+
+  // API operations are handled within each action function, no need for auto-save
+
+  const addLanguage = useCallback(async (language: Omit<LoveLanguage, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true })
+      const newLanguage = await loveLanguagesService.createLanguage({
+        title: language.title,
+        description: language.description,
+        examples: language.examples,
+        category: language.category,
+        privacy: language.privacy,
+        importance: language.importance,
+        tags: language.tags
+      })
+      dispatch({ type: 'ADD_LANGUAGE', payload: newLanguage })
+    } catch (error) {
+      console.error('Failed to add language:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add language' })
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false })
     }
   }, [])
 
-  // Save to localStorage whenever state changes
-  useEffect(() => {
-    if (state.languages.length > 0 || state.actions.length > 0) {
-      saveToStorage(STORAGE_KEY, {
-        languages: state.languages,
-        partnerLanguages: state.partnerLanguages,
-        actions: state.actions,
-        discoveries: state.discoveries,
-      })
+  const updateLanguage = useCallback(async (id: string, updates: Partial<LoveLanguage>) => {
+    try {
+      const updatedLanguage = await loveLanguagesService.updateLanguage(id, updates)
+      dispatch({ type: 'UPDATE_LANGUAGE', payload: { id, updates: updatedLanguage } })
+    } catch (error) {
+      console.error('Failed to update language:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update language' })
     }
-  }, [state.languages, state.partnerLanguages, state.actions, state.discoveries])
+  }, [])
 
-  const addLanguage = (language: Omit<LoveLanguage, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newLanguage: LoveLanguage = {
-      ...language,
-      id: `lang-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  const deleteLanguage = useCallback(async (id: string) => {
+    try {
+      await loveLanguagesService.deleteLanguage(id)
+      dispatch({ type: 'DELETE_LANGUAGE', payload: id })
+    } catch (error) {
+      console.error('Failed to delete language:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete language' })
     }
-    dispatch({ type: 'ADD_LANGUAGE', payload: newLanguage })
-  }
-
-  const updateLanguage = (id: string, updates: Partial<LoveLanguage>) => {
-    dispatch({ type: 'UPDATE_LANGUAGE', payload: { id, updates } })
-  }
-
-  const deleteLanguage = (id: string) => {
-    dispatch({ type: 'DELETE_LANGUAGE', payload: id })
-  }
+  }, [])
 
   const toggleLanguagePrivacy = (id: string) => {
     const language = state.languages.find(l => l.id === id)
@@ -214,52 +242,91 @@ export function LoveLanguagesProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const addAction = (action: Omit<LoveAction, 'id' | 'createdAt' | 'updatedAt' | 'completedCount'>) => {
-    const newAction: LoveAction = {
-      ...action,
-      id: `action-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      completedCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  const addAction = useCallback(async (action: Omit<LoveAction, 'id' | 'createdAt' | 'updatedAt' | 'completedCount' | 'suggestedById' | 'linkedLanguageTitle' | 'createdBy'>) => {
+    try {
+      const newAction = await loveLanguagesService.createAction({
+        title: action.title,
+        description: action.description,
+        linkedLanguageId: action.linkedLanguageId,
+        suggestedBy: action.suggestedBy,
+        frequency: action.frequency,
+        difficulty: action.difficulty,
+        forUserId: action.forUserId,
+        plannedFor: action.plannedFor,
+        notes: action.notes
+      })
+      dispatch({ type: 'ADD_ACTION', payload: newAction })
+    } catch (error) {
+      console.error('Failed to add action:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add action' })
     }
-    dispatch({ type: 'ADD_ACTION', payload: newAction })
-  }
+  }, [])
 
-  const updateAction = (id: string, updates: Partial<LoveAction>) => {
-    dispatch({ type: 'UPDATE_ACTION', payload: { id, updates } })
-  }
-
-  const deleteAction = (id: string) => {
-    dispatch({ type: 'DELETE_ACTION', payload: id })
-  }
-
-  const completeAction = (id: string) => {
-    dispatch({ type: 'COMPLETE_ACTION', payload: id })
-  }
-
-  const addDiscovery = (discovery: string) => {
-    const newDiscovery: LoveLanguageDiscovery = {
-      id: `disc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      userId: 'jeremy',
-      discovery,
-      createdAt: new Date(),
+  const updateAction = useCallback(async (id: string, updates: Partial<LoveAction>) => {
+    try {
+      const updatedAction = await loveLanguagesService.updateAction(id, updates)
+      dispatch({ type: 'UPDATE_ACTION', payload: { id, updates: updatedAction } })
+    } catch (error) {
+      console.error('Failed to update action:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update action' })
     }
-    dispatch({ type: 'ADD_DISCOVERY', payload: newDiscovery })
-  }
+  }, [])
 
-  const convertDiscoveryToLanguage = (
+  const deleteAction = useCallback(async (id: string) => {
+    try {
+      await loveLanguagesService.deleteAction(id)
+      dispatch({ type: 'DELETE_ACTION', payload: id })
+    } catch (error) {
+      console.error('Failed to delete action:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete action' })
+    }
+  }, [])
+
+  const completeAction = useCallback(async (id: string) => {
+    try {
+      const completedAction = await loveLanguagesService.completeAction(id)
+      dispatch({ type: 'UPDATE_ACTION', payload: { id, updates: completedAction } })
+    } catch (error) {
+      console.error('Failed to complete action:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to complete action' })
+    }
+  }, [])
+
+  const addDiscovery = useCallback(async (discovery: string, checkInId?: string) => {
+    try {
+      const newDiscovery = await loveLanguagesService.createDiscovery({
+        discovery,
+        checkInId
+      })
+      dispatch({ type: 'ADD_DISCOVERY', payload: newDiscovery })
+    } catch (error) {
+      console.error('Failed to add discovery:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add discovery' })
+    }
+  }, [])
+
+  const convertDiscoveryToLanguage = useCallback(async (
     discoveryId: string,
-    language: Omit<LoveLanguage, 'id' | 'createdAt' | 'updatedAt'>
+    language: Omit<LoveLanguage, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
   ) => {
-    const newLanguage: LoveLanguage = {
-      ...language,
-      id: `lang-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    try {
+      const newLanguage = await loveLanguagesService.createLanguage({
+        title: language.title,
+        description: language.description,
+        examples: language.examples,
+        category: language.category,
+        privacy: language.privacy,
+        importance: language.importance,
+        tags: language.tags
+      })
+      await loveLanguagesService.convertDiscovery(discoveryId, newLanguage.id)
+      dispatch({ type: 'ADD_LANGUAGE', payload: newLanguage })
+      dispatch({ type: 'CONVERT_DISCOVERY', payload: { discoveryId, languageId: newLanguage.id } })
+    } catch (error) {
+      console.error('Failed to convert discovery:', error)
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to convert discovery' })
     }
-    dispatch({ type: 'ADD_LANGUAGE', payload: newLanguage })
-    dispatch({ type: 'CONVERT_DISCOVERY', payload: { discoveryId, languageId: newLanguage.id } })
-  }
+  }, [])
 
   const loadDemoData = () => {
     // Jeremy's love languages
