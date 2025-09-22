@@ -21,8 +21,9 @@ export interface RegisterData {
   email: string
   password: string
   passwordConfirmation: string
-  firstName: string
-  lastName: string
+  firstName?: string
+  lastName?: string
+  partnerInviteCode?: string
 }
 
 export interface AuthTokens {

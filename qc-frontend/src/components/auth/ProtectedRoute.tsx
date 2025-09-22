@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface ProtectedRouteProps {
   children: ReactNode
@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuthContext()
+  const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
@@ -30,7 +30,7 @@ interface GuestOnlyRouteProps {
 }
 
 export function GuestOnlyRoute({ children, fallback }: GuestOnlyRouteProps) {
-  const { isAuthenticated, isLoading } = useAuthContext()
+  const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
