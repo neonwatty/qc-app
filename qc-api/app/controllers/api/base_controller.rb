@@ -1,8 +1,10 @@
 module Api
   class BaseController < ApplicationController
+    include Validatable
+
     # Ensure all API endpoints require authentication
     before_action :authenticate_user!
-    
+
     # Set couple context for endpoints that require it
     before_action :set_couple_context, if: :couple_scoped?
     

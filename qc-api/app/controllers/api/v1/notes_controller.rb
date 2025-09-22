@@ -23,21 +23,23 @@ module Api
 
       # POST /api/v1/check_ins/:check_in_id/notes
       def create
-        @note = @check_in.notes.build(note_params)
-        @note.author = current_user
-        @note.category_id = params[:category_id] if params[:category_id]
+        # Validate params before creating
+        if validate_params(NoteValidator, note_params)
+          @note = @check_in.notes.build(note_params)
+          @note.author = current_user
 
-        # Auto-tag with current step if in active session
-        if @check_in.active? && @check_in.current_step
-          @note.add_tag("step:#{@check_in.current_step}")
-        end
+          # Auto-tag with current step if in active session
+          if @check_in.active? && @check_in.current_step
+            @note.add_tag("step:#{@check_in.current_step}")
+          end
 
-        if @note.save
-          notify_partner_if_shared(@note)
-          update_session_activity(@check_in)
-          render_created(serialize_detailed_resource(@note))
-        else
-          render_unprocessable_entity(@note.errors.full_messages)
+          if @note.save
+            notify_partner_if_shared(@note)
+            update_session_activity(@check_in)
+            render_created(serialize_detailed_resource(@note))
+          else
+            render_unprocessable_entity(@note.errors.full_messages)
+          end
         end
       end
 
