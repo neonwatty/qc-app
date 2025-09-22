@@ -25,7 +25,7 @@ class CreateReminders < ActiveRecord::Migration[8.0]
     add_index :reminders, :created_by_id
     add_index :reminders, :assigned_to_id
     add_index :reminders, :scheduled_for
-    add_index :reminders, [:is_active, :scheduled_for]
+    add_index :reminders, [ :is_active, :scheduled_for ]
     add_index :reminders, :category
 
     add_foreign_key :reminders, :users, column: :created_by_id

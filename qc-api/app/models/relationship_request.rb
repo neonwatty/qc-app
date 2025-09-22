@@ -1,9 +1,9 @@
 class RelationshipRequest < ApplicationRecord
   # Associations
-  belongs_to :requested_by, class_name: 'User'
-  belongs_to :requested_for, class_name: 'User'
-  belongs_to :related_check_in, class_name: 'CheckIn', optional: true
-  has_one :reminder, foreign_key: 'converted_from_request_id', dependent: :nullify
+  belongs_to :requested_by, class_name: "User"
+  belongs_to :requested_for, class_name: "User"
+  belongs_to :related_check_in, class_name: "CheckIn", optional: true
+  has_one :reminder, foreign_key: "converted_from_request_id", dependent: :nullify
 
   # Validations
   validates :title, presence: true
@@ -17,21 +17,21 @@ class RelationshipRequest < ApplicationRecord
   after_update :set_responded_at, if: :saved_change_to_status?
 
   # Scopes
-  scope :pending, -> { where(status: 'pending') }
-  scope :accepted, -> { where(status: 'accepted') }
-  scope :declined, -> { where(status: 'declined') }
-  scope :converted, -> { where(status: 'converted') }
-  scope :for_user, ->(user) { where('requested_by_id = ? OR requested_for_id = ?', user.id, user.id) }
-  scope :inbox_for, ->(user) { where(requested_for_id: user.id, status: 'pending') }
+  scope :pending, -> { where(status: "pending") }
+  scope :accepted, -> { where(status: "accepted") }
+  scope :declined, -> { where(status: "declined") }
+  scope :converted, -> { where(status: "converted") }
+  scope :for_user, ->(user) { where("requested_by_id = ? OR requested_for_id = ?", user.id, user.id) }
+  scope :inbox_for, ->(user) { where(requested_for_id: user.id, status: "pending") }
   scope :by_priority, -> { order(Arel.sql("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 END")) }
 
   # Instance methods
   def accept!(response_message = nil)
-    update!(status: 'accepted', response: response_message)
+    update!(status: "accepted", response: response_message)
   end
 
   def decline!(response_message = nil)
-    update!(status: 'declined', response: response_message)
+    update!(status: "declined", response: response_message)
   end
 
   def convert_to_reminder!(reminder_params = {})
@@ -45,7 +45,7 @@ class RelationshipRequest < ApplicationRecord
           converted_from_request_id: id
         )
       )
-      update!(status: 'converted', converted_to_reminder_id: reminder.id)
+      update!(status: "converted", converted_to_reminder_id: reminder.id)
       reminder
     end
   end

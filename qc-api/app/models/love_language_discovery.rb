@@ -2,7 +2,7 @@ class LoveLanguageDiscovery < ApplicationRecord
   # Associations
   belongs_to :user
   belongs_to :check_in, optional: true
-  belongs_to :converted_to_language, class_name: 'LoveLanguage', optional: true
+  belongs_to :converted_to_language, class_name: "LoveLanguage", optional: true
 
   # Validations
   validates :discovery, presence: true

@@ -1,6 +1,6 @@
 class PreparationTopic < ApplicationRecord
   # Associations
-  belongs_to :author, class_name: 'User'
+  belongs_to :author, class_name: "User"
   belongs_to :session_preparation
 
   # Validations

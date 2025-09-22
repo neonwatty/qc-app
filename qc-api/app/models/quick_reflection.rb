@@ -1,7 +1,7 @@
 class QuickReflection < ApplicationRecord
   # Associations
-  belongs_to :session, class_name: 'CheckIn', foreign_key: 'session_id'
-  belongs_to :author, class_name: 'User'
+  belongs_to :session, class_name: "CheckIn", foreign_key: "session_id"
+  belongs_to :author, class_name: "User"
 
   # Validations
   validates :feeling_before, numericality: { in: 1..5 }
@@ -11,7 +11,7 @@ class QuickReflection < ApplicationRecord
   # Scopes
   scope :shared, -> { where(share_with_partner: true) }
   scope :private_reflections, -> { where(share_with_partner: false) }
-  scope :improved_mood, -> { where('feeling_after > feeling_before') }
+  scope :improved_mood, -> { where("feeling_after > feeling_before") }
   scope :by_author, ->(user) { where(author: user) }
 
   # Instance methods

@@ -32,7 +32,7 @@ class CustomPrompt < ApplicationRecord
       siblings = couple.custom_prompts.for_category(category).ordered
 
       # Remove current prompt from list
-      current_list = siblings.to_a - [self]
+      current_list = siblings.to_a - [ self ]
 
       # Insert at new position
       current_list.insert(new_position, self)

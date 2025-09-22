@@ -1,8 +1,8 @@
 class ActionItem < ApplicationRecord
   # Associations
   belongs_to :check_in
-  belongs_to :assigned_to, class_name: 'User', optional: true
-  has_many :reminders, foreign_key: 'related_action_item_id', dependent: :nullify
+  belongs_to :assigned_to, class_name: "User", optional: true
+  has_many :reminders, foreign_key: "related_action_item_id", dependent: :nullify
 
   # Validations
   validates :title, presence: true
@@ -13,8 +13,8 @@ class ActionItem < ApplicationRecord
   # Scopes
   scope :pending, -> { where(completed: false) }
   scope :completed, -> { where(completed: true) }
-  scope :overdue, -> { pending.where('due_date < ?', Date.current) }
-  scope :upcoming, -> { pending.where('due_date >= ?', Date.current).order(:due_date) }
+  scope :overdue, -> { pending.where("due_date < ?", Date.current) }
+  scope :upcoming, -> { pending.where("due_date >= ?", Date.current).order(:due_date) }
   scope :assigned_to_user, ->(user) { where(assigned_to_id: user.id) }
 
   # Instance methods

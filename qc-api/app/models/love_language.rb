@@ -1,8 +1,8 @@
 class LoveLanguage < ApplicationRecord
   # Associations
   belongs_to :user
-  has_many :love_actions, foreign_key: 'linked_language_id', dependent: :destroy
-  has_many :discoveries, class_name: 'LoveLanguageDiscovery', foreign_key: 'converted_to_language_id'
+  has_many :love_actions, foreign_key: "linked_language_id", dependent: :destroy
+  has_many :discoveries, class_name: "LoveLanguageDiscovery", foreign_key: "converted_to_language_id"
 
   # Validations
   validates :title, presence: true
@@ -12,8 +12,8 @@ class LoveLanguage < ApplicationRecord
   validates :importance, inclusion: { in: %w[low medium high essential] }
 
   # Scopes
-  scope :shared, -> { where(privacy: 'shared') }
-  scope :private_languages, -> { where(privacy: 'private') }
+  scope :shared, -> { where(privacy: "shared") }
+  scope :private_languages, -> { where(privacy: "private") }
   scope :by_importance, -> { order(Arel.sql("CASE importance WHEN 'essential' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 END")) }
   scope :by_category, ->(category) { where(category: category) }
   scope :recently_discussed, -> { where.not(last_discussed_at: nil).order(last_discussed_at: :desc) }
@@ -34,10 +34,10 @@ class LoveLanguage < ApplicationRecord
   end
 
   def essential?
-    importance == 'essential'
+    importance == "essential"
   end
 
   def high_importance?
-    importance == 'high'
+    importance == "high"
   end
 end

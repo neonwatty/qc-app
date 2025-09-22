@@ -1,6 +1,6 @@
 class SessionPreparation < ApplicationRecord
   # Associations
-  belongs_to :session, class_name: 'CheckIn', optional: true
+  belongs_to :session, class_name: "CheckIn", optional: true
   belongs_to :couple
   has_many :preparation_topics, dependent: :destroy
 

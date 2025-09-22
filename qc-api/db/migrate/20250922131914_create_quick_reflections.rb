@@ -14,7 +14,7 @@ class CreateQuickReflections < ActiveRecord::Migration[8.0]
 
     add_index :quick_reflections, :session_id
     add_index :quick_reflections, :author_id
-    add_index :quick_reflections, [:session_id, :author_id], unique: true
+    add_index :quick_reflections, [ :session_id, :author_id ], unique: true
 
     add_foreign_key :quick_reflections, :check_ins, column: :session_id
     add_foreign_key :quick_reflections, :users, column: :author_id

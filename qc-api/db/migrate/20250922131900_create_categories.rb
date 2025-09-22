@@ -13,7 +13,7 @@ class CreateCategories < ActiveRecord::Migration[8.0]
     end
 
     add_index :categories, :couple_id
-    add_index :categories, [:couple_id, :order]
+    add_index :categories, [ :couple_id, :order ]
     add_foreign_key :categories, :couples
   end
 end

@@ -53,5 +53,10 @@ module QcApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # JWT Configuration
+    config.jwt = ActiveSupport::OrderedOptions.new
+    config.jwt.secret_key = ENV.fetch("JWT_SECRET_KEY") { Rails.application.credentials.jwt_secret_key || SecureRandom.hex(64) }
+    config.jwt.expiry = ENV.fetch("JWT_EXPIRY_HOURS", 24).to_i.hours
   end
 end

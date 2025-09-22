@@ -12,7 +12,7 @@ class PromptTemplate < ApplicationRecord
   scope :custom_templates, -> { where(is_system: false) }
   scope :for_couple, ->(couple) { where(couple: couple).or(where(is_system: true)) }
   scope :by_usage, -> { order(usage_count: :desc) }
-  scope :with_tags, ->(tags) { where('tags && ARRAY[?]::text[]', tags) }
+  scope :with_tags, ->(tags) { where("tags && ARRAY[?]::text[]", tags) }
   scope :for_category, ->(category) { where(category: category) }
 
   # Callbacks

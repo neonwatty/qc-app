@@ -1,8 +1,8 @@
 class SessionSettingsProposal < ApplicationRecord
   # Associations
   belongs_to :couple
-  belongs_to :proposed_by, class_name: 'User'
-  belongs_to :reviewed_by, class_name: 'User', optional: true
+  belongs_to :proposed_by, class_name: "User"
+  belongs_to :reviewed_by, class_name: "User", optional: true
 
   # Validations
   validates :settings, presence: true
@@ -14,9 +14,9 @@ class SessionSettingsProposal < ApplicationRecord
   after_update :create_session_settings, if: :accepted?
 
   # Scopes
-  scope :pending, -> { where(status: 'pending') }
-  scope :accepted, -> { where(status: 'accepted') }
-  scope :rejected, -> { where(status: 'rejected') }
+  scope :pending, -> { where(status: "pending") }
+  scope :accepted, -> { where(status: "accepted") }
+  scope :rejected, -> { where(status: "rejected") }
   scope :recent, -> { order(proposed_at: :desc) }
 
   # Instance methods
@@ -24,7 +24,7 @@ class SessionSettingsProposal < ApplicationRecord
     return false if proposed_by_id == user.id
 
     update!(
-      status: 'accepted',
+      status: "accepted",
       reviewed_by: user,
       reviewed_at: Time.current
     )
@@ -34,18 +34,18 @@ class SessionSettingsProposal < ApplicationRecord
     return false if proposed_by_id == user.id
 
     update!(
-      status: 'rejected',
+      status: "rejected",
       reviewed_by: user,
       reviewed_at: Time.current
     )
   end
 
   def pending?
-    status == 'pending'
+    status == "pending"
   end
 
   def accepted?
-    status == 'accepted'
+    status == "accepted"
   end
 
   private
@@ -58,7 +58,7 @@ class SessionSettingsProposal < ApplicationRecord
     couple.session_settings.create!(
       settings.merge(
         agreed_at: reviewed_at,
-        agreed_by: [proposed_by_id, reviewed_by_id]
+        agreed_by: [ proposed_by_id, reviewed_by_id ]
       )
     )
   end

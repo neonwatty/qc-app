@@ -12,8 +12,8 @@ class CreateCustomPrompts < ActiveRecord::Migration[8.0]
 
     add_index :custom_prompts, :category_id
     add_index :custom_prompts, :couple_id
-    add_index :custom_prompts, [:couple_id, :category_id]
-    add_index :custom_prompts, [:couple_id, :order]
+    add_index :custom_prompts, [ :couple_id, :category_id ]
+    add_index :custom_prompts, [ :couple_id, :order ]
 
     add_foreign_key :custom_prompts, :categories
     add_foreign_key :custom_prompts, :couples

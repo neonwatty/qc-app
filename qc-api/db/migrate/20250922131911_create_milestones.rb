@@ -19,7 +19,7 @@ class CreateMilestones < ActiveRecord::Migration[8.0]
 
     add_index :milestones, :couple_id
     add_index :milestones, :category
-    add_index :milestones, [:couple_id, :achieved]
+    add_index :milestones, [ :couple_id, :achieved ]
     add_index :milestones, :achieved_at
 
     add_foreign_key :milestones, :couples

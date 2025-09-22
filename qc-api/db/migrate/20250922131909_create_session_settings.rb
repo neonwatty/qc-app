@@ -20,7 +20,7 @@ class CreateSessionSettings < ActiveRecord::Migration[8.0]
     end
 
     add_index :session_settings, :couple_id
-    add_index :session_settings, [:couple_id, :version]
+    add_index :session_settings, [ :couple_id, :version ]
 
     add_foreign_key :session_settings, :couples
   end

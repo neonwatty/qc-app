@@ -37,15 +37,15 @@ class Milestone < ApplicationRecord
   end
 
   def legendary?
-    rarity == 'legendary'
+    rarity == "legendary"
   end
 
   def epic?
-    rarity == 'epic'
+    rarity == "epic"
   end
 
   def rare?
-    rarity == 'rare'
+    rarity == "rare"
   end
 
   private

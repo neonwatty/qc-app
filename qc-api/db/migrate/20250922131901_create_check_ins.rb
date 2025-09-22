@@ -19,7 +19,7 @@ class CreateCheckIns < ActiveRecord::Migration[8.0]
 
     add_index :check_ins, :couple_id
     add_index :check_ins, :status
-    add_index :check_ins, [:couple_id, :started_at]
+    add_index :check_ins, [ :couple_id, :started_at ]
     add_foreign_key :check_ins, :couples
   end
 end

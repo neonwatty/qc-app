@@ -16,7 +16,7 @@ class CreateLoveLanguages < ActiveRecord::Migration[8.0]
 
     add_index :love_languages, :user_id
     add_index :love_languages, :category
-    add_index :love_languages, [:user_id, :category]
+    add_index :love_languages, [ :user_id, :category ]
     add_index :love_languages, :tags, using: 'gin'
 
     add_foreign_key :love_languages, :users

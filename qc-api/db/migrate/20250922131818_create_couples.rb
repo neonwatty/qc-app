@@ -21,7 +21,7 @@ class CreateCouples < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :couple_users, [:couple_id, :user_id], unique: true
+    add_index :couple_users, [ :couple_id, :user_id ], unique: true
     add_foreign_key :couple_users, :couples
     add_foreign_key :couple_users, :users
   end

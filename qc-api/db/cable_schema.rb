@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_131916) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_133353) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -126,6 +126,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_131916) do
     t.index ["couple_id", "category_id"], name: "index_custom_prompts_on_couple_id_and_category_id"
     t.index ["couple_id", "order"], name: "index_custom_prompts_on_couple_id_and_order"
     t.index ["couple_id"], name: "index_custom_prompts_on_couple_id"
+  end
+
+  create_table "jwt_denylists", force: :cascade do |t|
+    t.string "jti"
+    t.datetime "exp"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_denylists_on_jti"
   end
 
   create_table "love_actions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -379,8 +387,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_131916) do
     t.uuid "partner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["partner_id"], name: "index_users_on_partner_id"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "action_items", "check_ins"

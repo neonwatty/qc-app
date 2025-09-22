@@ -15,7 +15,7 @@ class CreateNotes < ActiveRecord::Migration[8.0]
     add_index :notes, :check_in_id
     add_index :notes, :category_id
     add_index :notes, :privacy
-    add_index :notes, [:author_id, :privacy]
+    add_index :notes, [ :author_id, :privacy ]
     add_index :notes, :tags, using: 'gin'
 
     add_foreign_key :notes, :users, column: :author_id

@@ -4,11 +4,11 @@ class CheckIn < ApplicationRecord
   belongs_to :session_settings, optional: true
   has_many :notes, dependent: :destroy
   has_many :action_items, dependent: :destroy
-  has_one :session_preparation, foreign_key: 'session_id', dependent: :destroy
-  has_many :quick_reflections, foreign_key: 'session_id', dependent: :destroy
+  has_one :session_preparation, foreign_key: "session_id", dependent: :destroy
+  has_many :quick_reflections, foreign_key: "session_id", dependent: :destroy
   has_many :love_language_discoveries, dependent: :destroy
-  has_many :relationship_requests, foreign_key: 'related_check_in_id'
-  has_many :reminders, foreign_key: 'related_check_in_id'
+  has_many :relationship_requests, foreign_key: "related_check_in_id"
+  has_many :reminders, foreign_key: "related_check_in_id"
 
   # Validations
   validates :status, inclusion: { in: %w[in-progress completed abandoned] }
@@ -20,21 +20,21 @@ class CheckIn < ApplicationRecord
   after_update :update_couple_stats, if: :completed?
 
   # Scopes
-  scope :completed, -> { where(status: 'completed') }
-  scope :in_progress, -> { where(status: 'in-progress') }
-  scope :abandoned, -> { where(status: 'abandoned') }
+  scope :completed, -> { where(status: "completed") }
+  scope :in_progress, -> { where(status: "in-progress") }
+  scope :abandoned, -> { where(status: "abandoned") }
   scope :recent, -> { order(started_at: :desc) }
 
   # Instance methods
   def complete!
     update!(
-      status: 'completed',
+      status: "completed",
       completed_at: Time.current
     )
   end
 
   def abandon!
-    update!(status: 'abandoned')
+    update!(status: "abandoned")
   end
 
   def duration
@@ -43,11 +43,11 @@ class CheckIn < ApplicationRecord
   end
 
   def completed?
-    status == 'completed'
+    status == "completed"
   end
 
   def in_progress?
-    status == 'in-progress'
+    status == "in-progress"
   end
 
   def add_participant(user_id)

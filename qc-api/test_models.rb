@@ -17,7 +17,7 @@ puts "✓ Created #{User.count} users"
 # Test Couple creation
 puts "\n2. Creating Couple..."
 couple = Couple.create!(name: "Alex & Jordan", check_in_frequency: "weekly", theme: "light")
-couple.users << [user1, user2]
+couple.users << [ user1, user2 ]
 puts "✓ Created couple with #{couple.categories.count} default categories"
 
 # Test Category
@@ -30,8 +30,8 @@ puts "\n4. Creating Check-in..."
 check_in = couple.check_ins.create!(
   started_at: Time.current,
   status: 'in-progress',
-  participants: [user1.id, user2.id],
-  categories: [category.id]
+  participants: [ user1.id, user2.id ],
+  categories: [ category.id ]
 )
 puts "✓ Created check-in with status: #{check_in.status}"
 
@@ -75,7 +75,7 @@ love_language = user1.love_languages.create!(
   category: 'words',
   privacy: 'shared',
   importance: 'high',
-  examples: ["Saying 'I love you'", "Compliments", "Verbal appreciation"]
+  examples: [ "Saying 'I love you'", "Compliments", "Verbal appreciation" ]
 )
 puts "✓ Created love language: #{love_language.title}"
 

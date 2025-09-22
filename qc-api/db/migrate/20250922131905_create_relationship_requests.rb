@@ -23,7 +23,7 @@ class CreateRelationshipRequests < ActiveRecord::Migration[8.0]
     add_index :relationship_requests, :requested_by_id
     add_index :relationship_requests, :requested_for_id
     add_index :relationship_requests, :status
-    add_index :relationship_requests, [:requested_for_id, :status]
+    add_index :relationship_requests, [ :requested_for_id, :status ]
     add_index :relationship_requests, :tags, using: 'gin'
 
     add_foreign_key :relationship_requests, :users, column: :requested_by_id

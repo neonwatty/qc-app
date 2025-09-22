@@ -1,10 +1,10 @@
 class Reminder < ApplicationRecord
   # Associations
-  belongs_to :created_by, class_name: 'User'
-  belongs_to :assigned_to, class_name: 'User', optional: true
-  belongs_to :related_check_in, class_name: 'CheckIn', optional: true
-  belongs_to :related_action_item, class_name: 'ActionItem', optional: true
-  belongs_to :converted_from_request, class_name: 'RelationshipRequest', optional: true
+  belongs_to :created_by, class_name: "User"
+  belongs_to :assigned_to, class_name: "User", optional: true
+  belongs_to :related_check_in, class_name: "CheckIn", optional: true
+  belongs_to :related_action_item, class_name: "ActionItem", optional: true
+  belongs_to :converted_from_request, class_name: "RelationshipRequest", optional: true
 
   # Validations
   validates :title, presence: true
@@ -21,9 +21,9 @@ class Reminder < ApplicationRecord
   scope :active, -> { where(is_active: true) }
   scope :inactive, -> { where(is_active: false) }
   scope :snoozed, -> { where(is_snoozed: true) }
-  scope :upcoming, -> { active.where('scheduled_for > ?', Time.current).order(:scheduled_for) }
-  scope :overdue, -> { active.where('scheduled_for <= ? AND completed_at IS NULL', Time.current) }
-  scope :for_user, ->(user) { where('created_by = ? OR assigned_to = ?', user.id, user.id) }
+  scope :upcoming, -> { active.where("scheduled_for > ?", Time.current).order(:scheduled_for) }
+  scope :overdue, -> { active.where("scheduled_for <= ? AND completed_at IS NULL", Time.current) }
+  scope :for_user, ->(user) { where("created_by = ? OR assigned_to = ?", user.id, user.id) }
 
   # Instance methods
   def snooze!(duration = 1.hour)
@@ -52,6 +52,6 @@ class Reminder < ApplicationRecord
   private
 
   def set_defaults
-    self.notification_channel ||= 'both'
+    self.notification_channel ||= "both"
   end
 end
