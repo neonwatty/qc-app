@@ -252,22 +252,32 @@ describe('useNotifications', () => {
       })
     })
 
-    it('should show desktop notification when enabled', () => {
+    it('should show desktop notification when enabled', async () => {
       const { result } = renderHook(() =>
         useNotifications({ showDesktop: true })
       )
 
       act(() => {
         result.current.updatePreferences({ desktopEnabled: true })
+      })
+
+      // Wait for the preference update to take effect
+      await waitFor(() => {
+        expect(result.current.preferences.desktopEnabled).toBe(true)
+      })
+
+      act(() => {
         result.current.sendTestNotification()
       })
 
-      expect(window.Notification).toHaveBeenCalledWith(
-        'Test Notification',
-        expect.objectContaining({
-          body: 'This is a test notification to verify your settings',
-        })
-      )
+      await waitFor(() => {
+        expect(window.Notification).toHaveBeenCalledWith(
+          'Test Notification',
+          expect.objectContaining({
+            body: 'This is a test notification to verify your settings',
+          })
+        )
+      })
     })
 
     it('should not show desktop notification when disabled', () => {
@@ -291,20 +301,25 @@ describe('useNotificationBadge', () => {
     jest.clearAllMocks()
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('should update document title with unread count', () => {
-    // Mock the hook to return unread notifications
-    jest.spyOn(require('../useNotifications'), 'useNotifications').mockReturnValue({
-      notifications: [generateMockNotification({ read: false })],
+    // Mock the action cable hook to return notifications
+    const mockUseNotificationChannel = require('../useActionCable').useNotificationChannel
+    mockUseNotificationChannel.mockReturnValue({
+      isSubscribed: true,
+      notifications: [
+        generateMockNotification({ read: false }),
+        generateMockNotification({ read: false }),
+        generateMockNotification({ read: false }),
+        generateMockNotification({ read: false }),
+        generateMockNotification({ read: false }),
+      ],
       unreadCount: 5,
-      hasUnread: true,
-      preferences: { enabled: true },
-      isConnected: true,
       markAsRead: jest.fn(),
-      markAllAsRead: jest.fn(),
-      deleteNotification: jest.fn(),
       clearAll: jest.fn(),
-      updatePreferences: jest.fn(),
-      sendTestNotification: jest.fn(),
     })
 
     renderHook(() => useNotificationBadge())
@@ -315,19 +330,14 @@ describe('useNotificationBadge', () => {
   it('should reset document title when no unread', () => {
     document.title = '(5) Quality Control'
 
-    // Mock the hook to return no unread notifications
-    jest.spyOn(require('../useNotifications'), 'useNotifications').mockReturnValue({
+    // Mock the action cable hook to return no unread notifications
+    const mockUseNotificationChannel = require('../useActionCable').useNotificationChannel
+    mockUseNotificationChannel.mockReturnValue({
+      isSubscribed: true,
       notifications: [],
       unreadCount: 0,
-      hasUnread: false,
-      preferences: { enabled: true },
-      isConnected: true,
       markAsRead: jest.fn(),
-      markAllAsRead: jest.fn(),
-      deleteNotification: jest.fn(),
       clearAll: jest.fn(),
-      updatePreferences: jest.fn(),
-      sendTestNotification: jest.fn(),
     })
 
     renderHook(() => useNotificationBadge())

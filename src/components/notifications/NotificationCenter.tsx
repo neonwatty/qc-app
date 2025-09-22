@@ -93,7 +93,7 @@ export function NotificationCenter({ className, onSettingsClick }: NotificationC
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" aria-label="Filter notifications">
                 <Filter className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -109,7 +109,7 @@ export function NotificationCenter({ className, onSettingsClick }: NotificationC
           </DropdownMenu>
 
           {onSettingsClick && (
-            <Button variant="ghost" size="sm" onClick={onSettingsClick}>
+            <Button variant="ghost" size="sm" onClick={onSettingsClick} aria-label="Settings">
               <Settings className="h-4 w-4" />
             </Button>
           )}
@@ -126,33 +126,103 @@ export function NotificationCenter({ className, onSettingsClick }: NotificationC
           <TabsTrigger value="checkin" className="text-xs">Check-ins</TabsTrigger>
         </TabsList>
 
-        <TabsContent value={selectedType} className="mt-0">
-          <ScrollArea className="h-[400px]">
-            {filteredNotifications.length === 0 ? (
-              <EmptyState type={selectedType} showUnreadOnly={showUnreadOnly} />
-            ) : (
-              <div className="divide-y">
-                {Object.entries(groupedNotifications).map(([date, items]) => (
-                  <div key={date}>
-                    <div className="px-4 py-2 bg-muted/50 text-xs font-medium text-muted-foreground sticky top-0">
-                      {date}
-                    </div>
-                    {items.map((notification) => (
-                      <NotificationItem
-                        key={notification.id}
-                        notification={notification}
-                        onMarkAsRead={() => markAsRead(notification.id)}
-                        onDelete={() => deleteNotification(notification.id)}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
+        <TabsContent value="all" className="mt-0">
+          <NotificationList
+            notifications={filteredNotifications}
+            groupedNotifications={groupedNotifications}
+            selectedType={selectedType}
+            showUnreadOnly={showUnreadOnly}
+            markAsRead={markAsRead}
+            deleteNotification={deleteNotification}
+          />
+        </TabsContent>
+        <TabsContent value="reminder" className="mt-0">
+          <NotificationList
+            notifications={filteredNotifications}
+            groupedNotifications={groupedNotifications}
+            selectedType={selectedType}
+            showUnreadOnly={showUnreadOnly}
+            markAsRead={markAsRead}
+            deleteNotification={deleteNotification}
+          />
+        </TabsContent>
+        <TabsContent value="request" className="mt-0">
+          <NotificationList
+            notifications={filteredNotifications}
+            groupedNotifications={groupedNotifications}
+            selectedType={selectedType}
+            showUnreadOnly={showUnreadOnly}
+            markAsRead={markAsRead}
+            deleteNotification={deleteNotification}
+          />
+        </TabsContent>
+        <TabsContent value="milestone" className="mt-0">
+          <NotificationList
+            notifications={filteredNotifications}
+            groupedNotifications={groupedNotifications}
+            selectedType={selectedType}
+            showUnreadOnly={showUnreadOnly}
+            markAsRead={markAsRead}
+            deleteNotification={deleteNotification}
+          />
+        </TabsContent>
+        <TabsContent value="checkin" className="mt-0">
+          <NotificationList
+            notifications={filteredNotifications}
+            groupedNotifications={groupedNotifications}
+            selectedType={selectedType}
+            showUnreadOnly={showUnreadOnly}
+            markAsRead={markAsRead}
+            deleteNotification={deleteNotification}
+          />
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+/**
+ * Notification list component
+ */
+function NotificationList({
+  notifications,
+  groupedNotifications,
+  selectedType,
+  showUnreadOnly,
+  markAsRead,
+  deleteNotification
+}: {
+  notifications: Notification[]
+  groupedNotifications: Record<string, Notification[]>
+  selectedType: string
+  showUnreadOnly: boolean
+  markAsRead: (id: string) => void
+  deleteNotification: (id: string) => void
+}) {
+  return (
+    <ScrollArea className="h-[400px]">
+      {notifications.length === 0 ? (
+        <EmptyState type={selectedType} showUnreadOnly={showUnreadOnly} />
+      ) : (
+        <div className="divide-y">
+          {Object.entries(groupedNotifications).map(([date, items]) => (
+            <div key={date}>
+              <div className="px-4 py-2 bg-muted/50 text-xs font-medium text-muted-foreground sticky top-0">
+                {date}
+              </div>
+              {items.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onMarkAsRead={() => markAsRead(notification.id)}
+                  onDelete={() => deleteNotification(notification.id)}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </ScrollArea>
   )
 }
 

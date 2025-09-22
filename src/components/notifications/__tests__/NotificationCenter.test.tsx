@@ -4,6 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { NotificationCenter } from '../NotificationCenter'
 import { renderWithProviders, generateMockNotification } from '@/test-utils/testHelpers'
 
+// Verify the component is imported correctly
+if (!NotificationCenter) {
+  console.error('NotificationCenter is not exported correctly')
+}
+
 // Mock the useNotifications hook
 const mockUseNotifications = {
   notifications: [],
@@ -17,6 +22,9 @@ const mockUseNotifications = {
 
 jest.mock('@/hooks/useNotifications', () => ({
   useNotifications: () => mockUseNotifications,
+  // Export types to prevent import errors
+  NotificationType: {},
+  NotificationPriority: {},
 }))
 
 // Mock date-fns
@@ -204,8 +212,8 @@ describe('NotificationCenter', () => {
       await user.hover(notification!)
 
       // Find and click delete button (X icon)
-      const deleteButtons = screen.getAllByRole('button')
-      const deleteButton = deleteButtons.find(btn => btn.querySelector('svg[class*=h-3]'))
+      const xIcon = screen.getByTestId('x-icon')
+      const deleteButton = xIcon.closest('button')
 
       if (deleteButton) {
         await user.click(deleteButton)
@@ -306,9 +314,10 @@ describe('NotificationCenter', () => {
 
       renderWithProviders(<NotificationCenter />)
 
-      // Check that icons are rendered (they will be SVGs)
-      const svgElements = screen.getAllByRole('img', { hidden: true })
-      expect(svgElements.length).toBeGreaterThan(0)
+      // Check that at least one notification type icon is rendered
+      // Since icons are mocked as spans with data-testid attributes, we check for any icon
+      const iconElements = document.querySelectorAll('[data-testid*="-icon"]')
+      expect(iconElements.length).toBeGreaterThan(0)
     })
   })
 })
