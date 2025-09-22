@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_141935) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_150958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -105,6 +105,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141935) do
     t.string "current_step"
     t.jsonb "step_durations", default: {}
     t.datetime "abandoned_at"
+    t.datetime "last_activity_at"
+    t.integer "last_updated_by"
     t.index ["completed_at"], name: "index_check_ins_on_completed_at"
     t.index ["couple_id", "completed_at"], name: "index_check_ins_couple_completed"
     t.index ["couple_id", "started_at"], name: "index_check_ins_on_couple_id_and_started_at"

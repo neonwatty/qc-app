@@ -32,9 +32,16 @@ Rails.application.routes.draw do
         resources :check_ins do
           member do
             post :complete
+            post :start
+            post :abandon
+            post :move_step
+            post :add_participant
+            post :add_category
+            get :progress
           end
           collection do
             get :current
+            get :statistics
           end
         end
 
@@ -74,7 +81,16 @@ Rails.application.routes.draw do
       end
 
       resources :check_ins, only: [] do
-        resources :notes
+        resources :notes do
+          member do
+            post :publish
+            post :make_private
+          end
+          collection do
+            get :by_step
+            get :summary
+          end
+        end
       end
 
       resources :action_items do
