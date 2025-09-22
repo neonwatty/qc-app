@@ -1,6 +1,6 @@
 // Export all API services and utilities
-export { default as apiClient, handleApiError } from './client'
-export type { ApiError } from './client'
+export { default as apiClient, handleApiError, ApiClient } from './client'
+export type { ApiError, ApiClientConfig } from './client'
 
 // Export all service instances
 export { default as authService } from './services/auth.service'
@@ -9,6 +9,10 @@ export { default as checkInService } from './services/checkin.service'
 export { default as notesService } from './services/notes.service'
 export { default as actionItemsService } from './services/actionItems.service'
 export { default as milestonesService } from './services/milestones.service'
+export { default as categoriesService } from './services/categories.service'
+export { default as sessionSettingsService } from './services/sessionSettings.service'
+export { default as loveLanguagesService } from './services/loveLanguages.service'
+export { default as remindersService } from './services/reminders.service'
 
 // Export service types
 export type {
@@ -48,3 +52,6 @@ export type {
   UpdateMilestoneRequest,
   MilestonesFilter,
 } from './services/milestones.service'
+
+// Export all API types
+export * from './types'
