@@ -1,0 +1,63 @@
+# Sidekiq configuration file
+---
+:verbose: false
+:concurrency: 10
+:timeout: 25
+
+# Sidekiq server configuration
+:queues:
+  - [urgent, 6]
+  - [default, 4]
+  - [notifications, 3]
+  - [reminders, 3]
+  - [data_processing, 2]
+  - [reports, 2]
+  - [maintenance, 1]
+
+# Retry configuration
+:max_retries: 3
+:retry_in: 3600  # 1 hour
+
+# Dead job configuration
+:dead_max_jobs: 10000
+:dead_timeout_in_seconds: 2592000  # 30 days
+
+# Redis configuration
+:redis:
+  url: <%= ENV.fetch('REDIS_URL', 'redis://localhost:6379/0') %>
+  namespace: qc_api_sidekiq
+
+development:
+  :concurrency: 5
+  :queues:
+    - [urgent, 5]
+    - [default, 3]
+    - [notifications, 2]
+    - [reminders, 2]
+    - [data_processing, 1]
+    - [reports, 1]
+    - [maintenance, 1]
+
+test:
+  :concurrency: 1
+  :queues:
+    - [urgent, 1]
+    - [default, 1]
+
+production:
+  :concurrency: 25
+  :queues:
+    - [urgent, 10]
+    - [default, 8]
+    - [notifications, 5]
+    - [reminders, 5]
+    - [data_processing, 4]
+    - [reports, 3]
+    - [maintenance, 2]
+
+  # Production-specific settings
+  :redis:
+    url: <%= ENV['REDIS_URL'] %>
+    namespace: qc_api_sidekiq_production
+    pool_timeout: 1
+    pool_size: <%= ENV.fetch('RAILS_MAX_THREADS', 5) %>
