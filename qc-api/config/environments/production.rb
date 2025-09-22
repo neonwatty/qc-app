@@ -18,8 +18,12 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
+  # Allowed hosts configuration from environment variable
+  config.hosts = ENV.fetch("ALLOWED_HOSTS", "localhost").split(",").map(&:strip) if ENV["ALLOWED_HOSTS"].present?
+
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Use AWS S3 in production if credentials are configured
+  config.active_storage.service = ENV["AWS_ACCESS_KEY_ID"].present? ? :amazon : :local
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
@@ -55,7 +59,10 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("MAILER_HOST", "example.com"),
+    protocol: ENV.fetch("MAILER_PROTOCOL", "https")
+  }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
@@ -77,11 +84,27 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
+  # Allow specific hosts from environment configuration
+  if ENV["ALLOWED_HOSTS"].present?
+    config.hosts = ENV["ALLOWED_HOSTS"].split(",").map(&:strip)
+  end
+
   # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Additional production optimizations
+  config.middleware.use Rack::Deflater # Enable gzip compression
+
+  # Security headers
+  config.force_ssl = true
+  config.ssl_options = {
+    hsts: {
+      expires: 1.year,
+      subdomains: true,
+      preload: true
+    },
+    redirect: {
+      exclude: ->(request) { request.path == "/up" }
+    }
+  }
 end
