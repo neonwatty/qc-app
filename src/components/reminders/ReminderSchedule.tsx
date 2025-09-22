@@ -30,7 +30,7 @@ export function ReminderSchedule({ reminders }: ReminderScheduleProps) {
     <Card className="p-4">
       <h3 className="font-semibold mb-3 flex items-center gap-2">
         <Clock className="w-5 h-5" />
-        Today's Schedule
+        Today&apos;s Schedule
       </h3>
       <div className="space-y-2">
         {todayReminders.map((reminder, index) => {

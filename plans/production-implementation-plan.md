@@ -98,14 +98,14 @@ Testing Matrix:
 - ✅ Use existing type definitions as source of truth
 
 **Technical Stack**:
-- **PostgreSQL** with Prisma ORM for primary data storage
-- **Redis** for session management and caching
+- **Local PostgreSQL** with Prisma ORM for all data storage and sessions
+- **No Redis needed** - PostgreSQL handles session management via connect-pg-simple
 - **Database Schema Migration** from TypeScript types to Prisma schema
 - **Backup Strategy**:
-  - Automated daily backups to S3
-  - Point-in-time recovery capability
-  - Weekly backup testing procedures
-  - Disaster recovery runbook
+  - Local PostgreSQL backups via pg_dump
+  - Daily automated backups with cron
+  - Simple restore procedures
+  - Version control for schema migrations
 
 ```prisma
 // Example: Direct translation from POC types
@@ -142,18 +142,15 @@ model CheckIn {
 
 **NEW Implementation**:
 - **NextAuth.js v5** configuration
-- Email/password authentication with strength requirements
-- OAuth providers (Google, Apple)
-- Magic link authentication
-- JWT tokens with refresh mechanism
-- Session management with Redis
-- **Security Enhancements**:
-  - Password hashing with bcrypt/argon2
+- Google OAuth only for beta (no email/password initially)
+- Database sessions stored in PostgreSQL
+- Session management with connect-pg-simple
+- **Simplified Security for Beta**:
+  - OAuth-only authentication (inherently secure)
   - Session token rotation every 15 minutes
   - Secure cookie settings (httpOnly, secure, sameSite)
-  - Account lockout after failed attempts
-  - Two-factor authentication (optional for beta)
-  - Session invalidation on password change
+  - PostgreSQL session storage with automatic cleanup
+  - Session invalidation on logout
 
 ```typescript
 // src/lib/auth.ts - NEW FILE
@@ -180,7 +177,50 @@ export const authOptions = {
 - Partner acceptance flow
 ```
 
-### 1.3 Beta User Management System
+### 1.3 Socket.io Real-Time Server
+**Two-Server Architecture for WebSocket Support**:
+- **Separate Node.js server** running Socket.io (port 3001)
+- **Maintains Next.js optimizations** - no custom server needed
+- **Shares PostgreSQL** connection for session validation
+- **Zero-cost solution** - completely self-hosted
+
+```javascript
+// socket-server.js - NEW FILE
+const { Server } = require('socket.io');
+const { Pool } = require('pg');
+
+const io = new Server(3001, {
+  cors: { origin: 'http://localhost:3000' }
+});
+
+const pool = new Pool({
+  // Same PostgreSQL config as Next.js app
+});
+
+io.on('connection', async (socket) => {
+  // Validate session from PostgreSQL
+  const { sessionId } = socket.handshake.auth;
+  const result = await pool.query(
+    'SELECT * FROM sessions WHERE sid = $1',
+    [sessionId]
+  );
+
+  if (!result.rows[0]) {
+    socket.disconnect();
+    return;
+  }
+
+  const session = result.rows[0];
+  socket.join(`couple-${session.coupleId}`);
+
+  // Real-time check-in sync
+  socket.on('checkin:update', (data) => {
+    socket.to(`couple-${session.coupleId}`).emit('checkin:sync', data);
+  });
+});
+```
+
+### 1.4 Beta User Management System
 **NEW Implementation for Beta Phase**:
 - **Invitation System**:
   - Unique invitation codes generation
@@ -229,23 +269,27 @@ export function middleware(request: NextRequest) {
 **Essential for Beta Iteration**:
 ```typescript
 // src/lib/feature-flags.ts
-import { createClient } from '@vercel/edge-config'
-
+// Simple environment-based flags for beta
 export const flags = {
-  NEW_CHECKIN_FLOW: 'new-checkin-flow',
-  LOVE_LANGUAGES: 'love-languages',
-  ADVANCED_REMINDERS: 'advanced-reminders',
-  // Gradual rollout per user/group
+  NEW_CHECKIN_FLOW: process.env.NEXT_PUBLIC_NEW_CHECKIN_FLOW === 'true',
+  LOVE_LANGUAGES: process.env.NEXT_PUBLIC_LOVE_LANGUAGES === 'true',
+  ADVANCED_REMINDERS: process.env.NEXT_PUBLIC_ADVANCED_REMINDERS === 'true',
 }
 
-// Usage in components:
-const { isEnabled } = useFeatureFlag('love-languages')
+// Or database-driven flags for more control:
+export async function getFeatureFlag(flag: string, userId: string) {
+  const result = await db.query(
+    'SELECT enabled FROM feature_flags WHERE flag = $1 AND user_id = $2',
+    [flag, userId]
+  )
+  return result.rows[0]?.enabled ?? false
+}
 ```
 
 - **Implementation Options**:
-  - Vercel Edge Config (simple, free for beta)
-  - LaunchDarkly (if complex A/B testing needed)
-  - Custom solution with database flags
+  - Environment variables (simplest for beta)
+  - PostgreSQL flags table (more flexible)
+  - Custom solution with user/group targeting
 
 ### 1.6 API Development with Security
 **POC REUSE**:
@@ -309,7 +353,7 @@ export const monitoring = {
 - **Log Aggregation**: LogDNA/Datadog
 - **Alert Management**: PagerDuty integration
 - **Database Monitoring**: pg_stat_statements
-- **Redis Monitoring**: Redis Insights
+- **Session Monitoring**: PostgreSQL session queries
 - **Status Page**: status.qc-app.com
 
 ## Phase 2: Core Features Migration + Testing (Week 2-3)
@@ -368,8 +412,20 @@ const saveSession = useCallback(async (session: CheckInSession) => {
 ```typescript
 // src/hooks/useRealtimeCheckin.ts - NEW
 import { useEffect } from 'react'
-import { pusher } from '@/lib/pusher'
-// Subscribes to check-in channel for live updates
+import { io } from 'socket.io-client'
+
+const socket = io('http://localhost:3001', {
+  auth: { sessionId: session.id }
+})
+
+export function useRealtimeCheckin(sessionId: string) {
+  useEffect(() => {
+    socket.on('checkin:sync', (data) => {
+      // Update local state with partner's changes
+    })
+    return () => socket.off('checkin:sync')
+  }, [sessionId])
+}
 ```
 
 ### 2.2 Notes Management
@@ -525,7 +581,7 @@ self.addEventListener('push', (event) => {
 ```
 
 **Email Notifications**:
-- Use SendGrid/Resend for transactional emails
+- Use Nodemailer with Gmail SMTP for transactional emails (free tier)
 - Email templates based on existing UI components
 - Digest emails for activity summaries
 
@@ -579,15 +635,15 @@ export function SupportWidget() {
 - **Knowledge Base**: Searchable help articles
 - **Video Tutorials**: Onboarding and feature guides
 
-**Email Templates**:
+**Email Templates (using Nodemailer + Gmail SMTP)**:
 ```typescript
 // src/lib/email-templates/
 - welcome.tsx          // New user welcome
 - invitation.tsx       // Partner invitation
 - reminder.tsx         // Check-in reminder
-- passwordReset.tsx    // Password reset
 - weeklyDigest.tsx     // Activity summary
 - betaFeedback.tsx     // Beta survey request
+// Note: No password reset needed with Google OAuth only
 ```
 
 ## Phase 4: Error Recovery & Beta Monitoring (Week 4)
@@ -714,11 +770,15 @@ export const monitor = {
 - ✅ `tsconfig.json` - TypeScript config optimal
 
 **Deployment Stack**:
-- **Vercel** for Next.js hosting
-- **Neon/Supabase** for PostgreSQL
-- **Upstash** for Redis
-- **AWS S3/Cloudinary** for images
-- **Sentry** for error tracking
+- **Two-Server Architecture**:
+  - Next.js app (Port 3000)
+  - Socket.io server (Port 3001)
+- **Local PostgreSQL** for development
+- **Self-hosted or free tier** for production:
+  - Option 1: Single VPS with Docker Compose
+  - Option 2: Next.js on Vercel + Socket.io on Railway/Render
+- **Local file storage** for images (or free Cloudinary tier)
+- **Sentry** for error tracking (generous free tier)
 
 **CI/CD Pipeline**:
 ```yaml
@@ -737,10 +797,36 @@ steps:
 ```
 
 **Environment Management**:
-- Development: Local + feature branches
-- Staging: staging.qc-app.com
-- Production: app.qc-app.com
+- Development: Local (Next.js:3000, Socket.io:3001, PostgreSQL:5432)
+- Staging: Docker Compose on test VPS or free tiers
+- Production: Self-hosted VPS or split hosting
 - Database migrations: Prisma migrate deploy
+
+**Docker Compose Setup**:
+```yaml
+# docker-compose.yml
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: qc_app
+    ports:
+      - "5432:5432"
+
+  nextjs:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  socketio:
+    build: ./socket-server
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+```
 
 ### 5.2 Comprehensive Testing Strategy
 **POC REUSE - ALL TESTS**:
@@ -847,15 +933,16 @@ export const performanceConfig = {
   },
   // Caching strategy
   caching: {
-    redis: {
+    postgresql: {
+      // Use PostgreSQL for all caching needs
       sessionTTL: 3600,
-      userDataTTL: 300,
-      staticContentTTL: 86400
+      userDataCache: 'materialized_views',
+      queryCache: 'prepared_statements'
     },
-    cdn: {
-      images: 'cloudflare',
-      static: 'vercel-edge',
-      api: 'stale-while-revalidate'
+    browser: {
+      localStorage: 'offline_first',
+      serviceWorker: 'cache_api_responses',
+      strategy: 'stale-while-revalidate'
     }
   },
   // Bundle optimization
@@ -1089,8 +1176,9 @@ useEffect(() => {
   - Support infrastructure planning
 
 **Week 1-2**: Backend + Auth + Security (ENHANCED)
-  - Database with backup strategy
-  - Authentication with security hardening
+  - Local PostgreSQL setup with backup strategy
+  - Google OAuth only authentication via NextAuth.js
+  - Socket.io server setup (separate process)
   - Beta user management system
   - API development with input validation
   - Operational monitoring setup
@@ -1105,7 +1193,7 @@ useEffect(() => {
   - Notifications and Reminders
   - Support system and help documentation
   - Email templates and communication
-  - WebSocket for real-time features
+  - Socket.io integration for real-time features
 
 **Week 4**: Error Recovery + Edge Cases (COMPREHENSIVE)
   - Complete error handling system
@@ -1135,7 +1223,7 @@ This beta-optimized plan:
 3. **Prioritizes beta monitoring** (Week 4)
    - Error recovery, monitoring, beta dashboard
 4. **Defers unnecessary complexity** (Throughout)
-   - Complex caching, i18n, full PWA, multiple OAuth
+   - Redis/external caching, i18n, full PWA, multiple OAuth providers
 5. **Enables rapid iteration** (Week 6)
    - Feedback loops, A/B testing, quick fixes
 
@@ -1153,13 +1241,15 @@ This beta-optimized plan:
 ### Critical Path Items
 **Must-Have Before Beta Launch**:
 1. Privacy Policy & Terms of Service
-2. Database backup strategy
-3. Basic security hardening (input validation, rate limiting)
-4. E2E testing for critical flows
-5. Support system beyond feedback widget
-6. Content moderation basics
-7. Error recovery mechanisms
-8. User data export capability
+2. PostgreSQL backup strategy (pg_dump automation)
+3. Google OAuth setup and session management
+4. Socket.io server running alongside Next.js
+5. Basic security hardening (input validation, rate limiting)
+6. E2E testing for critical flows
+7. Support system beyond feedback widget
+8. Content moderation basics
+9. Error recovery mechanisms
+10. User data export capability
 
 ### Post-Beta Roadmap
 **Based on Beta Learnings**:

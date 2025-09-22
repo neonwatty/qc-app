@@ -93,7 +93,7 @@ export function TourStep({ onNext, onPrevious }: TourStepProps) {
           Discover Key Features
         </h2>
         <p className="text-gray-600">
-          Here's what makes Quality Control special
+          Here&apos;s what makes Quality Control special
         </p>
       </div>
 

@@ -138,7 +138,7 @@ export default function LoveActionsPage() {
           <Alert className="border-rose-200 bg-rose-50/50">
             <Info className="h-4 w-4 text-rose-600" />
             <AlertDescription className="text-gray-700 font-medium">
-              Love Actions are specific ways to show love based on your partner's love languages. 
+              Love Actions are specific ways to show love based on your partner&apos;s love languages. 
               Start small and build consistency over time.
             </AlertDescription>
           </Alert>
@@ -313,7 +313,7 @@ export default function LoveActionsPage() {
                     {partnerLanguages.length > 0 && (
                       <>
                         <SelectItem value="header-partner" disabled>
-                          <span className="font-semibold">Partner's Languages</span>
+                          <span className="font-semibold">Partner&apos;s Languages</span>
                         </SelectItem>
                         {partnerLanguages.map((lang) => (
                           <SelectItem key={lang.id} value={lang.id}>

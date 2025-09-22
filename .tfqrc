@@ -13,7 +13,7 @@
     "outputFormat": "stream-json",
     "maxIterations": 10,
     "testTimeout": 1800000,
-    "prompt": "Run the test file at {testFilePath} and debug any errors you encounter one at a time. Then run the test again to verify that your changes have fixed any errors. Finally, run linting to ensure code quality.",
+    "prompt": "First, detect the testing framework by checking for jest.config.* or vitest.config.* files and examining package.json scripts. Then run the test file at {testFilePath} using the appropriate test runner (npm run test for Jest, npx vitest run for Vitest). Debug any errors you encounter one at a time. After fixing errors, run the test again with the same test runner to verify that your changes have fixed any errors. Finally, run linting to ensure code quality.",
     "_comment": "The {testFilePath} placeholder will be replaced with the actual test file path when Claude is invoked",
     "claudePath": "/Users/jeremywatt/.claude/local/claude"
   }

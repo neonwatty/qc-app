@@ -1,6 +1,6 @@
 {
   "database": {
-    "path": "/Users/jeremywatt/Desktop/fscrape/.todoq/todoq.db",
+    "path": "./.todoq/todoq.db",
     "autoMigrate": true,
     "walMode": true
   },

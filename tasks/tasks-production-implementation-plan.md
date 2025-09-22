@@ -1,0 +1,355 @@
+## Relevant Files
+
+### POC Components to Copy (Primary References)
+- `src/app/dashboard/page.tsx` - Dashboard with stats, activity feed, quick actions
+- `src/app/checkin/page.tsx` - Complete check-in flow implementation
+- `src/app/settings/page.tsx` - Settings panels and customization
+- `src/app/notes/page.tsx` - Notes management interface
+- `src/app/growth/page.tsx` - Growth Gallery and milestones
+- `src/app/reminders/page.tsx` - Reminders management
+- `src/app/requests/page.tsx` - Partner requests inbox
+- `src/app/love-languages/page.tsx` - Love Languages feature
+- `src/app/onboarding/page.tsx` - Onboarding flow
+- `src/contexts/CheckInContext.tsx` - Check-in state management
+- `src/contexts/SessionSettingsContext.tsx` - Session settings state
+- `src/contexts/BookendsContext.tsx` - Pre/post session state
+- `src/contexts/LoveLanguagesContext.tsx` - Love Languages state
+- `src/contexts/ThemeContext.tsx` - Theme management
+- `src/types/index.ts` - All TypeScript interfaces (database schema source)
+- `src/lib/mock-data.ts` - Mock data structure (API response templates)
+- `src/lib/storage.ts` - Storage utilities (to be enhanced with API)
+- `src/components/**/*.tsx` - All UI components to copy
+
+### Test Files to Extend
+- `src/app/onboarding/__tests__/*.test.tsx` - Onboarding flow tests
+- `src/test-utils/*.ts` - Test utilities and mocks
+- `jest.config.js` - Jest configuration to copy
+
+### Production Files to Create
+- `qc-fullstack/prisma/schema.prisma` - Database schema from POC types
+- `qc-fullstack/lib/auth.ts` - NextAuth.js v5 configuration
+- `qc-fullstack/app/api/**/*.ts` - API routes from context actions
+- `qc-fullstack/lib/prisma.ts` - Prisma client singleton
+- `qc-fullstack/tests/e2e/*.spec.ts` - Playwright E2E tests
+- `qc-fullstack/lib/monitoring.ts` - Sentry and PostHog setup
+- `qc-fullstack/lib/feature-flags.ts` - Feature flag system
+- `qc-fullstack/lib/beta-access.ts` - Beta user management
+- `qc-fullstack/legal/*.md` - Privacy policy and ToS
+- `qc-fullstack/.github/workflows/deploy.yml` - CI/CD pipeline
+
+### Notes
+
+- Unit tests should be placed alongside code files (e.g., `Component.tsx` and `Component.test.tsx`)
+- Use `npm test` to run all tests, `npm test -- path/to/test` for specific tests
+- POC components are the source of truth for UI/UX - copy first, enhance second
+- Database schema should exactly mirror TypeScript types from POC
+
+## Tasks
+
+- [ ] 1.0 **Phase 0: Pre-Development Foundations**
+  - [ ] 1.1 Create `qc-fullstack/` directory structure
+    - *Docs: [Next.js project structure](https://nextjs.org/docs/getting-started/project-structure)*
+    - *Testing: Setup - Unit: directory structure validation, Integration: build process*
+  - [ ] 1.2 Copy POC configuration files to `qc-fullstack/`
+    - *Docs: Copy `next.config.js`, `tailwind.config.ts`, `tsconfig.json`, `jest.config.js`*
+    - *Testing: Configuration - Unit: config loading, Integration: build with configs*
+  - [ ] 1.3 Create legal documents in `qc-fullstack/legal/`
+    - *Docs: [GDPR compliance](https://gdpr.eu/), [CCPA requirements](https://oag.ca.gov/privacy/ccpa)*
+    - *Testing: Legal - Unit: document presence, Integration: consent flow*
+  - [ ] 1.4 Document security architecture in `qc-fullstack/docs/security/`
+    - *Docs: [OWASP Top 10](https://owasp.org/www-project-top-ten/)*
+    - *Testing: Documentation - Unit: markdown validation, Integration: security checklist*
+  - [ ] 1.5 Setup testing infrastructure in `qc-fullstack/tests/`
+    - *Docs: [Playwright setup](https://playwright.dev/docs/intro), [Jest configuration](https://jestjs.io/docs/configuration)*
+    - *Testing: Test Infrastructure - Unit: test runner config, Integration: sample tests*
+  - [ ] 1.6 Design support system structure in `qc-fullstack/support/`
+    - *Docs: [Support system design patterns](https://www.intercom.com/blog/support-system-design/)*
+    - *Testing: Support - Unit: component structure, Integration: help widget*
+
+- [ ] 2.0 **Phase 1: Backend Infrastructure & Security**
+  - [ ] 2.1 Setup PostgreSQL database with Prisma
+    - *Docs: [Prisma with PostgreSQL](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgresql)*
+    - *Testing: Database - Unit: connection test, Integration: CRUD operations*
+  - [ ] 2.2 Convert POC types to Prisma schema
+    - *Docs: Copy from `src/types/index.ts`, convert to Prisma syntax*
+    - *Testing: Schema - Unit: schema validation, Integration: migration test*
+  - [ ] 2.3 Implement database backup strategy
+    - *Docs: [PostgreSQL backup strategies](https://www.postgresql.org/docs/current/backup.html)*
+    - *Testing: Backup - Unit: backup script, Integration: restore test*
+  - [ ] 2.4 Setup NextAuth.js v5 authentication
+    - *Docs: [NextAuth.js v5 setup](https://authjs.dev/getting-started/installation)*
+    - *Testing: Auth - Unit: auth config, Integration: login/logout flow*
+  - [ ] 2.5 Copy and enhance onboarding components
+    - *Docs: Copy `src/app/onboarding/`, add auth integration*
+    - *Testing: Onboarding - Unit: component tests, Integration: full flow test*
+  - [ ] 2.6 Implement beta user management system
+    - *Docs: [Invitation system patterns](https://www.patterns.dev/posts/invitation-pattern)*
+    - *Testing: Beta Access - Unit: invitation validation, Integration: access control*
+  - [ ] 2.7 Setup PostHog analytics
+    - *Docs: [PostHog Next.js integration](https://posthog.com/docs/libraries/next-js)*
+    - *Testing: Analytics - Unit: event tracking, Integration: user journey*
+  - [ ] 2.8 Implement feedback widget
+    - *Docs: [Feedback UI patterns](https://www.nngroup.com/articles/feedback-request-interface/)*
+    - *Testing: Feedback - Unit: widget render, Integration: submission flow*
+  - [ ] 2.9 Setup feature flags system
+    - *Docs: [Vercel Edge Config](https://vercel.com/docs/storage/edge-config)*
+    - *Testing: Feature Flags - Unit: flag evaluation, Integration: conditional rendering*
+  - [ ] 2.10 Create API routes from CheckInContext actions
+    - *Docs: Copy reducer from `src/contexts/CheckInContext.tsx:69-200`*
+    - *Testing: API - Unit: route handlers, Integration: full API flow*
+  - [ ] 2.11 Implement Prisma client singleton
+    - *Docs: [Prisma Next.js best practices](https://www.prisma.io/docs/orm/more/help-and-troubleshooting/nextjs-help)*
+    - *Testing: Prisma Client - Unit: singleton pattern, Integration: concurrent queries*
+  - [ ] 2.12 Setup Redis for session management
+    - *Docs: [Upstash Redis setup](https://upstash.com/docs/redis/quickstart)*
+    - *Testing: Redis - Unit: connection test, Integration: session storage*
+  - [ ] 2.13 Implement rate limiting
+    - *Docs: [API rate limiting patterns](https://www.cloudflare.com/learning/bots/what-is-rate-limiting/)*
+    - *Testing: Rate Limiting - Unit: limiter logic, Integration: request throttling*
+  - [ ] 2.14 Setup monitoring with Sentry
+    - *Docs: [Sentry Next.js setup](https://docs.sentry.io/platforms/javascript/guides/nextjs/)*
+    - *Testing: Monitoring - Unit: error capture, Integration: error reporting*
+
+- [ ] 3.0 **Phase 2: Core Features Migration - Dashboard**
+  - [ ] 3.1 Copy dashboard page and components
+    - *Docs: Copy `src/app/dashboard/` to `qc-fullstack/app/dashboard/`*
+    - *Testing: Dashboard - Unit: component render, Integration: data loading*
+  - [ ] 3.2 Copy StatsGrid component and enhance with API
+    - *Docs: Copy `src/components/dashboard/StatsGrid.tsx`, add SWR hooks*
+    - *Testing: Stats - Unit: stat calculations, Integration: real-time updates*
+  - [ ] 3.3 Copy ActivityFeed with database integration
+    - *Docs: Copy `src/components/dashboard/ActivityFeed.tsx`, add pagination*
+    - *Testing: Activity Feed - Unit: feed items, Integration: infinite scroll*
+  - [ ] 3.4 Copy QuickActions component
+    - *Docs: Copy `src/components/dashboard/QuickActions.tsx`*
+    - *Testing: Quick Actions - Unit: action buttons, Integration: navigation*
+  - [ ] 3.5 Copy and enhance LoveLanguagesWidget
+    - *Docs: Copy `src/components/dashboard/LoveLanguagesWidget.tsx`*
+    - *Testing: Love Languages Widget - Unit: widget display, Integration: preferences*
+
+- [ ] 4.0 **Phase 2: Core Features Migration - Check-in System**
+  - [ ] 4.1 Copy entire check-in flow components
+    - *Docs: Copy `src/components/checkin/` to `qc-fullstack/components/checkin/`*
+    - *Testing: Check-in Components - Unit: each component, Integration: flow navigation*
+  - [ ] 4.2 Copy CheckInContext with API integration
+    - *Docs: Copy `src/contexts/CheckInContext.tsx`, add API calls*
+    - *Testing: Check-in Context - Unit: reducer actions, Integration: state persistence*
+  - [ ] 4.3 Implement real-time sync for check-ins
+    - *Docs: [Pusher Next.js setup](https://pusher.com/docs/channels/getting_started/javascript)*
+    - *Testing: Real-time - Unit: WebSocket connection, Integration: live updates*
+  - [ ] 4.4 Copy SessionTimer with backend tracking
+    - *Docs: Copy `src/components/checkin/SessionTimer.tsx`, add API timing*
+    - *Testing: Timer - Unit: time tracking, Integration: session duration*
+  - [ ] 4.5 Copy CompletionCelebration component
+    - *Docs: Copy `src/components/checkin/CompletionCelebration.tsx`*
+    - *Testing: Celebration - Unit: animation trigger, Integration: completion flow*
+  - [ ] 4.6 Create check-in API endpoints
+    - *Docs: [Next.js API routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)*
+    - *Testing: Check-in API - Unit: endpoint logic, Integration: full session*
+
+- [ ] 5.0 **Phase 2: Core Features Migration - Session Settings**
+  - [ ] 5.1 Copy SessionSettingsContext
+    - *Docs: Copy `src/contexts/SessionSettingsContext.tsx`*
+    - *Testing: Settings Context - Unit: settings state, Integration: persistence*
+  - [ ] 5.2 Copy SessionSettingsPanel component
+    - *Docs: Copy `src/components/Settings/SessionSettingsPanel.tsx`*
+    - *Testing: Settings Panel - Unit: form controls, Integration: settings save*
+  - [ ] 5.3 Copy CategoryManager with database
+    - *Docs: Copy `src/components/Settings/CategoryManager.tsx`, add CRUD*
+    - *Testing: Categories - Unit: category CRUD, Integration: custom categories*
+  - [ ] 5.4 Copy PromptLibrary with persistence
+    - *Docs: Copy `src/components/Settings/PromptLibrary.tsx`*
+    - *Testing: Prompts - Unit: prompt management, Integration: prompt usage*
+
+- [ ] 6.0 **Phase 2: Core Features Migration - Session Bookends**
+  - [ ] 6.1 Copy BookendsContext with API
+    - *Docs: Copy `src/contexts/BookendsContext.tsx`*
+    - *Testing: Bookends Context - Unit: state management, Integration: data flow*
+  - [ ] 6.2 Copy PrepBanner component
+    - *Docs: Copy `src/components/bookends/PrepBanner.tsx`*
+    - *Testing: Prep Banner - Unit: banner display, Integration: pre-session flow*
+  - [ ] 6.3 Copy PreparationModal with database
+    - *Docs: Copy `src/components/bookends/PreparationModal.tsx`*
+    - *Testing: Preparation - Unit: form submission, Integration: mood tracking*
+  - [ ] 6.4 Copy ReflectionForm with persistence
+    - *Docs: Copy `src/components/bookends/ReflectionForm.tsx`*
+    - *Testing: Reflection - Unit: form validation, Integration: post-session save*
+
+- [ ] 7.0 **Phase 2: Core Features Migration - Notes Management**
+  - [ ] 7.1 Copy all notes components
+    - *Docs: Copy `src/components/notes/` to `qc-fullstack/components/notes/`*
+    - *Testing: Notes Components - Unit: each component, Integration: notes CRUD*
+  - [ ] 7.2 Copy NoteEditor with rich text
+    - *Docs: Copy `src/components/notes/NoteEditor.tsx`*
+    - *Testing: Editor - Unit: text formatting, Integration: content save*
+  - [ ] 7.3 Implement PostgreSQL full-text search
+    - *Docs: [PostgreSQL FTS](https://www.postgresql.org/docs/current/textsearch.html)*
+    - *Testing: Search - Unit: search queries, Integration: search results*
+  - [ ] 7.4 Copy PrivacySelector with permissions
+    - *Docs: Copy `src/components/notes/PrivacySelector.tsx`*
+    - *Testing: Privacy - Unit: privacy levels, Integration: access control*
+  - [ ] 7.5 Implement note versioning
+    - *Docs: [Database versioning patterns](https://www.martinfowler.com/articles/evodb.html)*
+    - *Testing: Versioning - Unit: version tracking, Integration: history view*
+
+- [ ] 8.0 **Phase 2: Core Features Migration - Love Languages**
+  - [ ] 8.1 Copy LoveLanguagesContext
+    - *Docs: Copy `src/contexts/LoveLanguagesContext.tsx`*
+    - *Testing: Love Languages Context - Unit: state logic, Integration: persistence*
+  - [ ] 8.2 Copy love languages pages
+    - *Docs: Copy `src/app/love-languages/` to `qc-fullstack/app/love-languages/`*
+    - *Testing: Love Languages Pages - Unit: page render, Integration: navigation*
+  - [ ] 8.3 Create love languages API
+    - *Docs: [RESTful API design](https://restfulapi.net/)*
+    - *Testing: Love Languages API - Unit: endpoints, Integration: data flow*
+  - [ ] 8.4 Implement partner visibility settings
+    - *Docs: [Privacy patterns](https://www.privacypatterns.org/)*
+    - *Testing: Visibility - Unit: permission checks, Integration: partner access*
+
+- [ ] 9.0 **Phase 2: Core Features Migration - Growth Gallery**
+  - [ ] 9.1 Copy all growth components
+    - *Docs: Copy `src/components/growth/` to `qc-fullstack/components/growth/`*
+    - *Testing: Growth Components - Unit: each component, Integration: timeline*
+  - [ ] 9.2 Copy Timeline with database
+    - *Docs: Copy `src/components/growth/Timeline.tsx`*
+    - *Testing: Timeline - Unit: timeline render, Integration: event ordering*
+  - [ ] 9.3 Setup image storage (S3/Cloudinary)
+    - *Docs: [Cloudinary Next.js](https://cloudinary.com/documentation/next_integration)*
+    - *Testing: Image Storage - Unit: upload logic, Integration: image display*
+  - [ ] 9.4 Copy PhotoUpload with cloud storage
+    - *Docs: Copy `src/components/growth/PhotoUpload.tsx`*
+    - *Testing: Photo Upload - Unit: file validation, Integration: upload flow*
+  - [ ] 9.5 Copy MilestoneCard with persistence
+    - *Docs: Copy `src/components/growth/MilestoneCard.tsx`*
+    - *Testing: Milestones - Unit: milestone CRUD, Integration: achievement tracking*
+
+- [ ] 10.0 **Phase 2: Core Features Migration - Partner Requests**
+  - [ ] 10.1 Copy request components
+    - *Docs: Copy `src/components/requests/` to `qc-fullstack/components/requests/`*
+    - *Testing: Request Components - Unit: each component, Integration: request flow*
+  - [ ] 10.2 Implement request API from mock structure
+    - *Docs: Use `src/lib/mock-requests.ts` as API template*
+    - *Testing: Request API - Unit: CRUD operations, Integration: request lifecycle*
+  - [ ] 10.3 Add real-time request notifications
+    - *Docs: [WebSocket patterns](https://socket.io/docs/v4/)*
+    - *Testing: Notifications - Unit: WebSocket events, Integration: live updates*
+  - [ ] 10.4 Implement request-to-reminder conversion
+    - *Docs: Business logic from mock data patterns*
+    - *Testing: Conversion - Unit: data transformation, Integration: reminder creation*
+
+- [ ] 11.0 **Phase 2: Core Features Migration - Reminders**
+  - [ ] 11.1 Copy reminder components
+    - *Docs: Copy `src/components/reminders/` to `qc-fullstack/components/reminders/`*
+    - *Testing: Reminder Components - Unit: each component, Integration: scheduler*
+  - [ ] 11.2 Copy ReminderScheduler with database
+    - *Docs: Copy `src/components/Settings/ReminderScheduler.tsx`*
+    - *Testing: Scheduler - Unit: schedule logic, Integration: recurring reminders*
+  - [ ] 11.3 Implement background job processor
+    - *Docs: [Bull queue for Next.js](https://github.com/OptimalBits/bull)*
+    - *Testing: Jobs - Unit: job processing, Integration: scheduled execution*
+  - [ ] 11.4 Setup email reminder templates
+    - *Docs: [SendGrid templates](https://sendgrid.com/solutions/email-api/)*
+    - *Testing: Email - Unit: template rendering, Integration: email delivery*
+
+- [ ] 12.0 **Phase 2: Core Features Migration - Settings**
+  - [ ] 12.1 Copy all settings components
+    - *Docs: Copy `src/components/Settings/` to `qc-fullstack/components/Settings/`*
+    - *Testing: Settings Components - Unit: each panel, Integration: settings persistence*
+  - [ ] 12.2 Copy settings page with sections
+    - *Docs: Copy `src/app/settings/page.tsx`*
+    - *Testing: Settings Page - Unit: section navigation, Integration: settings save*
+  - [ ] 12.3 Copy ThemeSelector with persistence
+    - *Docs: Copy `src/components/Settings/ThemeSelector.tsx`*
+    - *Testing: Theme - Unit: theme switching, Integration: preference storage*
+  - [ ] 12.4 Copy NotificationSettings with preferences
+    - *Docs: Copy `src/components/Settings/NotificationSettings.tsx`*
+    - *Testing: Notifications - Unit: preference toggles, Integration: notification delivery*
+
+- [ ] 13.0 **Phase 3: Communication Features**
+  - [ ] 13.1 Implement push notifications
+    - *Docs: [Web Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)*
+    - *Testing: Push - Unit: service worker, Integration: notification delivery*
+  - [ ] 13.2 Setup email notification system
+    - *Docs: [SendGrid Next.js](https://sendgrid.com/docs/for-developers/sending-email/quickstart-nodejs/)*
+    - *Testing: Email System - Unit: email service, Integration: email flow*
+  - [ ] 13.3 Create email templates from POC UI
+    - *Docs: Use POC components as visual templates*
+    - *Testing: Templates - Unit: template render, Integration: email preview*
+  - [ ] 13.4 Implement WebSocket for real-time features
+    - *Docs: [Socket.io with Next.js](https://socket.io/docs/v4/server-initialization/)*
+    - *Testing: WebSocket - Unit: connection handling, Integration: real-time sync*
+  - [ ] 13.5 Create support widget
+    - *Docs: [Intercom integration](https://developers.intercom.com/installing-intercom/docs)*
+    - *Testing: Support Widget - Unit: widget render, Integration: chat flow*
+  - [ ] 13.6 Setup knowledge base structure
+    - *Docs: [Documentation best practices](https://documentation.divio.com/)*
+    - *Testing: Knowledge Base - Unit: article structure, Integration: search*
+
+- [ ] 14.0 **Phase 4: Error Recovery & Monitoring**
+  - [ ] 14.1 Enhance ErrorBoundary from POC
+    - *Docs: Copy and enhance `src/components/ui/ErrorBoundary.tsx`*
+    - *Testing: Error Boundary - Unit: error catching, Integration: error recovery*
+  - [ ] 14.2 Implement offline queue system
+    - *Docs: [Offline-first patterns](https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook)*
+    - *Testing: Offline - Unit: queue operations, Integration: sync on reconnect*
+  - [ ] 14.3 Add conflict resolution for concurrent edits
+    - *Docs: [CRDT patterns](https://crdt.tech/)*
+    - *Testing: Conflicts - Unit: merge logic, Integration: concurrent users*
+  - [ ] 14.4 Create beta monitoring dashboard
+    - *Docs: [Admin dashboard patterns](https://www.patterns.dev/posts/dashboard-pattern)*
+    - *Testing: Dashboard - Unit: metric display, Integration: real-time data*
+  - [ ] 14.5 Setup comprehensive error logging
+    - *Docs: [Structured logging](https://www.loggly.com/ultimate-guide/structured-logging-101/)*
+    - *Testing: Logging - Unit: log formatting, Integration: log aggregation*
+  - [ ] 14.6 Implement data recovery mechanisms
+    - *Docs: [Data recovery patterns](https://www.postgresql.org/docs/current/backup.html)*
+    - *Testing: Recovery - Unit: backup restore, Integration: data integrity*
+
+- [ ] 15.0 **Phase 5: Production Infrastructure**
+  - [ ] 15.1 Setup GitHub Actions CI/CD pipeline
+    - *Docs: [GitHub Actions for Next.js](https://github.com/features/actions)*
+    - *Testing: CI/CD - Unit: workflow steps, Integration: deployment*
+  - [ ] 15.2 Configure Playwright E2E tests
+    - *Docs: [Playwright with Next.js](https://nextjs.org/docs/pages/guides/testing/playwright)*
+    - *Testing: E2E Setup - Unit: test config, Integration: test suite*
+  - [ ] 15.3 Write E2E tests for critical flows
+    - *Docs: Test check-in, onboarding, notes flows*
+    - *Testing: E2E Tests - Unit: individual tests, Integration: full user journey*
+  - [ ] 15.4 Setup load testing with k6
+    - *Docs: [k6 load testing](https://k6.io/docs/)*
+    - *Testing: Load Tests - Unit: test scripts, Integration: performance metrics*
+  - [ ] 15.5 Configure security scanning
+    - *Docs: [OWASP ZAP](https://www.zaproxy.org/docs/)*
+    - *Testing: Security - Unit: vulnerability scans, Integration: security report*
+  - [ ] 15.6 Setup Vercel deployment
+    - *Docs: [Vercel deployment](https://vercel.com/docs/deployments/overview)*
+    - *Testing: Deployment - Unit: build process, Integration: live site*
+  - [ ] 15.7 Configure database migrations
+    - *Docs: [Prisma migrations](https://www.prisma.io/docs/concepts/components/prisma-migrate)*
+    - *Testing: Migrations - Unit: migration scripts, Integration: schema updates*
+
+- [ ] 16.0 **Phase 6: Beta Program Management**
+  - [ ] 16.1 Implement beta feedback collection
+    - *Docs: [Feedback patterns](https://www.nngroup.com/articles/feedback-request-interface/)*
+    - *Testing: Feedback - Unit: feedback forms, Integration: feedback pipeline*
+  - [ ] 16.2 Setup A/B testing framework
+    - *Docs: [A/B testing patterns](https://www.optimizely.com/optimization-glossary/ab-testing/)*
+    - *Testing: A/B Tests - Unit: experiment logic, Integration: variant serving*
+  - [ ] 16.3 Optimize database queries
+    - *Docs: [PostgreSQL optimization](https://www.postgresql.org/docs/current/performance-tips.html)*
+    - *Testing: Performance - Unit: query analysis, Integration: response times*
+  - [ ] 16.4 Implement caching strategy
+    - *Docs: [Next.js caching](https://nextjs.org/docs/app/building-your-application/caching)*
+    - *Testing: Caching - Unit: cache logic, Integration: cache hit rates*
+  - [ ] 16.5 Optimize bundle size
+    - *Docs: [Webpack optimization](https://webpack.js.org/guides/optimization/)*
+    - *Testing: Bundle - Unit: chunk analysis, Integration: load performance*
+  - [ ] 16.6 Setup PWA basics
+    - *Docs: [PWA with Next.js](https://web.dev/progressive-web-apps/)*
+    - *Testing: PWA - Unit: manifest, Integration: offline capability*
+  - [ ] 16.7 Polish mobile touch interactions
+    - *Docs: Copy and enhance POC's touch components*
+    - *Testing: Mobile - Unit: gesture handling, Integration: mobile UX*
+  - [ ] 16.8 Create beta graduation criteria
+    - *Docs: [Launch readiness checklist](https://www.productplan.com/glossary/launch-readiness/)*
+    - *Testing: Graduation - Unit: metric checks, Integration: readiness report*

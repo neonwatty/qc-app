@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Filter, Bell, Calendar, Search, Check } from 'lucide-react'
+import { Plus, Filter, Bell, Calendar, Search, Check, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
@@ -219,13 +219,10 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
           {pendingRequests.length > 0 && (
             <div className="space-y-2 mb-4">
               {pendingRequests.map(request => (
-                <ReminderRequestNotification
-                  key={request.id}
-                  request={request}
-                  onAccept={handleAcceptRequest}
-                  onDecline={handleDeclineRequest}
-                  onModify={handleModifyRequest}
-                />
+                <div key={request.id}>
+                  {/* TODO: Add ReminderRequestNotification component */}
+                  {/* Placeholder for ReminderRequestNotification */}
+                </div>
               ))}
             </div>
           )}
@@ -317,11 +314,12 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
       </div>
 
       {/* Request Modal */}
-      <ReminderRequestModal
+      {/* TODO: Add ReminderRequestModal component */}
+      {/* <ReminderRequestModal
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
         onSubmit={handleNewRequest}
-      />
+      /> */}
     </div>
   )
 }

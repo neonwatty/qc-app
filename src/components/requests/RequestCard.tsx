@@ -166,7 +166,7 @@ export function RequestCard({ request, isReceived, currentUserId }: RequestCardP
           {/* Response (if any) */}
           {request.response && (
             <div className="mt-2 p-2 bg-white/60 rounded-lg border border-purple-100">
-              <p className="text-xs text-gray-600 italic">"{request.response}"</p>
+              <p className="text-xs text-gray-600 italic">&ldquo;{request.response}&rdquo;</p>
             </div>
           )}
 
