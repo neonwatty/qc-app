@@ -1,68 +1,270 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 0 0% 99%; /* Pure white background */
+    --foreground: 210 15% 25%; /* Soft dark text */
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 25%;
+    --primary: 350 85% 50%; /* Coral pink - vibrant and dark enough for contrast */
+    --primary-foreground: 0 0% 100%; /* Pure white */
+    --secondary: 15 90% 65%; /* Soft coral - darker */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 40% 98%;
+    --muted-foreground: 210 15% 60%;
+    --accent: 25 95% 75%; /* Peach */
+    --accent-foreground: 210 15% 25%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 25% 92%;
+    --input: 20 25% 96%;
+    --ring: 350 85% 60%;
+    --radius: 1.5rem;
+
+    /* Modern dating app color palette */
+    --coral-primary: 350 85% 60%;
+    --coral-light: 350 80% 75%;
+    --coral-lighter: 350 70% 85%;
+    --peach: 25 95% 75%;
+    --peach-light: 25 90% 85%;
+    --blush: 340 75% 80%;
+    --rose-gold: 20 50% 80%;
+    --warm-gray: 210 15% 95%;
+    --soft-shadow: 210 15% 85%;
   }
-  a:hover {
-    color: #747bff;
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 350 85% 60%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 350 85% 60%;
   }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  /* Ensure button text has proper contrast */
   button {
-    background-color: #f9f9f9;
+    text-shadow: none;
   }
+
+  /* High contrast mode */
+  .high-contrast {
+    filter: contrast(1.2);
+  }
+
+  .high-contrast * {
+    font-weight: 500;
+  }
+
+  /* Reduced motion mode */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* =====================================================
+   MOBILE TOUCH OPTIMIZATIONS
+   ===================================================== */
+
+/* Enhanced touch targets - minimum 44px for accessibility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Touch manipulation for better scrolling and zooming */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* Visual feedback for touch interactions */
+.touch-feedback-scale {
+  transition: transform 0.15s ease-in-out;
+}
+
+.touch-feedback-scale:active {
+  transform: scale(0.95);
+}
+
+/* Hardware acceleration for smooth animations */
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Safe area support for devices with notches */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Smooth momentum scrolling on iOS */
+.scroll-smooth {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbars on mobile while maintaining functionality */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile-optimized input styling */
+.mobile-input {
+  font-size: 16px; /* Prevents zoom on iOS */
+  line-height: 1.4;
+  touch-action: manipulation;
+}
+
+/* =====================================================
+   COLORFUL GRADIENTS AND EFFECTS
+   ===================================================== */
+
+/* Modern Dating App Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--coral-primary)), hsl(var(--coral-light)));
+}
+
+.gradient-warm {
+  background: linear-gradient(135deg, hsl(var(--coral-light)), hsl(var(--peach)), hsl(var(--peach-light)));
+}
+
+.gradient-soft-coral {
+  background: linear-gradient(135deg, hsl(var(--coral-lighter)), hsl(var(--blush)));
+}
+
+.gradient-sunset {
+  background: linear-gradient(135deg, #FF7B7B, #FFB6C1, #FFA07A);
+}
+
+.gradient-blush {
+  background: linear-gradient(135deg, #FFE4E1, #FFF0F5, #FFEEF0);
+}
+
+.gradient-peach-dream {
+  background: linear-gradient(135deg, #FFCCCB, #FFB6C1, #FFDAB9);
+}
+
+.gradient-romantic {
+  background: linear-gradient(135deg, #FFF0F5, #FFE4E6, #FFEEF0);
+}
+
+/* Animated gradient */
+.gradient-animated {
+  background: linear-gradient(270deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--accent)), hsl(var(--primary)));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Glassmorphism with color */
+.glass-colorful {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Colorful shadows */
+.shadow-primary {
+  box-shadow: 0 4px 20px -2px hsla(var(--primary), 0.3);
+}
+
+.shadow-secondary {
+  box-shadow: 0 4px 20px -2px hsla(var(--secondary), 0.3);
+}
+
+.shadow-accent {
+  box-shadow: 0 4px 20px -2px hsla(var(--accent), 0.3);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px -4px hsla(var(--primary), 0.3);
+}
+
+/* Text gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-warm {
+  background: linear-gradient(135deg, hsl(var(--coral-primary)), hsl(var(--peach)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

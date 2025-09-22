@@ -33,8 +33,8 @@ const initialState: AuthState = {
 export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {
-    const response = await api.post('/auth/login', { email, password })
-    return response.data
+    const response = await api.post<{ user: User; token: string }>('/auth/login', { email, password })
+    return response.data as { user: User; token: string }
   }
 )
 
@@ -44,8 +44,8 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 })
 
 export const fetchCurrentUser = createAsyncThunk('auth/fetchCurrentUser', async () => {
-  const response = await api.get('/auth/me')
-  return response.data
+  const response = await api.get<User>('/auth/me')
+  return response.data as User
 })
 
 const authSlice = createSlice({

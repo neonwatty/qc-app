@@ -39,21 +39,21 @@ export const fetchNotifications = createAsyncThunk(
     params.append('limit', limit.toString())
     if (unreadOnly) params.append('unread_only', 'true')
 
-    const response = await api.get(`/notifications?${params.toString()}`)
-    return response.data
+    const response = await api.get<{ notifications: Notification[]; unread_count: number }>(`/notifications?${params.toString()}`)
+    return response.data as { notifications: Notification[]; unread_count: number }
   }
 )
 
 export const markAsRead = createAsyncThunk(
   'notification/markAsRead',
   async (notificationId: number) => {
-    const response = await api.patch(`/notifications/${notificationId}/read`)
-    return response.data
+    const response = await api.patch<Notification>(`/notifications/${notificationId}/read`)
+    return response.data as Notification
   }
 )
 
 export const markAllAsRead = createAsyncThunk('notification/markAllAsRead', async () => {
-  const response = await api.patch('/notifications/mark_all_read')
+  const response = await api.patch<{ success: boolean }>('/notifications/mark_all_read')
   return response.data
 })
 

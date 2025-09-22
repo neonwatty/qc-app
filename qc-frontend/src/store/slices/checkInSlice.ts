@@ -44,28 +44,28 @@ const initialState: CheckInState = {
 
 // Async thunks
 export const startCheckIn = createAsyncThunk('checkIn/start', async (coupleId: number) => {
-  const response = await api.post('/check_ins', { couple_id: coupleId })
-  return response.data
+  const response = await api.post<CheckInSession>('/check_ins', { couple_id: coupleId })
+  return response.data as CheckInSession
 })
 
 export const updateCheckIn = createAsyncThunk(
   'checkIn/update',
   async ({ sessionId, data }: { sessionId: number; data: Partial<CheckInSession> }) => {
-    const response = await api.patch(`/check_ins/${sessionId}`, data)
-    return response.data
+    const response = await api.patch<CheckInSession>(`/check_ins/${sessionId}`, data)
+    return response.data as CheckInSession
   }
 )
 
 export const completeCheckIn = createAsyncThunk('checkIn/complete', async (sessionId: number) => {
-  const response = await api.post(`/check_ins/${sessionId}/complete`)
-  return response.data
+  const response = await api.post<CheckInSession>(`/check_ins/${sessionId}/complete`)
+  return response.data as CheckInSession
 })
 
 export const fetchRecentCheckIns = createAsyncThunk(
   'checkIn/fetchRecent',
   async (coupleId: number) => {
-    const response = await api.get(`/couples/${coupleId}/check_ins?limit=10`)
-    return response.data
+    const response = await api.get<CheckInSession[]>(`/couples/${coupleId}/check_ins?limit=10`)
+    return response.data as CheckInSession[]
   }
 )
 

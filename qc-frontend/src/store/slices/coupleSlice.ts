@@ -41,15 +41,15 @@ const initialState: CoupleState = {
 
 // Async thunks
 export const fetchCouple = createAsyncThunk('couple/fetchCouple', async (coupleId: number) => {
-  const response = await api.get(`/couples/${coupleId}`)
-  return response.data
+  const response = await api.get<Couple>(`/couples/${coupleId}`)
+  return response.data as Couple
 })
 
 export const updateCoupleSettings = createAsyncThunk(
   'couple/updateSettings',
   async ({ coupleId, settings }: { coupleId: number; settings: Record<string, unknown> }) => {
-    const response = await api.patch(`/couples/${coupleId}/settings`, { settings })
-    return response.data
+    const response = await api.patch<{ settings: Record<string, unknown> }>(`/couples/${coupleId}/settings`, { settings })
+    return response.data as { settings: Record<string, unknown> }
   }
 )
 
