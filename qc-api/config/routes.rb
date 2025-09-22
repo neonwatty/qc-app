@@ -29,6 +29,22 @@ Rails.application.routes.draw do
           delete 'remove_partner/:partner_id', to: 'couples#remove_partner'
         end
 
+        # Dashboard endpoints
+        resource :dashboard, only: [:show] do
+          collection do
+            get :index, action: :index
+            get :overview
+            get :streaks
+            get :activity_feed
+            get :health_score
+            get :insights
+            get :achievements
+            get :weekly_report
+            get :monthly_report
+            get :statistics
+          end
+        end
+
         resources :check_ins do
           member do
             post :complete

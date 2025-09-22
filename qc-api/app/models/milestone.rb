@@ -94,8 +94,7 @@ class Milestone < ApplicationRecord
       milestone_progress_updates.create!(
         previous_progress: progress,
         new_progress: new_progress,
-        update_notes: update_notes,
-        updated_at: Time.current
+        update_notes: update_notes
       )
 
       update!(progress: new_progress)
@@ -224,7 +223,8 @@ class Milestone < ApplicationRecord
     return unless achieved?
 
     bonus = calculate_bonus_points
-    couple.increment!(:total_points, points + bonus) if bonus > 0
+    # TODO: Add total_points to Couple model if needed
+    # couple.increment!(:total_points, points + bonus) if bonus > 0
   end
 
   def calculate_bonus_points

@@ -56,8 +56,64 @@ class Couple < ApplicationRecord
   end
 
   def calculate_streak!
-    # Logic to calculate current streak based on check-in frequency
-    # This would need to be implemented based on business rules
+    return 0 unless last_check_in_at
+
+    streak = 0
+    current_date = Date.today
+    check_ins_ordered = check_ins.completed.order(completed_at: :desc)
+
+    case check_in_frequency
+    when 'daily'
+      consecutive_days = 0
+      check_ins_ordered.each do |check_in|
+        check_date = check_in.completed_at.to_date
+        if check_date == current_date - consecutive_days
+          consecutive_days += 1
+        else
+          break
+        end
+      end
+      streak = consecutive_days
+    when 'weekly'
+      consecutive_weeks = 0
+      check_ins_ordered.each do |check_in|
+        check_week = check_in.completed_at.to_date.cweek
+        expected_week = (Date.today.cweek - consecutive_weeks) % 52
+        if check_week == expected_week
+          consecutive_weeks += 1
+        else
+          break
+        end
+      end
+      streak = consecutive_weeks
+    when 'biweekly'
+      consecutive_periods = 0
+      check_ins_ordered.each do |check_in|
+        days_ago = (current_date - check_in.completed_at.to_date).to_i
+        expected_period = consecutive_periods * 14
+        if days_ago >= expected_period && days_ago < expected_period + 14
+          consecutive_periods += 1
+        else
+          break
+        end
+      end
+      streak = consecutive_periods
+    when 'monthly'
+      consecutive_months = 0
+      check_ins_ordered.each do |check_in|
+        check_month = check_in.completed_at.to_date.month
+        expected_month = (current_date.month - consecutive_months - 1) % 12 + 1
+        if check_month == expected_month
+          consecutive_months += 1
+        else
+          break
+        end
+      end
+      streak = consecutive_months
+    end
+
+    update_column(:current_streak, streak) if current_streak != streak
+    streak
   end
 
   def maximum_two_users
