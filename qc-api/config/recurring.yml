@@ -1,15 +1,101 @@
-# examples:
-#   periodic_cleanup:
-#     class: CleanSoftDeletedRecordsJob
-#     queue: background
-#     args: [ 1000, { batch_size: 500 } ]
-#     schedule: every hour
-#   periodic_cleanup_with_command:
-#     command: "SoftDeletedRecord.due.delete_all"
-#     priority: 2
-#     schedule: at 5am every day
+# Configuration for recurring jobs
+# Uses Rails 7.1+ solid_queue or sidekiq-cron for scheduling
+
+# Common settings for all environments
+default: &default
+  # Reminder processing
+  process_scheduled_reminders:
+    class: ReminderProcessorJob
+    queue: reminders
+    args: ['scheduled', { time_window: 15 }]
+    schedule: every 5 minutes
+    description: Process scheduled reminders
+
+  process_urgent_reminders:
+    class: ReminderProcessorJob
+    queue: urgent
+    args: ['urgent']
+    schedule: every minute
+    description: Process urgent reminders
+
+  process_recurring_reminders:
+    class: ReminderProcessorJob
+    queue: reminders
+    args: ['recurring']
+    schedule: every 15 minutes
+    description: Process recurring reminders
+
+  # Check-in reminders
+  morning_reminder:
+    class: CheckInReminderJob
+    queue: reminders
+    schedule: at 9am every day
+    description: Morning check-in reminder
+
+  evening_reminder:
+    class: CheckInReminderJob
+    queue: reminders
+    schedule: at 8pm every day
+    description: Evening check-in reminder
+
+  # Data processing
+  calculate_milestones:
+    class: MilestoneCalculationJob
+    queue: data_processing
+    schedule: every hour
+    description: Calculate relationship milestones
+
+  weekly_summary:
+    class: WeeklySummaryJob
+    queue: reports
+    schedule: at 8am every monday
+    description: Generate weekly summaries
+
+  # Maintenance
+  cleanup_notifications:
+    class: DataCleanupJob
+    queue: maintenance
+    args: ['notifications']
+    schedule: at 3am every day
+    description: Clean up old notifications
+
+  cleanup_sessions:
+    class: DataCleanupJob
+    queue: maintenance
+    args: ['sessions']
+    schedule: at 2am every day
+    description: Clean up abandoned sessions
+
+development:
+  <<: *default
+  # Reduce frequency for development
+  process_scheduled_reminders:
+    class: ReminderProcessorJob
+    queue: reminders
+    args: ['all']
+    schedule: every 30 minutes
+    description: Process all reminders (dev)
+
+test:
+  # No recurring jobs in test environment
 
 production:
-  clear_solid_queue_finished_jobs:
+  <<: *default
+
+  # Additional production-only jobs
+  health_check:
+    class: HealthCheckJob
+    queue: urgent
+    schedule: every 5 minutes
+    description: System health monitoring
+
+  backup_data:
+    class: BackupJob
+    queue: maintenance
+    schedule: at 4am every day
+    description: Daily data backup
+
+  clear_job_queue:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
+    description: Clear finished jobs from queue
