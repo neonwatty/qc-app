@@ -32,15 +32,17 @@ export const disconnectWebSocket = (): void => {
 }
 
 // Subscribe to a channel
+interface ChannelCallbacks {
+  connected?: () => void
+  disconnected?: () => void
+  received?: (data: unknown) => void
+  rejected?: () => void
+}
+
 export const subscribeToChannel = (
   channelName: string,
-  params: Record<string, any> = {},
-  callbacks: {
-    connected?: () => void
-    disconnected?: () => void
-    received?: (data: any) => void
-    rejected?: () => void
-  } = {}
+  params: Record<string, unknown> = {},
+  callbacks: ChannelCallbacks = {}
 ): Subscription | null => {
   if (!consumer) {
     console.error('WebSocket consumer not initialized')
@@ -52,8 +54,8 @@ export const subscribeToChannel = (
     {
       connected: callbacks.connected || (() => {}),
       disconnected: callbacks.disconnected || (() => {}),
-      received: callbacks.received || ((data: any) => console.log('Received:', data)),
-      rejected: callbacks.rejected || (() => console.error('Subscription rejected'))
+      received: callbacks.received || ((data: unknown) => console.log('Received:', data)),
+      rejected: callbacks.rejected || (() => console.error('Subscription rejected')),
     }
   )
 }
@@ -68,16 +70,16 @@ export const unsubscribeFromChannel = (subscription: Subscription): void => {
 // Channel-specific subscriptions
 export const channels = {
   // Presence Channel
-  presence: (coupleId: number, callbacks: any) =>
+  presence: (coupleId: number, callbacks: ChannelCallbacks) =>
     subscribeToChannel('PresenceChannel', { couple_id: coupleId }, callbacks),
 
   // Notification Channel
-  notifications: (userId: number, callbacks: any) =>
+  notifications: (userId: number, callbacks: ChannelCallbacks) =>
     subscribeToChannel('NotificationChannel', { user_id: userId }, callbacks),
 
   // CheckIn Channel
-  checkIn: (sessionId: number, callbacks: any) =>
-    subscribeToChannel('CheckInChannel', { session_id: sessionId }, callbacks)
+  checkIn: (sessionId: number, callbacks: ChannelCallbacks) =>
+    subscribeToChannel('CheckInChannel', { session_id: sessionId }, callbacks),
 }
 
 // Export consumer for direct access if needed

@@ -6,8 +6,26 @@
   "printWidth": 100,
   "endOfLine": "lf",
   "arrowParens": "avoid",
-  "trailingComma": "none",
+  "trailingComma": "es5",
   "bracketSpacing": true,
   "jsxSingleQuote": false,
-  "jsxBracketSameLine": false
+  "bracketSameLine": false,
+  "proseWrap": "always",
+  "htmlWhitespaceSensitivity": "css",
+  "embeddedLanguageFormatting": "auto",
+  "plugins": [],
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 80
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "proseWrap": "preserve"
+      }
+    }
+  ]
 }

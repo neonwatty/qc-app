@@ -39,7 +39,7 @@ const initialState: CheckInState = {
   recentSessions: [],
   isLoading: false,
   error: null,
-  isSaving: false
+  isSaving: false,
 }
 
 // Async thunks
@@ -78,23 +78,39 @@ const checkInSlice = createSlice({
         state.currentSession = { ...state.currentSession, ...action.payload }
       }
     },
-    addNote: (state, action: PayloadAction<any>) => {
+    addNote: (
+      state,
+      action: PayloadAction<{
+        id: number
+        content: string
+        privacy_level: 'private' | 'shared'
+        category?: string
+      }>
+    ) => {
       if (state.currentSession) {
         state.currentSession.notes = [...(state.currentSession.notes || []), action.payload]
       }
     },
-    addActionItem: (state, action: PayloadAction<any>) => {
+    addActionItem: (
+      state,
+      action: PayloadAction<{
+        id: number
+        title: string
+        assigned_to?: number
+        due_date?: string
+      }>
+    ) => {
       if (state.currentSession) {
         state.currentSession.action_items = [
           ...(state.currentSession.action_items || []),
-          action.payload
+          action.payload,
         ]
       }
     },
     clearSession: state => {
       state.currentSession = null
       state.error = null
-    }
+    },
   },
   extraReducers: builder => {
     // Start check-in
@@ -137,7 +153,7 @@ const checkInSlice = createSlice({
     builder.addCase(fetchRecentCheckIns.fulfilled, (state, action) => {
       state.recentSessions = action.payload
     })
-  }
+  },
 })
 
 export const { updateSession, addNote, addActionItem, clearSession } = checkInSlice.actions

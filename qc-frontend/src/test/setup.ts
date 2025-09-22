@@ -18,8 +18,8 @@ Object.defineProperty(window, 'matchMedia', {
     removeListener: vi.fn(),
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn()
-  }))
+    dispatchEvent: vi.fn(),
+  })),
 })
 
 // Mock IntersectionObserver
@@ -32,7 +32,7 @@ class IntersectionObserverMock {
 Object.defineProperty(window, 'IntersectionObserver', {
   writable: true,
   configurable: true,
-  value: IntersectionObserverMock
+  value: IntersectionObserverMock,
 })
 
 // Mock ResizeObserver
@@ -45,5 +45,5 @@ class ResizeObserverMock {
 Object.defineProperty(window, 'ResizeObserver', {
   writable: true,
   configurable: true,
-  value: ResizeObserverMock
+  value: ResizeObserverMock,
 })

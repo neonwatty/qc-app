@@ -11,9 +11,9 @@ const apiClient: AxiosInstance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json'
+    Accept: 'application/json',
   },
-  withCredentials: true // Enable cookies for session management
+  withCredentials: true, // Enable cookies for session management
 })
 
 // Request interceptor
@@ -60,30 +60,33 @@ apiClient.interceptors.response.use(
 // API Methods
 export const api = {
   // GET request
-  get: <T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> =>
+  get: <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> =>
     apiClient.get<T>(url, config),
 
   // POST request
-  post: <T = any>(
+  post: <T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> => apiClient.post<T>(url, data, config),
 
   // PUT request
-  put: <T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> =>
-    apiClient.put<T>(url, data, config),
+  put: <T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> => apiClient.put<T>(url, data, config),
 
   // PATCH request
-  patch: <T = any>(
+  patch: <T = unknown>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> => apiClient.patch<T>(url, data, config),
 
   // DELETE request
-  delete: <T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> =>
-    apiClient.delete<T>(url, config)
+  delete: <T = unknown>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> =>
+    apiClient.delete<T>(url, config),
 }
 
 // Export default client for custom configurations

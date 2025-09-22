@@ -33,16 +33,54 @@
     "react/prop-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": [
-      "warn",
+      "error",
       {
         "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
+        "varsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
       }
     ],
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "react-hooks/exhaustive-deps": "warn"
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ],
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "error",
+    "@typescript-eslint/prefer-optional-chain": "error",
+    "no-console": ["error", { "allow": ["warn", "error", "info"] }],
+    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/self-closing-comp": "error",
+    "react/jsx-boolean-value": ["error", "never"],
+    "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "no-implicit-coercion": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "object-shorthand": ["error", "always"],
+    "prefer-template": "error",
+    "prefer-destructuring": [
+      "error",
+      {
+        "VariableDeclarator": {
+          "array": false,
+          "object": true
+        },
+        "AssignmentExpression": {
+          "array": false,
+          "object": false
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ]
   },
-  "ignorePatterns": ["dist", "build", "node_modules", "coverage", "*.config.js", "*.config.ts"]
+  "ignorePatterns": ["dist", "build", "node_modules", "coverage", "*.config.js", "*.config.ts", "*.test.ts", "*.test.tsx", "vite.config.ts", "vitest.config.ts"]
 }

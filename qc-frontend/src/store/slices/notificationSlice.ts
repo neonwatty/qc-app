@@ -28,7 +28,7 @@ const initialState: NotificationState = {
   notifications: [],
   unreadCount: 0,
   isLoading: false,
-  error: null
+  error: null,
 }
 
 // Async thunks
@@ -91,7 +91,7 @@ const notificationSlice = createSlice({
     clearNotifications: state => {
       state.notifications = []
       state.unreadCount = 0
-    }
+    },
   },
   extraReducers: builder => {
     // Fetch notifications
@@ -139,7 +139,7 @@ const notificationSlice = createSlice({
         state.notifications.splice(index, 1)
       }
     })
-  }
+  },
 })
 
 export const { addNotification, updateNotification, clearNotifications } = notificationSlice.actions

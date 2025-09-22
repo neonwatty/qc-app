@@ -17,7 +17,7 @@ interface Couple {
   partner2: Partner
   created_at: string
   updated_at: string
-  settings?: Record<string, any>
+  settings?: Record<string, unknown>
   statistics?: {
     total_check_ins: number
     current_streak: number
@@ -36,7 +36,7 @@ interface CoupleState {
 const initialState: CoupleState = {
   couple: null,
   isLoading: false,
-  error: null
+  error: null,
 }
 
 // Async thunks
@@ -47,7 +47,7 @@ export const fetchCouple = createAsyncThunk('couple/fetchCouple', async (coupleI
 
 export const updateCoupleSettings = createAsyncThunk(
   'couple/updateSettings',
-  async ({ coupleId, settings }: { coupleId: number; settings: Record<string, any> }) => {
+  async ({ coupleId, settings }: { coupleId: number; settings: Record<string, unknown> }) => {
     const response = await api.patch(`/couples/${coupleId}/settings`, { settings })
     return response.data
   }
@@ -64,26 +64,31 @@ const coupleSlice = createSlice({
       if (state.couple) {
         const { partnerId, status } = action.payload
         if (state.couple.partner1.id === partnerId) {
-          state.couple.partner1.presence_status = status as any
+          state.couple.partner1.presence_status = status as 'online' | 'offline' | 'idle' | 'away'
         } else if (state.couple.partner2.id === partnerId) {
-          state.couple.partner2.presence_status = status as any
+          state.couple.partner2.presence_status = status as 'online' | 'offline' | 'idle' | 'away'
         }
       }
     },
-    updateStatistics: (state, action: PayloadAction<Partial<{
-      total_check_ins: number
-      current_streak: number
-      longest_streak: number
-      total_notes: number
-      completed_action_items: number
-    }>>) => {
+    updateStatistics: (
+      state,
+      action: PayloadAction<
+        Partial<{
+          total_check_ins: number
+          current_streak: number
+          longest_streak: number
+          total_notes: number
+          completed_action_items: number
+        }>
+      >
+    ) => {
       if (state.couple && state.couple.statistics) {
         state.couple.statistics = {
           ...state.couple.statistics,
-          ...action.payload
-        } as any
+          ...action.payload,
+        }
       }
-    }
+    },
   },
   extraReducers: builder => {
     // Fetch couple
@@ -107,7 +112,7 @@ const coupleSlice = createSlice({
         state.couple.settings = action.payload.settings
       }
     })
-  }
+  },
 })
 
 export const { updatePartnerPresence, updateStatistics } = coupleSlice.actions

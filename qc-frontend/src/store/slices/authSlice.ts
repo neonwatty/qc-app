@@ -26,7 +26,7 @@ const initialState: AuthState = {
   token: localStorage.getItem('auth_token'),
   isAuthenticated: false,
   isLoading: false,
-  error: null
+  error: null,
 }
 
 // Async thunks
@@ -62,7 +62,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false
       state.error = null
       localStorage.removeItem('auth_token')
-    }
+    },
   },
   extraReducers: builder => {
     // Login
@@ -104,7 +104,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.isAuthenticated = false
       })
-  }
+  },
 })
 
 export const { setToken, clearAuth } = authSlice.actions
