@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_135048) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_135702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -168,7 +168,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135048) do
     t.uuid "created_by", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "effectiveness_rating"
+    t.jsonb "completion_notes", default: []
+    t.datetime "archived_at"
+    t.index ["archived_at"], name: "index_love_actions_on_archived_at"
     t.index ["created_by"], name: "index_love_actions_on_created_by"
+    t.index ["effectiveness_rating"], name: "index_love_actions_on_effectiveness_rating"
     t.index ["for_user_id"], name: "index_love_actions_on_for_user_id"
     t.index ["linked_language_id"], name: "index_love_actions_on_linked_language_id"
     t.index ["planned_for"], name: "index_love_actions_on_planned_for"
@@ -182,7 +187,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135048) do
     t.uuid "converted_to_language_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "source"
+    t.string "confidence_level"
+    t.uuid "discovered_by_id"
+    t.boolean "reviewed", default: false
+    t.datetime "reviewed_at"
+    t.boolean "rejected", default: false
+    t.datetime "rejected_at"
+    t.datetime "converted_at"
+    t.string "suggested_category"
+    t.string "suggested_importance"
+    t.string "suggested_title"
     t.index ["check_in_id"], name: "index_love_language_discoveries_on_check_in_id"
+    t.index ["discovered_by_id"], name: "index_love_language_discoveries_on_discovered_by_id"
+    t.index ["reviewed"], name: "index_love_language_discoveries_on_reviewed"
+    t.index ["source"], name: "index_love_language_discoveries_on_source"
     t.index ["user_id"], name: "index_love_language_discoveries_on_user_id"
   end
 
@@ -198,9 +217,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135048) do
     t.datetime "last_discussed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "couple_id"
+    t.integer "importance_rank"
+    t.boolean "is_active", default: true
+    t.integer "discussion_count", default: 0
+    t.datetime "importance_updated_at"
     t.index ["category"], name: "index_love_languages_on_category"
+    t.index ["couple_id"], name: "index_love_languages_on_couple_id"
+    t.index ["importance_rank"], name: "index_love_languages_on_importance_rank"
     t.index ["tags"], name: "index_love_languages_on_tags", using: :gin
     t.index ["user_id", "category"], name: "index_love_languages_on_user_id_and_category"
+    t.index ["user_id", "title"], name: "index_love_languages_on_user_id_and_title", unique: true
     t.index ["user_id"], name: "index_love_languages_on_user_id"
   end
 
@@ -431,6 +458,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135048) do
   add_foreign_key "love_language_discoveries", "check_ins"
   add_foreign_key "love_language_discoveries", "love_languages", column: "converted_to_language_id"
   add_foreign_key "love_language_discoveries", "users"
+  add_foreign_key "love_language_discoveries", "users", column: "discovered_by_id"
+  add_foreign_key "love_languages", "couples"
   add_foreign_key "love_languages", "users"
   add_foreign_key "milestones", "couples"
   add_foreign_key "notes", "categories"
