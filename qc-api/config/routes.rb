@@ -136,6 +136,52 @@ Rails.application.routes.draw do
           get :partner
         end
       end
+
+      # Love Languages and Actions routes
+      resources :love_languages do
+        member do
+          post :toggle_active
+          post :mark_discussed
+          put :update_importance
+          post :add_example
+          delete :remove_example
+        end
+        collection do
+          get :partner_languages
+          get :statistics
+          post :create_defaults
+          get :discoveries
+        end
+      end
+
+      namespace :love_languages do
+        resources :discoveries, only: [] do
+          member do
+            post :convert, to: '/api/v1/love_languages#convert_discovery'
+            post :reject, to: '/api/v1/love_languages#reject_discovery'
+          end
+        end
+      end
+
+      resources :love_actions do
+        member do
+          post :complete
+          post :plan
+          post :archive
+          post :unarchive
+          post :mark_recurring
+        end
+        collection do
+          get :upcoming
+          get :overdue
+          get :due_today
+          get :partner_suggestions
+          get :highly_effective
+          post :batch_complete
+          get :statistics
+          post :generate_suggestions
+        end
+      end
     end
   end
 
