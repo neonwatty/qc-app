@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_133353) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_135048) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -25,10 +25,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_133353) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "priority"
+    t.string "category"
+    t.uuid "created_by_id"
+    t.uuid "completed_by_id"
+    t.datetime "reassigned_at"
+    t.boolean "completed_on_time"
+    t.jsonb "notes", default: []
     t.index ["assigned_to_id"], name: "index_action_items_on_assigned_to_id"
+    t.index ["category"], name: "index_action_items_on_category"
     t.index ["check_in_id"], name: "index_action_items_on_check_in_id"
     t.index ["completed"], name: "index_action_items_on_completed"
+    t.index ["due_date", "completed"], name: "index_action_items_on_due_date_and_completed"
     t.index ["due_date"], name: "index_action_items_on_due_date"
+    t.index ["priority"], name: "index_action_items_on_priority"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -88,8 +98,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_133353) do
     t.integer "extensions", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "current_step"
+    t.jsonb "step_durations", default: {}
+    t.datetime "abandoned_at"
     t.index ["couple_id", "started_at"], name: "index_check_ins_on_couple_id_and_started_at"
     t.index ["couple_id"], name: "index_check_ins_on_couple_id"
+    t.index ["current_step"], name: "index_check_ins_on_current_step"
     t.index ["status"], name: "index_check_ins_on_status"
   end
 
@@ -220,6 +234,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_133353) do
     t.text "tags", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "published_at"
+    t.datetime "first_shared_at"
     t.index ["author_id", "privacy"], name: "index_notes_on_author_id_and_privacy"
     t.index ["author_id"], name: "index_notes_on_author_id"
     t.index ["category_id"], name: "index_notes_on_category_id"
@@ -398,6 +414,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_133353) do
 
   add_foreign_key "action_items", "check_ins"
   add_foreign_key "action_items", "users", column: "assigned_to_id"
+  add_foreign_key "action_items", "users", column: "completed_by_id"
+  add_foreign_key "action_items", "users", column: "created_by_id"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "categories", "couples"
