@@ -41,9 +41,23 @@ Rails.application.routes.draw do
         resources :categories do
           member do
             post :toggle
+            post :prompts, to: 'categories#add_prompt'
+            delete 'prompts/:prompt_id', to: 'categories#remove_prompt'
+            put :reorder
           end
           collection do
             get :active
+          end
+        end
+
+        resources :prompt_templates do
+          member do
+            post :use
+            post :duplicate
+          end
+          collection do
+            get :popular
+            get :recent
           end
         end
 
@@ -76,6 +90,19 @@ Rails.application.routes.draw do
       resources :notes, only: [] do
         collection do
           get :search
+        end
+      end
+
+      # System-wide resources (no couple context required)
+      resources :categories, only: [] do
+        collection do
+          get :system, to: 'categories#system'
+        end
+      end
+
+      resources :prompt_templates, only: [] do
+        collection do
+          get :system, to: 'prompt_templates#system'
         end
       end
 
