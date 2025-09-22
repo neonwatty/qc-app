@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_141935) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -32,10 +32,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "reassigned_at"
     t.boolean "completed_on_time"
     t.jsonb "notes", default: []
+    t.index ["assigned_to_id", "completed", "due_date"], name: "index_action_items_assigned_status_due"
     t.index ["assigned_to_id"], name: "index_action_items_on_assigned_to_id"
     t.index ["category"], name: "index_action_items_on_category"
+    t.index ["check_in_id", "completed"], name: "index_action_items_checkin_completed"
     t.index ["check_in_id"], name: "index_action_items_on_check_in_id"
     t.index ["completed"], name: "index_action_items_on_completed"
+    t.index ["created_at"], name: "index_action_items_on_created_at"
     t.index ["due_date", "completed"], name: "index_action_items_on_due_date_and_completed"
     t.index ["due_date"], name: "index_action_items_on_due_date"
     t.index ["priority"], name: "index_action_items_on_priority"
@@ -81,6 +84,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "updated_at", null: false
     t.index ["couple_id", "order"], name: "index_categories_on_couple_id_and_order"
     t.index ["couple_id"], name: "index_categories_on_couple_id"
+    t.index ["created_at"], name: "index_categories_on_created_at"
   end
 
   create_table "check_ins", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -101,8 +105,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.string "current_step"
     t.jsonb "step_durations", default: {}
     t.datetime "abandoned_at"
+    t.index ["completed_at"], name: "index_check_ins_on_completed_at"
+    t.index ["couple_id", "completed_at"], name: "index_check_ins_couple_completed"
     t.index ["couple_id", "started_at"], name: "index_check_ins_on_couple_id_and_started_at"
+    t.index ["couple_id", "status", "created_at"], name: "index_check_ins_couple_status_created"
     t.index ["couple_id"], name: "index_check_ins_on_couple_id"
+    t.index ["created_at"], name: "index_check_ins_on_created_at"
     t.index ["current_step"], name: "index_check_ins_on_current_step"
     t.index ["status"], name: "index_check_ins_on_status"
   end
@@ -125,7 +133,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "last_check_in_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_couples_on_created_at"
+    t.index ["current_streak"], name: "index_couples_on_current_streak"
     t.index ["last_check_in_at"], name: "index_couples_on_last_check_in_at"
+    t.index ["total_check_ins"], name: "index_couples_on_total_check_ins"
+    t.index ["updated_at"], name: "index_couples_on_updated_at"
+    t.check_constraint "current_streak >= 0", name: "check_current_streak_non_negative"
+    t.check_constraint "total_check_ins >= 0", name: "check_total_check_ins_non_negative"
   end
 
   create_table "custom_prompts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -140,6 +154,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.index ["couple_id", "category_id"], name: "index_custom_prompts_on_couple_id_and_category_id"
     t.index ["couple_id", "order"], name: "index_custom_prompts_on_couple_id_and_order"
     t.index ["couple_id"], name: "index_custom_prompts_on_couple_id"
+    t.index ["created_at"], name: "index_custom_prompts_on_created_at"
   end
 
   create_table "jwt_denylists", force: :cascade do |t|
@@ -172,6 +187,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.jsonb "completion_notes", default: []
     t.datetime "archived_at"
     t.index ["archived_at"], name: "index_love_actions_on_archived_at"
+    t.index ["created_at"], name: "index_love_actions_on_created_at"
+    t.index ["created_by", "created_at"], name: "index_love_actions_by_created"
     t.index ["created_by"], name: "index_love_actions_on_created_by"
     t.index ["effectiveness_rating"], name: "index_love_actions_on_effectiveness_rating"
     t.index ["for_user_id"], name: "index_love_actions_on_for_user_id"
@@ -276,10 +293,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.index ["achieved_at"], name: "index_milestones_on_achieved_at"
     t.index ["achieved_by"], name: "index_milestones_on_achieved_by"
     t.index ["category"], name: "index_milestones_on_category"
+    t.index ["couple_id", "achieved", "rarity"], name: "index_milestones_couple_achieved_rarity"
     t.index ["couple_id", "achieved"], name: "index_milestones_on_couple_id_and_achieved"
+    t.index ["couple_id", "category", "achieved"], name: "index_milestones_couple_category_achieved"
     t.index ["couple_id", "category"], name: "index_milestones_on_couple_id_and_category"
+    t.index ["couple_id", "title"], name: "unique_index_milestones_couple_title", unique: true
     t.index ["couple_id"], name: "index_milestones_on_couple_id"
+    t.index ["created_at"], name: "index_milestones_on_created_at"
     t.index ["criteria"], name: "index_milestones_on_criteria", using: :gin
+    t.index ["progress"], name: "index_milestones_on_progress"
+    t.check_constraint "points >= 0", name: "check_points_non_negative"
+    t.check_constraint "progress >= 0 AND progress <= 100", name: "check_progress_range"
   end
 
   create_table "notes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -293,11 +317,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "updated_at", null: false
     t.datetime "published_at"
     t.datetime "first_shared_at"
+    t.index ["author_id", "created_at"], name: "index_notes_author_created"
     t.index ["author_id", "privacy"], name: "index_notes_on_author_id_and_privacy"
     t.index ["author_id"], name: "index_notes_on_author_id"
     t.index ["category_id"], name: "index_notes_on_category_id"
+    t.index ["check_in_id", "privacy"], name: "index_notes_checkin_privacy"
     t.index ["check_in_id"], name: "index_notes_on_check_in_id"
+    t.index ["created_at"], name: "index_notes_on_created_at"
+    t.index ["first_shared_at"], name: "index_notes_on_first_shared_at"
     t.index ["privacy"], name: "index_notes_on_privacy"
+    t.index ["published_at"], name: "index_notes_on_published_at"
     t.index ["tags"], name: "index_notes_on_tags", using: :gin
   end
 
@@ -326,6 +355,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_prompt_templates_on_category_id"
     t.index ["couple_id"], name: "index_prompt_templates_on_couple_id"
+    t.index ["created_at"], name: "index_prompt_templates_on_created_at"
     t.index ["is_system"], name: "index_prompt_templates_on_is_system"
     t.index ["tags"], name: "index_prompt_templates_on_tags", using: :gin
   end
@@ -378,11 +408,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.integer "defer_count", default: 0
     t.boolean "discussed", default: false
     t.datetime "discussed_at"
+    t.index ["couple_id", "status", "created_at"], name: "index_requests_couple_status_created"
     t.index ["couple_id"], name: "index_relationship_requests_on_couple_id"
+    t.index ["created_at"], name: "index_relationship_requests_on_created_at"
+    t.index ["expires_at"], name: "index_relationship_requests_on_expires_at"
     t.index ["priority", "status"], name: "index_relationship_requests_on_priority_and_status"
     t.index ["requested_by"], name: "index_relationship_requests_on_requested_by"
+    t.index ["requested_for", "status", "priority"], name: "index_requests_for_status_priority"
     t.index ["requested_for", "status"], name: "index_relationship_requests_on_requested_for_and_status"
     t.index ["requested_for"], name: "index_relationship_requests_on_requested_for"
+    t.index ["responded_at"], name: "index_relationship_requests_on_responded_at"
     t.index ["status", "expires_at"], name: "index_relationship_requests_on_status_and_expires_at"
     t.index ["status"], name: "index_relationship_requests_on_status"
     t.index ["tags"], name: "index_relationship_requests_on_tags", using: :gin
@@ -420,11 +455,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "skipped_at"
     t.boolean "is_template", default: false
     t.index ["assigned_to", "is_active"], name: "index_reminders_on_assigned_to_and_is_active"
+    t.index ["assigned_to", "is_snoozed", "snooze_until"], name: "index_reminders_assigned_snoozed"
     t.index ["assigned_to"], name: "index_reminders_on_assigned_to"
     t.index ["category"], name: "index_reminders_on_category"
+    t.index ["completed_at"], name: "index_reminders_on_completed_at"
+    t.index ["couple_id", "is_active", "scheduled_for"], name: "index_reminders_couple_active_scheduled"
     t.index ["couple_id"], name: "index_reminders_on_couple_id"
+    t.index ["created_at"], name: "index_reminders_on_created_at"
     t.index ["created_by", "is_active"], name: "index_reminders_on_created_by_and_is_active"
     t.index ["created_by"], name: "index_reminders_on_created_by"
+    t.index ["frequency"], name: "index_reminders_on_frequency"
     t.index ["is_active", "scheduled_for"], name: "index_reminders_on_is_active_and_scheduled_for"
     t.index ["parent_reminder_id"], name: "index_reminders_on_parent_reminder_id"
     t.index ["scheduled_for"], name: "index_reminders_on_scheduled_for"
@@ -468,8 +508,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.boolean "archived", default: false
     t.index ["archived"], name: "index_session_settings_on_archived"
     t.index ["couple_id", "agreed_at"], name: "index_session_settings_on_couple_id_and_agreed_at"
+    t.index ["couple_id", "archived", "version"], name: "index_settings_couple_archived_version"
     t.index ["couple_id", "version"], name: "index_session_settings_on_couple_id_and_version"
     t.index ["couple_id"], name: "index_session_settings_on_couple_id"
+    t.index ["created_at"], name: "index_session_settings_on_created_at"
+    t.check_constraint "session_duration > 0", name: "check_session_duration_positive"
+    t.check_constraint "version > 0", name: "check_version_positive"
   end
 
   create_table "session_settings_proposals", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -491,10 +535,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.datetime "withdrawn_at"
     t.datetime "expired_at"
     t.uuid "created_settings_id"
+    t.index ["couple_id", "status", "proposed_at"], name: "index_proposals_couple_status_proposed"
     t.index ["couple_id", "status"], name: "index_session_settings_proposals_on_couple_id_and_status"
     t.index ["couple_id"], name: "index_session_settings_proposals_on_couple_id"
+    t.index ["created_at"], name: "index_session_settings_proposals_on_created_at"
     t.index ["created_settings_id"], name: "index_session_settings_proposals_on_created_settings_id"
     t.index ["current_settings_id"], name: "index_session_settings_proposals_on_current_settings_id"
+    t.index ["proposed_at"], name: "index_session_settings_proposals_on_proposed_at"
     t.index ["proposed_by", "status"], name: "index_session_settings_proposals_on_proposed_by_and_status"
     t.index ["proposed_by"], name: "index_session_settings_proposals_on_proposed_by"
     t.index ["status"], name: "index_session_settings_proposals_on_status"
@@ -522,9 +569,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["partner_id"], name: "index_users_on_partner_id"
+    t.index ["remember_created_at"], name: "index_users_on_remember_created_at"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["updated_at"], name: "index_users_on_updated_at"
   end
 
   add_foreign_key "action_items", "check_ins"
