@@ -85,10 +85,17 @@ Rails.application.routes.draw do
           member do
             post :publish
             post :make_private
+            post :add_tag
+            delete :remove_tag
+            post :toggle_favorite
           end
           collection do
             get :by_step
             get :summary
+            get :tags
+            post :batch_update
+            delete :batch_delete
+            post :from_template
           end
         end
       end
@@ -106,6 +113,8 @@ Rails.application.routes.draw do
       resources :notes, only: [] do
         collection do
           get :search
+          get :export
+          get :favorites
         end
       end
 

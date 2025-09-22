@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_150958) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_151436) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -319,6 +319,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_150958) do
     t.datetime "updated_at", null: false
     t.datetime "published_at"
     t.datetime "first_shared_at"
+    t.boolean "is_favorite", default: false
     t.index ["author_id", "created_at"], name: "index_notes_author_created"
     t.index ["author_id", "privacy"], name: "index_notes_on_author_id_and_privacy"
     t.index ["author_id"], name: "index_notes_on_author_id"
@@ -327,6 +328,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_150958) do
     t.index ["check_in_id"], name: "index_notes_on_check_in_id"
     t.index ["created_at"], name: "index_notes_on_created_at"
     t.index ["first_shared_at"], name: "index_notes_on_first_shared_at"
+    t.index ["is_favorite"], name: "index_notes_on_is_favorite"
     t.index ["privacy"], name: "index_notes_on_privacy"
     t.index ["published_at"], name: "index_notes_on_published_at"
     t.index ["tags"], name: "index_notes_on_tags", using: :gin
