@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_135702) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -333,9 +333,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135702) do
     t.text "attachments", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "couple_id"
+    t.string "notification_preference"
+    t.datetime "expires_at"
+    t.datetime "response_required_by"
+    t.text "response_notes"
+    t.string "decline_reason"
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
+    t.datetime "converted_at"
+    t.datetime "expired_at"
+    t.datetime "deferred_until"
+    t.string "defer_reason"
+    t.integer "defer_count", default: 0
+    t.boolean "discussed", default: false
+    t.datetime "discussed_at"
+    t.index ["couple_id"], name: "index_relationship_requests_on_couple_id"
+    t.index ["priority", "status"], name: "index_relationship_requests_on_priority_and_status"
     t.index ["requested_by"], name: "index_relationship_requests_on_requested_by"
     t.index ["requested_for", "status"], name: "index_relationship_requests_on_requested_for_and_status"
     t.index ["requested_for"], name: "index_relationship_requests_on_requested_for"
+    t.index ["status", "expires_at"], name: "index_relationship_requests_on_status_and_expires_at"
     t.index ["status"], name: "index_relationship_requests_on_status"
     t.index ["tags"], name: "index_relationship_requests_on_tags", using: :gin
   end
@@ -360,10 +378,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135702) do
     t.jsonb "custom_schedule", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "couple_id"
+    t.uuid "parent_reminder_id"
+    t.jsonb "custom_frequency_data"
+    t.integer "advance_notice_minutes", default: 15
+    t.integer "priority"
+    t.integer "completion_count", default: 0
+    t.integer "skip_count", default: 0
+    t.integer "snooze_count", default: 0
+    t.integer "reschedule_count", default: 0
+    t.datetime "skipped_at"
+    t.boolean "is_template", default: false
+    t.index ["assigned_to", "is_active"], name: "index_reminders_on_assigned_to_and_is_active"
     t.index ["assigned_to"], name: "index_reminders_on_assigned_to"
     t.index ["category"], name: "index_reminders_on_category"
+    t.index ["couple_id"], name: "index_reminders_on_couple_id"
+    t.index ["created_by", "is_active"], name: "index_reminders_on_created_by_and_is_active"
     t.index ["created_by"], name: "index_reminders_on_created_by"
     t.index ["is_active", "scheduled_for"], name: "index_reminders_on_is_active_and_scheduled_for"
+    t.index ["parent_reminder_id"], name: "index_reminders_on_parent_reminder_id"
     t.index ["scheduled_for"], name: "index_reminders_on_scheduled_for"
   end
 
@@ -472,11 +505,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_135702) do
   add_foreign_key "quick_reflections", "check_ins", column: "session_id"
   add_foreign_key "quick_reflections", "users", column: "author_id"
   add_foreign_key "relationship_requests", "check_ins", column: "related_check_in_id"
+  add_foreign_key "relationship_requests", "couples"
   add_foreign_key "relationship_requests", "reminders", column: "converted_to_reminder_id"
   add_foreign_key "relationship_requests", "users", column: "requested_by"
   add_foreign_key "relationship_requests", "users", column: "requested_for"
   add_foreign_key "reminders", "action_items", column: "related_action_item_id"
   add_foreign_key "reminders", "check_ins", column: "related_check_in_id"
+  add_foreign_key "reminders", "couples"
+  add_foreign_key "reminders", "relationship_requests", column: "converted_from_request_id"
+  add_foreign_key "reminders", "reminders", column: "parent_reminder_id"
   add_foreign_key "reminders", "users", column: "assigned_to"
   add_foreign_key "reminders", "users", column: "created_by"
   add_foreign_key "session_preparations", "check_ins", column: "session_id"
