@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { Search, X, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
+import { notesService, RecentSearch } from '@/services/notes.service'
 
 interface SearchBarProps {
   value: string
@@ -31,23 +32,30 @@ export function SearchBar({
   const inputRef = useRef<HTMLInputElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [showClearButton, setShowClearButton] = useState(false)
-  const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([])
   const [showSearchTips, setShowSearchTips] = useState(false)
+  const [isLoadingSearches, setIsLoadingSearches] = useState(false)
 
   useEffect(() => {
     setShowClearButton(value.length > 0)
   }, [value])
 
   useEffect(() => {
-    // Load recent searches from localStorage
-    const stored = localStorage.getItem('notes-recent-searches')
-    if (stored) {
+    // Load recent searches from API
+    const loadRecentSearches = async () => {
+      setIsLoadingSearches(true)
       try {
-        setRecentSearches(JSON.parse(stored))
-      } catch (e) {
+        const searches = await notesService.getRecentSearches()
+        setRecentSearches(searches)
+      } catch (error) {
+        console.error('Failed to load recent searches:', error)
         setRecentSearches([])
+      } finally {
+        setIsLoadingSearches(false)
       }
     }
+
+    loadRecentSearches()
   }, [])
 
   const handleClear = () => {
@@ -55,19 +63,21 @@ export function SearchBar({
     inputRef.current?.focus()
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (value.trim()) {
-      // Save to recent searches
-      const newRecentSearches = [
-        value.trim(),
-        ...recentSearches.filter(s => s !== value.trim())
-      ].slice(0, 5)
-      setRecentSearches(newRecentSearches)
-      localStorage.setItem('notes-recent-searches', JSON.stringify(newRecentSearches))
+      // Save to recent searches via API
+      try {
+        await notesService.saveRecentSearch(value.trim(), resultCount || 0)
+        // Refresh recent searches
+        const searches = await notesService.getRecentSearches()
+        setRecentSearches(searches)
+      } catch (error) {
+        console.error('Failed to save recent search:', error)
+      }
       onSubmit?.()
     }
-  }
+  }, [value, resultCount, onSubmit])
 
   const handleSuggestionClick = (suggestion: string) => {
     onChange(suggestion)
@@ -89,7 +99,7 @@ export function SearchBar({
     if (!value) {
       return recentSearches.map(search => ({
         type: 'recent' as const,
-        value: search
+        value: search.query
       }))
     }
 
