@@ -1,19 +1,33 @@
 class NotificationChannel < ApplicationCable::Channel
+  # Batching configuration
+  BATCH_SIZE = 10
+  BATCH_DELAY = 2.seconds
+
   def subscribed
     # Personal notification stream
     stream_from "notifications_user_#{current_user.id}"
+
+    # Priority notification stream for urgent messages
+    stream_from "notifications_priority_#{current_user.id}"
 
     # Couple-wide notification stream
     if current_couple
       stream_from "notifications_couple_#{current_couple.id}"
     end
 
+    # Initialize notification tracking
+    initialize_notification_tracking
+
     # Send any pending notifications on connection
     deliver_pending_notifications
+
+    # Schedule notification sync
+    schedule_notification_sync
   end
 
   def unsubscribed
-    # Clean up any notification tracking
+    # Clean up notification tracking
+    cleanup_notification_tracking
   end
 
   # Mark notification as read
@@ -85,6 +99,117 @@ class NotificationChannel < ApplicationCable::Channel
     end
   end
 
+  # Batch mark as read
+  def batch_mark_read(data)
+    notification_ids = data['notification_ids'] || []
+    return if notification_ids.empty?
+
+    notifications = current_user.notifications.where(id: notification_ids, read: false)
+
+    if notifications.any?
+      notifications.update_all(
+        read: true,
+        read_at: Time.current
+      )
+
+      ActionCable.server.broadcast(
+        "notifications_user_#{current_user.id}",
+        {
+          event: 'batch_marked_read',
+          notification_ids: notifications.pluck(:id),
+          timestamp: Time.current.iso8601
+        }
+      )
+
+      broadcast_unread_count
+    end
+  end
+
+  # Request notification history
+  def request_history(data)
+    page = data['page'] || 1
+    per_page = data['per_page'] || 20
+    filter = data['filter'] || 'all'
+
+    notifications = current_user.notifications.active
+
+    # Apply filters
+    case filter
+    when 'unread'
+      notifications = notifications.unread
+    when 'high_priority'
+      notifications = notifications.high_priority
+    when 'today'
+      notifications = notifications.today
+    when 'this_week'
+      notifications = notifications.this_week
+    end
+
+    # Paginate
+    notifications = notifications.recent.page(page).per(per_page)
+
+    # Send paginated history
+    ActionCable.server.broadcast(
+      "notifications_user_#{current_user.id}",
+      {
+        event: 'history_response',
+        notifications: notifications.map { |n| serialize_notification(n) },
+        pagination: {
+          current_page: notifications.current_page,
+          total_pages: notifications.total_pages,
+          total_count: notifications.total_count
+        }
+      }
+    )
+  end
+
+  # Acknowledge notification receipt
+  def acknowledge(data)
+    notification_id = data['notification_id']
+    notification = current_user.notifications.find_by(id: notification_id)
+
+    if notification
+      notification.update_columns(
+        acknowledged: true,
+        acknowledged_at: Time.current
+      )
+
+      # Track delivery metrics
+      track_notification_metric(notification, 'acknowledged')
+    end
+  end
+
+  # Snooze notification
+  def snooze_notification(data)
+    notification_id = data['notification_id']
+    duration = data['duration'] || 60 # minutes
+    notification = current_user.notifications.find_by(id: notification_id)
+
+    if notification && !notification.read?
+      snooze_until = Time.current + duration.minutes
+
+      notification.update!(
+        snoozed: true,
+        snooze_until: snooze_until
+      )
+
+      # Schedule notification to reappear
+      NotificationReminderJob.perform_at(
+        snooze_until,
+        notification.id
+      )
+
+      ActionCable.server.broadcast(
+        "notifications_user_#{current_user.id}",
+        {
+          event: 'notification_snoozed',
+          notification_id: notification.id,
+          snooze_until: snooze_until.iso8601
+        }
+      )
+    end
+  end
+
   # Subscribe to specific notification types
   def update_preferences(data)
     preferences = data['preferences'] || {}
@@ -104,6 +229,50 @@ class NotificationChannel < ApplicationCable::Channel
 
   # Class method to send notifications from other parts of the app
   class << self
+    def broadcast_new_notification(notification)
+      # Determine broadcast channel based on priority
+      channel = if notification.high_priority?
+                  "notifications_priority_#{notification.user_id}"
+                else
+                  "notifications_user_#{notification.user_id}"
+                end
+
+      ActionCable.server.broadcast(
+        channel,
+        {
+          event: 'new_notification',
+          notification: serialize_notification(notification),
+          priority: notification.priority
+        }
+      )
+
+      # Update unread count
+      broadcast_unread_count_for(notification.user)
+    end
+
+    def broadcast_notification_update(notification)
+      ActionCable.server.broadcast(
+        "notifications_user_#{notification.user_id}",
+        {
+          event: 'notification_updated',
+          notification: serialize_notification(notification)
+        }
+      )
+    end
+
+    def broadcast_unread_count_for(user)
+      count = user.notifications.unread.count
+      priority_count = user.notifications.unread.high_priority.count
+
+      ActionCable.server.broadcast(
+        "notifications_user_#{user.id}",
+        {
+          event: 'unread_count_updated',
+          count: count,
+          priority_count: priority_count
+        }
+      )
+    end
     def notify_user(user, type, title, body, data = {})
       notification = user.notifications.create!(
         notification_type: type,
@@ -163,7 +332,54 @@ class NotificationChannel < ApplicationCable::Channel
           note_id: note.id,
           check_in_id: note.check_in_id,
           author_id: author.id,
-          action_url: "/checkin/#{note.check_in_id}/notes/#{note.id}"
+          action_url: "/checkin/#{note.check_in_id}/notes/#{note.id}",
+          priority: Notification::PRIORITIES[:normal]
+        }
+      )
+    end
+
+    def notify_relationship_request(request)
+      notify_user(
+        request.recipient,
+        'relationship_request',
+        'New Relationship Request',
+        "#{request.sender.name} wants to connect with you",
+        {
+          request_id: request.id,
+          sender_id: request.sender_id,
+          action_url: "/settings/relationships/requests/#{request.id}",
+          priority: Notification::PRIORITIES[:high]
+        }
+      )
+    end
+
+    def notify_reminder_due(reminder)
+      notify_couple(
+        reminder.couple,
+        'check_in_reminder',
+        reminder.title,
+        reminder.message,
+        {
+          reminder_id: reminder.id,
+          scheduled_for: reminder.scheduled_for.iso8601,
+          action_url: "/checkin/new",
+          priority: Notification::PRIORITIES[:high]
+        }
+      )
+    end
+
+    def notify_weekly_summary(couple, summary_data)
+      notify_couple(
+        couple,
+        'weekly_summary',
+        'Your Weekly Relationship Summary',
+        "Check out your progress from this week!",
+        {
+          week_start: summary_data[:week_start],
+          week_end: summary_data[:week_end],
+          stats: summary_data[:stats],
+          action_url: "/dashboard",
+          priority: Notification::PRIORITIES[:low]
         }
       )
     end
@@ -239,6 +455,76 @@ class NotificationChannel < ApplicationCable::Channel
   end
 
   private
+
+  def initialize_notification_tracking
+    @notification_batch = []
+    @batch_timer = nil
+    @sync_timer = nil
+  end
+
+  def cleanup_notification_tracking
+    if @batch_timer
+      @batch_timer.shutdown if @batch_timer.respond_to?(:shutdown)
+      @batch_timer = nil
+    end
+
+    if @sync_timer
+      @sync_timer.shutdown if @sync_timer.respond_to?(:shutdown)
+      @sync_timer = nil
+    end
+
+    @notification_batch = []
+  end
+
+  def schedule_notification_sync
+    return unless defined?(Concurrent::ScheduledTask)
+
+    # Sync notifications every 30 seconds
+    @sync_timer = Concurrent::ScheduledTask.execute(30) do
+      sync_notifications
+      schedule_notification_sync # Reschedule
+    end
+  end
+
+  def sync_notifications
+    # Check for any missed notifications
+    last_sync = @last_sync_at || 1.minute.ago
+    missed = current_user.notifications
+                         .where('created_at > ?', last_sync)
+                         .where.not(id: @synced_ids || [])
+
+    if missed.any?
+      notifications = missed.map { |n| serialize_notification(n) }
+
+      ActionCable.server.broadcast(
+        "notifications_user_#{current_user.id}",
+        {
+          event: 'missed_notifications',
+          notifications: notifications
+        }
+      )
+
+      @synced_ids = ((@synced_ids || []) + missed.pluck(:id)).last(100)
+    end
+
+    @last_sync_at = Time.current
+  end
+
+  def track_notification_metric(notification, action)
+    # Track metrics for analytics
+    Rails.logger.info "Notification metric: #{action} for notification #{notification.id}"
+
+    # Could integrate with analytics service
+    # Analytics.track(
+    #   user_id: notification.user_id,
+    #   event: "notification_#{action}",
+    #   properties: {
+    #     notification_id: notification.id,
+    #     notification_type: notification.notification_type,
+    #     time_to_action: Time.current - notification.created_at
+    #   }
+    # )
+  end
 
   def deliver_pending_notifications
     # Send any unread notifications when user connects
