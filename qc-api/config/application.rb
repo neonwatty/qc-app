@@ -54,6 +54,15 @@ module QcApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Custom middleware
+    require_relative '../app/middleware/security_middleware'
+    require_relative '../app/middleware/rate_limiter'
+    require_relative '../app/middleware/jwt_middleware'
+
+    config.middleware.use SecurityMiddleware
+    config.middleware.use RateLimiter
+    config.middleware.use JwtMiddleware
+
     # JWT Configuration
     config.jwt = ActiveSupport::OrderedOptions.new
     config.jwt.secret_key = ENV.fetch("JWT_SECRET_KEY") { Rails.application.credentials.jwt_secret_key || SecureRandom.hex(64) }

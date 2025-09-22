@@ -283,6 +283,10 @@ GEM
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.25.3)
+      connection_pool
     regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
@@ -403,6 +407,7 @@ DEPENDENCIES
   rack-attack
   rack-cors
   rails (~> 8.0.2)
+  redis (~> 5.0)
   rubocop-rails-omakase
   solid_cable
   solid_cache
