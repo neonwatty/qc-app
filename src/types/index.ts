@@ -46,6 +46,8 @@ export interface Note {
   content: string
   privacy: 'private' | 'shared' | 'draft'
   authorId: string
+  coupleId?: string
+  isPrivate?: boolean
   categoryId?: string
   checkInId?: string
   createdAt: Date
@@ -58,7 +60,9 @@ export interface ActionItem {
   title: string
   description?: string
   assignedTo?: string
+  createdBy?: string
   dueDate?: Date
+  priority?: 'low' | 'medium' | 'high'
   completed: boolean
   checkInId: string
   createdAt: Date

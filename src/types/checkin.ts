@@ -35,8 +35,8 @@ export type CheckInSession = {
   estimatedTimeRemaining?: number
 }
 
-export type CheckInAction = 
-  | { type: 'START_CHECKIN'; payload: { categories: string[] } }
+export type CheckInAction =
+  | { type: 'START_CHECKIN'; payload: { categories: string[]; checkIn?: CheckIn } }
   | { type: 'GO_TO_STEP'; payload: { step: CheckInStep } }
   | { type: 'COMPLETE_STEP'; payload: { step: CheckInStep } }
   | { type: 'SET_CATEGORY_PROGRESS'; payload: { categoryId: string; progress: Partial<CategoryProgress> } }
@@ -51,11 +51,18 @@ export type CheckInAction =
   | { type: 'COMPLETE_CHECKIN' }
   | { type: 'ABANDON_CHECKIN' }
   | { type: 'RESTORE_SESSION'; payload: { session: CheckInSession } }
+  | { type: 'SYNC_FROM_PARTNER'; payload: { updates: any } }
+  | { type: 'SET_ERROR'; payload: { error: string } }
+  | { type: 'SET_LOADING'; payload: { loading: boolean } }
+  | { type: 'SET_PARTNER_CONNECTED'; payload: { connected: boolean } }
+  | { type: 'ROLLBACK_CHANGE'; payload: { change: any } }
 
 export type CheckInContextState = {
   session: CheckInSession | null
   isLoading: boolean
   error: string | null
+  pendingChanges?: any[]
+  partnerConnected?: boolean
 }
 
 export type CheckInContextValue = CheckInContextState & {
