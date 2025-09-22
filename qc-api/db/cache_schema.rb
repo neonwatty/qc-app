@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_22_141458) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -231,6 +231,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
     t.index ["user_id"], name: "index_love_languages_on_user_id"
   end
 
+  create_table "milestone_achievements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "milestone_id", null: false
+    t.uuid "couple_id", null: false
+    t.datetime "achieved_at", null: false
+    t.integer "points_earned"
+    t.integer "bonus_points"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["achieved_at"], name: "index_milestone_achievements_on_achieved_at"
+    t.index ["couple_id"], name: "index_milestone_achievements_on_couple_id"
+    t.index ["milestone_id"], name: "index_milestone_achievements_on_milestone_id"
+  end
+
+  create_table "milestone_progress_updates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "milestone_id", null: false
+    t.integer "previous_progress"
+    t.integer "new_progress"
+    t.text "update_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["milestone_id"], name: "index_milestone_progress_updates_on_milestone_id"
+  end
+
   create_table "milestones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title", null: false
     t.text "description"
@@ -246,10 +269,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
     t.jsonb "data", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "target_value"
+    t.jsonb "criteria"
+    t.uuid "achieved_by"
+    t.text "achievement_notes"
     t.index ["achieved_at"], name: "index_milestones_on_achieved_at"
+    t.index ["achieved_by"], name: "index_milestones_on_achieved_by"
     t.index ["category"], name: "index_milestones_on_category"
     t.index ["couple_id", "achieved"], name: "index_milestones_on_couple_id_and_achieved"
+    t.index ["couple_id", "category"], name: "index_milestones_on_couple_id_and_category"
     t.index ["couple_id"], name: "index_milestones_on_couple_id"
+    t.index ["criteria"], name: "index_milestones_on_criteria", using: :gin
   end
 
   create_table "notes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -426,6 +456,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
     t.integer "version", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "categories_enabled", default: [], array: true
+    t.string "notification_timing"
+    t.string "reminder_frequency"
+    t.integer "break_intervals"
+    t.integer "max_session_length"
+    t.boolean "allow_async_mode", default: false
+    t.boolean "require_both_present", default: true
+    t.boolean "auto_save_notes", default: true
+    t.string "privacy_mode", default: "shared"
+    t.boolean "archived", default: false
+    t.index ["archived"], name: "index_session_settings_on_archived"
+    t.index ["couple_id", "agreed_at"], name: "index_session_settings_on_couple_id_and_agreed_at"
     t.index ["couple_id", "version"], name: "index_session_settings_on_couple_id_and_version"
     t.index ["couple_id"], name: "index_session_settings_on_couple_id"
   end
@@ -440,7 +482,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
     t.uuid "couple_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "reason"
+    t.uuid "current_settings_id"
+    t.text "review_message"
+    t.text "rejection_reason"
+    t.text "withdrawal_reason"
+    t.datetime "withdrawn_at"
+    t.datetime "expired_at"
+    t.uuid "created_settings_id"
+    t.index ["couple_id", "status"], name: "index_session_settings_proposals_on_couple_id_and_status"
     t.index ["couple_id"], name: "index_session_settings_proposals_on_couple_id"
+    t.index ["created_settings_id"], name: "index_session_settings_proposals_on_created_settings_id"
+    t.index ["current_settings_id"], name: "index_session_settings_proposals_on_current_settings_id"
+    t.index ["proposed_by", "status"], name: "index_session_settings_proposals_on_proposed_by_and_status"
     t.index ["proposed_by"], name: "index_session_settings_proposals_on_proposed_by"
     t.index ["status"], name: "index_session_settings_proposals_on_status"
   end
@@ -494,7 +549,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
   add_foreign_key "love_language_discoveries", "users", column: "discovered_by_id"
   add_foreign_key "love_languages", "couples"
   add_foreign_key "love_languages", "users"
+  add_foreign_key "milestone_achievements", "couples"
+  add_foreign_key "milestone_achievements", "milestones"
+  add_foreign_key "milestone_progress_updates", "milestones"
   add_foreign_key "milestones", "couples"
+  add_foreign_key "milestones", "users", column: "achieved_by"
   add_foreign_key "notes", "categories"
   add_foreign_key "notes", "check_ins"
   add_foreign_key "notes", "users", column: "author_id"
@@ -520,6 +579,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_22_140735) do
   add_foreign_key "session_preparations", "couples"
   add_foreign_key "session_settings", "couples"
   add_foreign_key "session_settings_proposals", "couples"
+  add_foreign_key "session_settings_proposals", "session_settings", column: "created_settings_id"
+  add_foreign_key "session_settings_proposals", "session_settings", column: "current_settings_id"
   add_foreign_key "session_settings_proposals", "users", column: "proposed_by"
   add_foreign_key "session_settings_proposals", "users", column: "reviewed_by"
   add_foreign_key "users", "users", column: "partner_id"
