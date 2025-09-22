@@ -40,7 +40,7 @@ class SessionSettingsProposal < ApplicationRecord
 
   # Instance methods
   def accept!(user, message = nil)
-    return false if proposed_by_id == user.id
+    return false if proposed_by == user.id
     return false unless can_be_reviewed?
 
     transaction do
@@ -55,7 +55,7 @@ class SessionSettingsProposal < ApplicationRecord
   end
 
   def reject!(user, reason = nil)
-    return false if proposed_by_id == user.id
+    return false if proposed_by == user.id
     return false unless can_be_reviewed?
 
     transaction do
@@ -167,7 +167,7 @@ class SessionSettingsProposal < ApplicationRecord
   end
 
   def cannot_review_own_proposal
-    if reviewed_by && reviewed_by_id == proposed_by_id
+    if reviewed_by && reviewed_by == proposed_by
       errors.add(:reviewed_by, "cannot review your own proposal")
     end
   end
@@ -182,7 +182,7 @@ class SessionSettingsProposal < ApplicationRecord
     new_settings = couple.session_settings.create!(
       settings.merge(
         agreed_at: reviewed_at,
-        agreed_by: [proposed_by_id, reviewed_by_id]
+        agreed_by: [proposed_by, reviewed_by]
       )
     )
     update_column(:created_settings_id, new_settings.id)
@@ -191,10 +191,10 @@ class SessionSettingsProposal < ApplicationRecord
   def notify_status_change
     case status
     when "accepted"
-      Rails.logger.info "Proposal #{id} accepted by #{reviewed_by_id}"
+      Rails.logger.info "Proposal #{id} accepted by #{reviewed_by}"
       # Send notification to proposed_by
     when "rejected"
-      Rails.logger.info "Proposal #{id} rejected by #{reviewed_by_id}"
+      Rails.logger.info "Proposal #{id} rejected by #{reviewed_by}"
       # Send notification to proposed_by
     when "expired"
       Rails.logger.info "Proposal #{id} expired"

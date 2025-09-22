@@ -4,8 +4,8 @@ class Couple < ApplicationRecord
   has_many :check_ins, dependent: :destroy
   has_many :categories, dependent: :destroy
   has_many :milestones, dependent: :destroy
-  has_many :session_settings, dependent: :destroy
-  has_many :session_settings_proposals, dependent: :destroy
+  has_many :session_settings, class_name: 'SessionSettings', dependent: :destroy
+  has_many :session_settings_proposals, class_name: 'SessionSettingsProposal', dependent: :destroy
   has_many :session_preparations, dependent: :destroy
   has_many :prompt_templates, dependent: :destroy
   has_many :custom_prompts, dependent: :destroy

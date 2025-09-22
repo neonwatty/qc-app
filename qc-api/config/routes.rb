@@ -78,6 +78,36 @@ Rails.application.routes.draw do
             get :statistics
           end
         end
+
+        resources :session_settings do
+          member do
+            post :agree
+            get :export_template
+          end
+          collection do
+            get :current
+            get :templates
+            post :apply_template
+            post :propose
+            get :proposals
+            get 'proposals/pending', to: 'session_settings#pending_proposals'
+            post :duplicate
+            get :history
+            post 'proposals/expire_old', to: 'session_settings#expire_old_proposals'
+          end
+        end
+
+        namespace :session_settings do
+          resources :proposals, only: [] do
+            member do
+              post :accept, to: '/api/v1/session_settings#accept_proposal'
+              post :reject, to: '/api/v1/session_settings#reject_proposal'
+              post :withdraw, to: '/api/v1/session_settings#withdraw_proposal'
+              post :comment, to: '/api/v1/session_settings#proposal_comments'
+              get :changes, to: '/api/v1/session_settings#proposal_changes'
+            end
+          end
+        end
       end
 
       resources :check_ins, only: [] do
