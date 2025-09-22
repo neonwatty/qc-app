@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include Authenticatable
   include Authorization
 
   before_action :configure_permitted_parameters, if: :devise_controller?
