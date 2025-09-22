@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 import { api } from '@services/api'
 
 interface Partner {
@@ -69,12 +70,18 @@ const coupleSlice = createSlice({
         }
       }
     },
-    updateStatistics: (state, action: PayloadAction<Record<string, any>>) => {
-      if (state.couple) {
+    updateStatistics: (state, action: PayloadAction<Partial<{
+      total_check_ins: number
+      current_streak: number
+      longest_streak: number
+      total_notes: number
+      completed_action_items: number
+    }>>) => {
+      if (state.couple && state.couple.statistics) {
         state.couple.statistics = {
           ...state.couple.statistics,
           ...action.payload
-        }
+        } as any
       }
     }
   },

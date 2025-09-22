@@ -1,4 +1,5 @@
-import { createConsumer, Consumer, Subscription, Channel } from '@rails/actioncable'
+import { createConsumer } from '@rails/actioncable'
+import type { Consumer, Subscription } from '@rails/actioncable'
 
 // WebSocket Configuration
 const CABLE_URL = import.meta.env.VITE_CABLE_URL || 'ws://localhost:3000/cable'
