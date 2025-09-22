@@ -1,25 +1,26 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { useCheckInTimer } from '@/hooks/useCheckInTimer'
 import { cn } from '@/lib/utils'
-import { 
-  MessageCircle, 
-  Clock, 
-  Users, 
-  Play, 
+import {
+  MessageCircle,
+  Clock,
+  Users,
+  Play,
   ChevronRight,
   Calendar,
   Heart,
   Zap,
   Target
 } from 'lucide-react'
-import { Couple } from '@/types'
+import { Couple, CheckIn } from '@/types'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { dashboardService } from '@/services/dashboard.service'
 
 interface CheckInCardProps {
   couple?: Couple | null
@@ -81,11 +82,14 @@ const ProgressRing: React.FC<{
   )
 }
 
-export const CheckInCard: React.FC<CheckInCardProps> = ({ 
-  couple, 
+export const CheckInCard: React.FC<CheckInCardProps> = ({
+  couple,
   className,
-  onStartCheckIn 
+  onStartCheckIn
 }) => {
+  const [upcomingCheckIn, setUpcomingCheckIn] = useState<CheckIn | null>(null)
+  const [isLoadingCheckIn, setIsLoadingCheckIn] = useState(false)
+
   const {
     timeRemaining,
     isOverdue,
@@ -95,12 +99,29 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
     timeUntilText,
     suggestionText,
     nextCheckInDate
-  } = useCheckInTimer({ 
+  } = useCheckInTimer({
     couple,
     onCountdownComplete: () => {
       // Could trigger notification or auto-suggestion
     }
   })
+
+  // Fetch upcoming check-in from API
+  useEffect(() => {
+    const fetchUpcomingCheckIn = async () => {
+      setIsLoadingCheckIn(true)
+      try {
+        const checkIn = await dashboardService.getUpcomingCheckIn()
+        setUpcomingCheckIn(checkIn)
+      } catch (error) {
+        console.error('Failed to fetch upcoming check-in:', error)
+      } finally {
+        setIsLoadingCheckIn(false)
+      }
+    }
+
+    fetchUpcomingCheckIn()
+  }, [])
 
   const getCardGradient = () => {
     if (isReady) {
@@ -230,7 +251,7 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
 
             {/* Action Button */}
             <StaggerItem>
-              <Link href="/checkin">
+              <Link href={upcomingCheckIn ? `/checkin/${upcomingCheckIn.id}` : '/checkin'}>
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -291,6 +312,12 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
               <Users className="h-3 w-3" />
               <span>Best together</span>
             </div>
+            {upcomingCheckIn && (
+              <div className="flex items-center gap-1">
+                <Zap className="h-3 w-3" />
+                <span>Session ready</span>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

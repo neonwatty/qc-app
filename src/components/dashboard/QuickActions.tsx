@@ -1,11 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Heart, Plus, Calendar } from 'lucide-react'
+import { Heart, Plus, Calendar, Activity } from 'lucide-react'
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { TouchButton, FAB } from '@/components/ui/TouchButton'
 import { cn } from '@/lib/utils'
+import { dashboardService, type DashboardData } from '@/services/dashboard.service'
 
 interface QuickActionProps {
   href: string
@@ -50,33 +51,79 @@ interface QuickActionsProps {
   variant?: 'floating' | 'embedded'
 }
 
-export const QuickActions: React.FC<QuickActionsProps> = ({ 
+export const QuickActions: React.FC<QuickActionsProps> = ({
   className,
   variant = 'floating'
 }) => {
-  const quickActions = [
-    {
-      href: '/checkin',
-      icon: Heart,
-      label: 'Gratitude',
-      description: 'Daily gratitude note',
-      hapticFeedback: 'medium' as const
-    },
-    {
-      href: '/notes',
-      icon: Plus,
-      label: 'Add Note',
-      description: 'Quick note entry',
-      hapticFeedback: 'light' as const
-    },
-    {
-      href: '/growth',
-      icon: Calendar,
-      label: 'Calendar',
-      description: 'Schedule check-in',
-      hapticFeedback: 'light' as const
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setIsLoading(true)
+      try {
+        const data = await dashboardService.getDashboardData()
+        setDashboardData(data)
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-  ]
+
+    fetchDashboardData()
+  }, [])
+
+  // Dynamic quick actions based on API data
+  const getQuickActions = () => {
+    const actions = [
+      {
+        href: dashboardData?.upcomingCheckIn ? `/checkin/${dashboardData.upcomingCheckIn.id}` : '/checkin',
+        icon: Heart,
+        label: dashboardData?.upcomingCheckIn ? 'Continue' : 'Check-In',
+        description: dashboardData?.upcomingCheckIn ? 'Resume session' : 'Start new session',
+        hapticFeedback: 'medium' as const
+      },
+      {
+        href: '/notes',
+        icon: Plus,
+        label: 'Add Note',
+        description: 'Quick note entry',
+        hapticFeedback: 'light' as const
+      }
+    ]
+
+    // Add dynamic action based on dashboard state
+    if (dashboardData?.upcomingReminders && dashboardData.upcomingReminders.length > 0) {
+      actions.push({
+        href: '/reminders',
+        icon: Calendar,
+        label: 'Reminders',
+        description: `${dashboardData.upcomingReminders.length} pending`,
+        hapticFeedback: 'light' as const
+      })
+    } else if (dashboardData?.activeActionItems && dashboardData.activeActionItems.length > 0) {
+      actions.push({
+        href: '/action-items',
+        icon: Activity,
+        label: 'Actions',
+        description: `${dashboardData.activeActionItems.length} active`,
+        hapticFeedback: 'light' as const
+      })
+    } else {
+      actions.push({
+        href: '/growth',
+        icon: Calendar,
+        label: 'Calendar',
+        description: 'Schedule check-in',
+        hapticFeedback: 'light' as const
+      })
+    }
+
+    return actions
+  }
+
+  const quickActions = getQuickActions()
 
   if (variant === 'floating') {
     return (

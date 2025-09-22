@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { useCountUp } from '@/hooks/useCountUp'
 import { cn } from '@/lib/utils'
-import { 
-  Calendar, 
-  TrendingUp, 
-  Trophy, 
+import {
+  Calendar,
+  TrendingUp,
+  Trophy,
   Target,
   Flame,
   BarChart3,
@@ -16,6 +16,7 @@ import {
   ArrowUp
 } from 'lucide-react'
 import { Milestone, Couple } from '@/types'
+import { dashboardService, type DashboardStats } from '@/services/dashboard.service'
 
 interface StatsGridProps {
   couple?: Couple | null
@@ -100,18 +101,39 @@ const StatCard: React.FC<StatCardProps> = ({
   )
 }
 
-export const StatsGrid: React.FC<StatsGridProps> = ({ 
-  couple, 
-  milestones = [], 
-  className 
+export const StatsGrid: React.FC<StatsGridProps> = ({
+  couple,
+  milestones = [],
+  className
 }) => {
   const [mounted, setMounted] = useState(false)
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
+  useEffect(() => {
+    const fetchStats = async () => {
+      setIsLoading(true)
+      try {
+        const data = await dashboardService.getStats()
+        setStats(data)
+      } catch (error) {
+        console.error('Failed to fetch dashboard stats:', error)
+        // Fall back to couple stats if API fails
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (mounted) {
+      fetchStats()
+    }
+  }, [mounted])
+
+  if (!mounted || isLoading) {
     return (
       <div className={cn("grid grid-cols-2 gap-3 sm:gap-4", className)}>
         {[...Array(4)].map((_, i) => (
@@ -131,10 +153,15 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
     )
   }
 
-  const currentStreak = couple?.stats?.currentStreak ?? 0
-  const totalCheckIns = couple?.stats?.totalCheckIns ?? 0
+  // Use API stats if available, otherwise fall back to couple stats
+  const currentStreak = stats?.currentStreak ?? couple?.stats?.currentStreak ?? 0
+  const totalCheckIns = stats?.totalCheckIns ?? couple?.stats?.totalCheckIns ?? 0
+  const completedActionItems = stats?.completedActionItems ?? 0
+  const totalActionItems = stats?.totalActionItems ?? 0
   const growthPoints = milestones.length
-  const completionRate = totalCheckIns > 0 ? Math.round((currentStreak / totalCheckIns) * 100) : 0
+  const completionRate = totalActionItems > 0
+    ? Math.round((completedActionItems / totalActionItems) * 100)
+    : 0
 
   const upcomingMilestones = milestones
     .filter(m => new Date(m.achievedAt) > new Date())

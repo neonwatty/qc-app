@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button'
 import { ActivityItem, ActivityData } from './ActivityItem'
 import { StaggerContainer, StaggerItem } from '@/components/ui/motion'
 import { cn } from '@/lib/utils'
-import { 
-  RefreshCw, 
-  Filter, 
+import {
+  RefreshCw,
+  Filter,
   ChevronDown,
   Activity as ActivityIcon,
   Eye,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Note, ActionItem, Milestone, Couple, CheckIn } from '@/types'
 import { motion, AnimatePresence } from 'framer-motion'
+import { dashboardService, type ActivityItem as ApiActivityItem } from '@/services/dashboard.service'
 
 interface ActivityFeedProps {
   couple?: Couple | null
@@ -44,10 +45,46 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
   const [visibleItems, setVisibleItems] = useState(6)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [showPrivate, setShowPrivate] = useState(true)
+  const [apiActivities, setApiActivities] = useState<ApiActivityItem[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Fetch activity from API
+  useEffect(() => {
+    const fetchActivity = async () => {
+      setIsLoading(true)
+      try {
+        const data = await dashboardService.getRecentActivity(maxItems)
+        setApiActivities(data)
+      } catch (error) {
+        console.error('Failed to fetch activity:', error)
+        // Fall back to local data
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchActivity()
+  }, [maxItems])
 
   // Generate activity data from all sources
   const activities = useMemo(() => {
     const activityList: ActivityData[] = []
+
+    // Add API activities first
+    apiActivities.forEach(activity => {
+      const activityData: ActivityData = {
+        type: activity.type === 'checkin' ? 'note' : activity.type,
+        id: activity.id,
+        timestamp: new Date(activity.timestamp),
+        data: {
+          id: activity.id,
+          title: activity.title,
+          description: activity.description,
+          ...activity.metadata
+        } as any
+      }
+      activityList.push(activityData)
+    })
 
     // Add notes
     notes.forEach(note => {
@@ -83,10 +120,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     })
 
     // Sort by timestamp (newest first)
-    return activityList.sort((a, b) => 
+    return activityList.sort((a, b) =>
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     )
-  }, [notes, actionItems, milestones, showPrivate])
+  }, [notes, actionItems, milestones, showPrivate, apiActivities])
 
   // Filter activities
   const filteredActivities = useMemo(() => {
@@ -110,10 +147,14 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
-    // Simulate refresh delay
-    setTimeout(() => {
+    try {
+      const data = await dashboardService.getRecentActivity(maxItems)
+      setApiActivities(data)
+    } catch (error) {
+      console.error('Failed to refresh activity:', error)
+    } finally {
       setIsRefreshing(false)
-    }, 1000)
+    }
   }
 
   const loadMore = () => {
@@ -205,7 +246,15 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
       </CardHeader>
 
       <CardContent className="pt-0">
-        {displayedActivities.length === 0 ? (
+        {isLoading ? (
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="h-16 bg-muted rounded-lg" />
+              </div>
+            ))}
+          </div>
+        ) : displayedActivities.length === 0 ? (
           <motion.div 
             className="text-center py-12"
             initial={{ opacity: 0, y: 20 }}
