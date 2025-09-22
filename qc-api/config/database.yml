@@ -18,12 +18,25 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # Connection timeout in milliseconds
+  connect_timeout: 5000
+  # Checkout timeout for getting connection from pool
+  checkout_timeout: 5
+  # Reaping frequency for cleaning up dead connections (seconds)
+  reaping_frequency: 10
+  # Idle timeout for connections in seconds
+  idle_timeout: 300
 
 
 development:
   primary: &primary_development
     <<: *default
     database: qc_api_development
+    # Development-specific settings
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
+    username: <%= ENV.fetch("DB_USERNAME", "postgres") %>
+    password: <%= ENV.fetch("DB_PASSWORD", "") %>
+    port: <%= ENV.fetch("DB_PORT", 5432) %>
   cache:
     <<: *primary_development
   queue:
@@ -37,6 +50,12 @@ development:
 test:
   <<: *default
   database: qc_api_test
+  # Test-specific settings for faster test runs
+  pool: 10
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  username: <%= ENV.fetch("DB_USERNAME", "postgres") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -62,6 +81,14 @@ production:
   primary: &primary_production
     <<: *default
     url: <%= ENV['DATABASE_URL'] %>
+    # Production-optimized connection pool settings
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 20 } %>
+    # Statement timeout to prevent long-running queries
+    statement_timeout: 60000
+    # Prepared statements for better performance
+    prepared_statements: true
+    # Advisory locks for migrations
+    advisory_locks: true
   cache:
     <<: *primary_production
   queue:

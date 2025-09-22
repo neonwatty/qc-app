@@ -36,6 +36,19 @@ module QcApi
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # Database connection pool configuration
+    # Async query executor for improved concurrency
+    config.active_record.async_query_executor = :global_thread_pool
+
+    # Maximum number of threads for async queries
+    config.active_record.global_executor_concurrency = ENV.fetch("ASYNC_QUERY_CONCURRENCY", 4).to_i
+
+    # Enable query logs in development for debugging
+    config.active_record.query_log_tags_enabled = Rails.env.development?
+
+    # Raise errors on unpermitted parameters in development/test
+    config.action_controller.action_on_unpermitted_parameters = :raise if Rails.env.development? || Rails.env.test?
+
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
