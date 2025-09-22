@@ -1,31 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { api } from '@services/api'
-
-interface Partner {
-  id: number
-  name: string
-  email: string
-  role: 'partner1' | 'partner2'
-  presence_status?: 'online' | 'offline' | 'idle' | 'away'
-  last_seen_at?: string
-}
-
-interface Couple {
-  id: number
-  partner1: Partner
-  partner2: Partner
-  created_at: string
-  updated_at: string
-  settings?: Record<string, unknown>
-  statistics?: {
-    total_check_ins: number
-    current_streak: number
-    longest_streak: number
-    total_notes: number
-    completed_action_items: number
-  }
-}
+import { coupleService } from '@/api'
+import type { Couple } from '@/types'
+import type { CreateCoupleRequest, InvitePartnerRequest } from '@/api'
 
 interface CoupleState {
   couple: Couple | null
@@ -40,18 +17,32 @@ const initialState: CoupleState = {
 }
 
 // Async thunks
-export const fetchCouple = createAsyncThunk('couple/fetchCouple', async (coupleId: number) => {
-  const response = await api.get<Couple>(`/couples/${coupleId}`)
-  return response.data as Couple
+export const createCouple = createAsyncThunk('couple/create', async (data: CreateCoupleRequest) => {
+  const couple = await coupleService.createCouple(data)
+  return couple
 })
 
-export const updateCoupleSettings = createAsyncThunk(
-  'couple/updateSettings',
-  async ({ coupleId, settings }: { coupleId: number; settings: Record<string, unknown> }) => {
-    const response = await api.patch<{ settings: Record<string, unknown> }>(`/couples/${coupleId}/settings`, { settings })
-    return response.data as { settings: Record<string, unknown> }
+export const fetchCouple = createAsyncThunk('couple/fetchCouple', async (coupleId: string) => {
+  const couple = await coupleService.getCouple(coupleId)
+  return couple
+})
+
+export const invitePartner = createAsyncThunk(
+  'couple/invitePartner',
+  async ({ coupleId, data }: { coupleId: string; data: InvitePartnerRequest }) => {
+    await coupleService.invitePartner(coupleId, data)
   }
 )
+
+export const acceptInvite = createAsyncThunk('couple/acceptInvite', async (inviteToken: string) => {
+  const couple = await coupleService.acceptInvite(inviteToken)
+  return couple
+})
+
+export const fetchStatistics = createAsyncThunk('couple/fetchStatistics', async (coupleId: string) => {
+  const statistics = await coupleService.getStatistics(coupleId)
+  return statistics
+})
 
 const coupleSlice = createSlice({
   name: 'couple',
