@@ -28,6 +28,9 @@ module QcApi
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Autoload validators
+    config.autoload_paths << Rails.root.join('app/validators')
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
