@@ -3,12 +3,12 @@ require 'jwt'
 class JwtService
   class << self
     def encode(payload, expiry = nil)
-      expiry ||= Rails.application.config.jwt.expiry.from_now
-      
+      expiry ||= Time.current + Rails.application.config.jwt.expiry
+
       payload[:exp] = expiry.to_i
       payload[:iat] = Time.current.to_i
       payload[:jti] = SecureRandom.uuid  # Unique token ID for revocation
-      
+
       JWT.encode(payload, secret_key, 'HS256')
     end
 

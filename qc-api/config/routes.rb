@@ -16,6 +16,11 @@ Rails.application.routes.draw do
              }
 
   namespace :api do
+    # Authentication routes
+    namespace :auth do
+      post :refresh, to: 'sessions#refresh'
+    end
+
     # API routes will go here
     resources :couples, only: [ :show, :create, :update ] do
       member do

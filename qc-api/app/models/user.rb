@@ -34,4 +34,51 @@ class User < ApplicationRecord
   def partner_in_couple(couple)
     couple.users.where.not(id: id).first
   end
+
+  def admin?
+    # Check if user has admin role (you may want to add an admin column to the users table)
+    # For now, return false as default
+    respond_to?(:is_admin) ? is_admin : false
+  end
+
+  # JWT payload customization
+  def jwt_payload
+    {
+      'sub' => id,
+      'email' => email,
+      'name' => name,
+      'admin' => admin?,
+      'couple_ids' => couple_ids,
+      'iat' => Time.current.to_i
+    }
+  end
+
+  # Generate a refresh token
+  def generate_refresh_token
+    payload = {
+      'sub' => id,
+      'type' => 'refresh',
+      'exp' => 30.days.from_now.to_i,
+      'jti' => SecureRandom.uuid
+    }
+
+    JWT.encode(payload, Rails.application.config.jwt.secret_key, 'HS256')
+  end
+
+  # Validate a refresh token
+  def self.from_refresh_token(token)
+    payload = JWT.decode(
+      token,
+      Rails.application.config.jwt.secret_key,
+      true,
+      { algorithm: 'HS256' }
+    ).first
+
+    return nil unless payload['type'] == 'refresh'
+    return nil if JwtDenylist.token_revoked?(payload['jti'])
+
+    find_by(id: payload['sub'])
+  rescue JWT::DecodeError, JWT::ExpiredSignature
+    nil
+  end
 end
