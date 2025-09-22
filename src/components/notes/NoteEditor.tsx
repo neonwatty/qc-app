@@ -11,6 +11,7 @@ import { PrivacySelector } from './PrivacySelector'
 import { PrivacyBadge } from './PrivacyBadge'
 import { useNoteEditor } from '@/hooks/useNoteEditor'
 import type { Note } from '@/types'
+import { notesService } from '@/services/notes.service'
 
 export type NotePrivacy = 'private' | 'shared' | 'draft'
 

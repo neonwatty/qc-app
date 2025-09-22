@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useAutoSaveWithFeedback } from './useAutoSave'
 import type { Note } from '@/types'
+import { notesService } from '@/services/notes.service'
 
 export type NotePrivacy = 'private' | 'shared' | 'draft'
 

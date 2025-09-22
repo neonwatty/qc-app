@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { LoveLanguage, LoveLanguageCategory, LoveLanguageImportance, LoveLanguagePrivacy } from '@/types'
+import { loveLanguagesService } from '@/services/love-languages.service'
 import {
   Dialog,
   DialogContent,
@@ -49,33 +50,51 @@ export function AddLanguageDialog({
   const [examples, setExamples] = useState<string[]>(initialLanguage?.examples || [''])
   const [tags, setTags] = useState<string[]>(initialLanguage?.tags || [])
   const [tagInput, setTagInput] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
+    if (isSubmitting) return
+
     const filteredExamples = examples.filter(ex => ex.trim() !== '')
-    
-    onSubmit({
-      userId: 'jeremy', // In real app, get from auth context
-      title,
-      description,
-      category,
-      importance,
-      privacy,
-      examples: filteredExamples,
-      tags,
-    })
-    
-    // Reset form
-    setTitle('')
-    setDescription('')
-    setCategory('custom')
-    setImportance('medium')
-    setPrivacy('private')
-    setExamples([''])
-    setTags([])
-    setTagInput('')
-    onOpenChange(false)
+
+    setIsSubmitting(true)
+    try {
+      const languageData = {
+        userId: 'jeremy', // In real app, get from auth context
+        title,
+        description,
+        category,
+        importance,
+        privacy,
+        examples: filteredExamples,
+        tags,
+      }
+
+      if (initialLanguage) {
+        await loveLanguagesService.updateLanguage(initialLanguage.id, languageData)
+      } else {
+        await loveLanguagesService.createLanguage(languageData as any)
+      }
+
+      onSubmit(languageData as any)
+
+      // Reset form
+      setTitle('')
+      setDescription('')
+      setCategory('custom')
+      setImportance('medium')
+      setPrivacy('private')
+      setExamples([''])
+      setTags([])
+      setTagInput('')
+      onOpenChange(false)
+    } catch (error) {
+      console.error('Failed to save language:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const addExample = () => {

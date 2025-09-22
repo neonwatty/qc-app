@@ -1,11 +1,13 @@
 'use client'
 
+import React, { useState } from 'react'
 import { LoveLanguage } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Heart, Lock, Unlock, Edit2, Trash2, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { loveLanguagesService } from '@/services/love-languages.service'
 
 interface LoveLanguageCardProps {
   language: LoveLanguage
@@ -40,6 +42,37 @@ export function LoveLanguageCard({
   onTogglePrivacy,
   onCreateAction,
 }: LoveLanguageCardProps) {
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleTogglePrivacy = async () => {
+    if (!onTogglePrivacy || isUpdating) return
+
+    setIsUpdating(true)
+    try {
+      const newPrivacy = language.privacy === 'private' ? 'shared' : 'private'
+      await loveLanguagesService.updateLanguage(language.id, { privacy: newPrivacy })
+      onTogglePrivacy()
+    } catch (error) {
+      console.error('Failed to update language privacy:', error)
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!onDelete || isDeleting) return
+
+    setIsDeleting(true)
+    try {
+      await loveLanguagesService.deleteLanguage(language.id)
+      onDelete()
+    } catch (error) {
+      console.error('Failed to delete language:', error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
   return (
     <Card className="bg-white hover:shadow-lg transition-shadow">
       <CardHeader className="pb-3">
@@ -55,7 +88,8 @@ export function LoveLanguageCard({
             <Button
               variant="ghost"
               size="icon"
-              onClick={onTogglePrivacy}
+              onClick={handleTogglePrivacy}
+              disabled={isUpdating}
               className="ml-2"
               title={language.privacy === 'private' ? 'Make visible to partner' : 'Make private'}
             >
@@ -112,7 +146,7 @@ export function LoveLanguageCard({
                   <Edit2 className="h-4 w-4 mr-1" />
                   Edit
                 </Button>
-                <Button onClick={onDelete} variant="outline" size="sm">
+                <Button onClick={handleDelete} variant="outline" size="sm" disabled={isDeleting}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </>

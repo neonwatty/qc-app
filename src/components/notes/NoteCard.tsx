@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { PrivacyBadge } from './PrivacyBadge'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import type { Note } from './NotesDashboard'
+import type { Note } from '@/types'
+import { notesService } from '@/services/notes.service'
 
 interface NoteCardProps {
   note: Note
@@ -43,6 +44,8 @@ export function NoteCard({
   const [showMenu, setShowMenu] = useState(false)
   const [isPressed, setIsPressed] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   const highlightText = (text: string, term?: string) => {
     if (!term) return text
@@ -76,13 +79,44 @@ export function NoteCard({
     action()
   }
 
+  const handleDelete = async () => {
+    if (!onDelete || isDeleting) return
+
+    setIsDeleting(true)
+    try {
+      await notesService.deleteNote(note.id)
+      onDelete(note)
+    } catch (error) {
+      console.error('Failed to delete note:', error)
+    } finally {
+      setIsDeleting(false)
+      setShowMenu(false)
+    }
+  }
+
+  const handleTogglePrivacy = async () => {
+    if (!onTogglePrivacy || isUpdating) return
+
+    setIsUpdating(true)
+    try {
+      const newPrivacy = note.privacy === 'private' ? 'shared' : 'private'
+      await notesService.updateNote(note.id, { privacy: newPrivacy })
+      onTogglePrivacy(note)
+    } catch (error) {
+      console.error('Failed to update note privacy:', error)
+    } finally {
+      setIsUpdating(false)
+      setShowMenu(false)
+    }
+  }
+
   const menuActions = [
     { icon: Edit2, label: 'Edit', action: onEdit, show: !!onEdit },
-    { icon: Share2, label: 'Share', action: onShare, show: !!onShare && note.type !== 'shared' },
-    { icon: Lock, label: 'Make Private', action: onTogglePrivacy, show: !!onTogglePrivacy && note.type === 'shared' },
+    { icon: Share2, label: 'Share', action: onShare, show: !!onShare && note.privacy !== 'shared' },
+    { icon: Lock, label: 'Make Private', action: handleTogglePrivacy, show: !!onTogglePrivacy && note.privacy === 'shared' },
     { icon: Copy, label: 'Duplicate', action: onDuplicate, show: !!onDuplicate },
     { icon: Archive, label: 'Archive', action: onArchive, show: !!onArchive },
-    { icon: Trash2, label: 'Delete', action: onDelete, show: !!onDelete, danger: true }
+    { icon: Trash2, label: 'Delete', action: handleDelete, show: !!onDelete, danger: true }
   ].filter(item => item.show)
 
   return (
@@ -120,7 +154,7 @@ export function NoteCard({
                 "font-semibold text-gray-900 line-clamp-2",
                 compact ? "text-sm" : "text-base"
               )}>
-                {highlightText(note.title, highlightTerm)}
+                {highlightText(note.content.substring(0, 50), highlightTerm)}
               </h3>
             </div>
             
@@ -147,7 +181,7 @@ export function NoteCard({
               </button>
 
               {/* Privacy Badge */}
-              <PrivacyBadge type={note.type} compact={compact} />
+              <PrivacyBadge type={note.privacy} compact={compact} />
 
               {/* More Actions Menu */}
               {showActions && menuActions.length > 0 && (
@@ -208,14 +242,16 @@ export function NoteCard({
           {/* Footer */}
           <div className="flex items-center justify-between text-xs">
             {/* Category */}
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-              {highlightText(note.category, highlightTerm)}
-            </span>
+            {note.categoryId && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                {highlightText(note.categoryId, highlightTerm)}
+              </span>
+            )}
 
             {/* Date */}
             <span className="flex items-center gap-1 text-gray-500">
               <Clock className="h-3 w-3" />
-              {formatDate(note.date)}
+              {formatDate(new Date(note.createdAt))}
             </span>
           </div>
 

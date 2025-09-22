@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MoreHorizontal, Edit2, Trash2, Share2, Lock, Archive, Star, Copy, ChevronRight, Clock, Folder } from 'lucide-react'
 import { PrivacyBadge } from './PrivacyBadge'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import type { Note } from './NotesDashboard'
+import type { Note } from '@/types'
+import { notesService } from '@/services/notes.service'
 
 interface NotesListProps {
   notes: Note[]
@@ -93,8 +94,8 @@ function NoteListItem({
 
   const menuActions = [
     { icon: Edit2, label: 'Edit', action: onEdit, show: !!onEdit },
-    { icon: Share2, label: 'Share', action: onShare, show: !!onShare && note.type !== 'shared' },
-    { icon: Lock, label: 'Private', action: onTogglePrivacy, show: !!onTogglePrivacy && note.type === 'shared' },
+    { icon: Share2, label: 'Share', action: onShare, show: !!onShare && note.privacy !== 'shared' },
+    { icon: Lock, label: 'Private', action: onTogglePrivacy, show: !!onTogglePrivacy && note.privacy === 'shared' },
     { icon: Copy, label: 'Duplicate', action: onDuplicate, show: !!onDuplicate },
     { icon: Archive, label: 'Archive', action: onArchive, show: !!onArchive },
     { icon: Trash2, label: 'Delete', action: onDelete, show: !!onDelete, danger: true }
@@ -144,9 +145,9 @@ function NoteListItem({
               "font-semibold text-gray-900 line-clamp-1 flex-1",
               compact ? "text-sm" : "text-base"
             )}>
-              {highlightText(note.title, highlightTerm)}
+              {highlightText(note.content.substring(0, 50), highlightTerm)}
             </h3>
-            <PrivacyBadge type={note.type} compact size="sm" />
+            <PrivacyBadge type={note.privacy} compact size="sm" />
           </div>
 
           {/* Content Preview */}
@@ -159,13 +160,15 @@ function NoteListItem({
 
           {/* Metadata Row */}
           <div className="flex items-center gap-4 text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <Folder className="h-3 w-3" />
-              {highlightText(note.category, highlightTerm)}
-            </span>
+            {note.categoryId && (
+              <span className="flex items-center gap-1">
+                <Folder className="h-3 w-3" />
+                {highlightText(note.categoryId, highlightTerm)}
+              </span>
+            )}
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {formatDate(note.date)}
+              {formatDate(new Date(note.createdAt))}
             </span>
             {note.tags && note.tags.length > 0 && (
               <span className="flex items-center gap-1">
