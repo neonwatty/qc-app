@@ -37,7 +37,7 @@ class Reminder < ApplicationRecord
   scope :not_snoozed, -> { where(is_snoozed: false) }
   scope :upcoming, -> { active.not_snoozed.where("scheduled_for > ?", Time.current).order(:scheduled_for) }
   scope :overdue, -> { active.not_snoozed.where("scheduled_for <= ? AND completed_at IS NULL", Time.current) }
-  scope :for_user, ->(user) { where("created_by_id = ? OR assigned_to_id = ?", user.id, user.id) }
+  scope :for_user, ->(user) { where("created_by = ? OR assigned_to = ?", user.id, user.id) }
   scope :for_couple, ->(couple) { where(couple_id: couple.id) }
   scope :by_category, ->(category) { where(category: category) }
   scope :high_priority, -> { where("priority >= ?", 4) }
@@ -173,9 +173,11 @@ class Reminder < ApplicationRecord
     return unless recurring? && next_occurrence_date
 
     self.class.create!(
-      attributes.except("id", "created_at", "updated_at", "completed_at", "skipped_at").merge(
+      attributes.except("id", "created_at", "updated_at", "completed_at", "skipped_at", "created_by", "assigned_to").merge(
         scheduled_for: next_occurrence_date,
-        parent_reminder_id: id
+        parent_reminder_id: id,
+        created_by: created_by,
+        assigned_to: assigned_to
       )
     )
   end

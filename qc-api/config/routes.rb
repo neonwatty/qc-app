@@ -182,6 +182,49 @@ Rails.application.routes.draw do
           post :generate_suggestions
         end
       end
+
+      # Reminders routes
+      resources :reminders do
+        member do
+          post :complete
+          post :skip
+          post :snooze
+          post :unsnooze
+          put :reschedule
+        end
+        collection do
+          get :upcoming
+          get :overdue
+          get :high_priority
+          post :batch_complete
+          post :batch_snooze
+          get :statistics
+          post :create_from_template
+          get :templates
+        end
+      end
+
+      # Relationship Requests routes
+      resources :relationship_requests do
+        member do
+          post :accept
+          post :decline
+          post :defer
+          post :convert_to_reminder
+          post :mark_discussed
+          post :add_note
+        end
+        collection do
+          get :inbox
+          get :sent
+          get :requiring_response
+          get :overdue
+          get :needs_attention
+          get :upcoming_activities
+          post :batch_accept
+          get :statistics
+        end
+      end
     end
   end
 

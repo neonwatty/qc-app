@@ -44,8 +44,8 @@ class RelationshipRequest < ApplicationRecord
   scope :active, -> { where(status: %w[pending accepted]) }
   scope :requiring_response, -> { pending.where("response_required_by > ?", Time.current) }
   scope :overdue, -> { pending.where("response_required_by <= ?", Time.current) }
-  scope :for_user, ->(user) { where("requested_by_id = ? OR requested_for_id = ?", user.id, user.id) }
-  scope :inbox_for, ->(user) { where(requested_for_id: user.id, status: "pending") }
+  scope :for_user, ->(user) { where("requested_by = ? OR requested_for = ?", user.id, user.id) }
+  scope :inbox_for, ->(user) { where(requested_for: user.id, status: "pending") }
   scope :sent_by, ->(user) { where(requested_by: user) }
   scope :for_couple, ->(couple) { where(couple_id: couple.id) }
   scope :by_category, ->(category) { where(category: category) }
@@ -62,6 +62,7 @@ class RelationshipRequest < ApplicationRecord
       )
     )
   }
+  scope :high_priority, -> { where(priority: %w[urgent high]) }
   scope :needs_immediate_attention, -> {
     pending.where("priority IN (?) OR response_required_by <= ?", %w[urgent high], 24.hours.from_now)
   }
