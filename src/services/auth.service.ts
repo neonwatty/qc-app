@@ -173,6 +173,22 @@ class AuthService {
     }
   }
 
+  getCurrentUserId(): string | undefined {
+    // Try to get user ID from stored user
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('auth_user')
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser)
+          return user.id
+        } catch {
+          return undefined
+        }
+      }
+    }
+    return undefined
+  }
+
   async getCurrentUser(): Promise<AuthUser | null> {
     // First check localStorage
     if (typeof window !== 'undefined') {
