@@ -7,6 +7,7 @@ import {
   WebSocketMessage,
   ConnectionState
 } from '@/services/websocket'
+import { actionCableService, ChannelIdentifier } from '@/services/actioncable'
 
 export interface UseWebSocketOptions {
   autoConnect?: boolean

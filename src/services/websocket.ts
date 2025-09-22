@@ -1,4 +1,5 @@
 import { authService } from './auth.service'
+import { actionCableService, ChannelIdentifier, SubscriptionCallbacks } from './actioncable'
 
 // WebSocket event types
 export type WebSocketEventType =
