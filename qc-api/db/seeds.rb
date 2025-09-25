@@ -129,32 +129,16 @@ Rails.logger.info "✅ Created #{default_categories.count} default categories"
 if Rails.env.development?
   Rails.logger.info "Creating demo users and couples..."
 
-  # Demo couple 1: Alex & Jordan
-  alex = User.create!(
-    email: 'alex@example.com',
-    password: 'password123',
-    password_confirmation: 'password123',
-    name: 'Alex Chen',
-    pronouns: 'they/them',
-    love_languages: ['quality_time', 'words_of_affirmation']
-  )
+  # Load enhanced Alex & Jordan couple seeder
+  require_relative 'seeds/alex_jordan_couple'
 
-  jordan = User.create!(
-    email: 'jordan@example.com',
-    password: 'password123',
-    password_confirmation: 'password123',
-    name: 'Jordan Smith',
-    pronouns: 'she/her',
-    love_languages: ['acts_of_service', 'physical_touch']
-  )
+  # Create Alex & Jordan with comprehensive relationship data
+  AlexJordanCouple::Seeder.new(default_categories).seed!
 
-  couple1 = Couple.create!(
-    name: 'Alex & Jordan',
-    anniversary: 2.years.ago
-  )
-
-  alex.update!(couple: couple1)
-  jordan.update!(couple: couple1)
+  # Get references to Alex and Jordan for backward compatibility
+  alex = User.find_by(email: 'alex@example.com')
+  jordan = User.find_by(email: 'jordan@example.com')
+  couple1 = Couple.find_by(name: 'Alex & Jordan')
 
   # Demo couple 2: Sam & Riley
   sam = User.create!(
@@ -185,39 +169,44 @@ if Rails.env.development?
 
   Rails.logger.info "✅ Created demo couples"
 
-  # Create session settings for couple 1
-  session_setting = SessionSetting.create!(
-    couple: couple1,
-    frequency: 'weekly',
-    reminder_day: 'sunday',
-    reminder_time: '19:00',
-    default_categories: default_categories.first(4).map(&:id),
-    session_duration_goal: 30,
-    enable_preparation_prompt: true,
-    enable_reflection_prompt: true,
-    preparation_prompt: 'Take a moment to reflect on your week together.',
-    reflection_prompt: 'How do you feel after this check-in?'
-  )
+  # Alex & Jordan's comprehensive data is created by AlexJordanCouple::Seeder above
+  # The following section creates additional demo data for Sam & Riley
 
-  Rails.logger.info "✅ Created session settings"
-
-  # Create check-ins with notes
-  Rails.logger.info "Creating check-ins and notes..."
-
-  5.times do |i|
-    # Check-in for couple 1
-    check_in = CheckIn.create!(
+  # Skip creating duplicate data for Alex & Jordan
+  if false
+    # Original Alex & Jordan data creation (now handled by AlexJordanCouple::Seeder)
+    session_setting = SessionSetting.create!(
       couple: couple1,
-      participants: [alex.id, jordan.id],
-      started_at: (5 - i).weeks.ago,
-      completed_at: (5 - i).weeks.ago + 45.minutes,
-      status: 'completed',
-      categories: default_categories.sample(3).map(&:id),
-      mood_before: rand(3..7),
-      mood_after: rand(6..10),
-      reflection: Faker::Lorem.paragraph(sentence_count: 4),
-      session_settings: session_setting
+      frequency: 'weekly',
+      reminder_day: 'sunday',
+      reminder_time: '19:00',
+      default_categories: default_categories.first(4).map(&:id),
+      session_duration_goal: 30,
+      enable_preparation_prompt: true,
+      enable_reflection_prompt: true,
+      preparation_prompt: 'Take a moment to reflect on your week together.',
+      reflection_prompt: 'How do you feel after this check-in?'
     )
+
+    Rails.logger.info "✅ Created session settings"
+
+    # Create check-ins with notes
+    Rails.logger.info "Creating check-ins and notes..."
+
+    5.times do |i|
+      # Check-in for couple 1
+      check_in = CheckIn.create!(
+        couple: couple1,
+        participants: [alex.id, jordan.id],
+        started_at: (5 - i).weeks.ago,
+        completed_at: (5 - i).weeks.ago + 45.minutes,
+        status: 'completed',
+        categories: default_categories.sample(3).map(&:id),
+        mood_before: rand(3..7),
+        mood_after: rand(6..10),
+        reflection: Faker::Lorem.paragraph(sentence_count: 4),
+        session_settings: session_setting
+      )
 
     # Create notes for this check-in
     3.times do
@@ -310,20 +299,21 @@ if Rails.env.development?
 
   Rails.logger.info "✅ Created reminders"
 
-  # Create custom categories for couple 1
-  Rails.logger.info "Creating custom categories..."
+    # Create custom categories for couple 1
+    Rails.logger.info "Creating custom categories..."
 
-  Category.create!(
-    name: 'Household Chores',
-    icon: '🏠',
-    description: 'Managing household responsibilities',
-    prompts: ['Are chores fairly distributed?', 'What needs attention this week?'],
-    is_custom: true,
-    couple: couple1,
-    order: 10
-  )
+    Category.create!(
+      name: 'Household Chores',
+      icon: '🏠',
+      description: 'Managing household responsibilities',
+      prompts: ['Are chores fairly distributed?', 'What needs attention this week?'],
+      is_custom: true,
+      couple: couple1,
+      order: 10
+    )
 
-  Rails.logger.info "✅ Created custom categories"
+    Rails.logger.info "✅ Created custom categories"
+  end # End of if false block for original Alex & Jordan data
 
   # Output summary
   Rails.logger.info "\n" + "="*50
