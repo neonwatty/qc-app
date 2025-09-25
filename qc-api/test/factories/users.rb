@@ -18,7 +18,7 @@ FactoryBot.define do
     trait :with_avatar do
       after(:build) do |user|
         user.avatar.attach(
-          io: File.open(Rails.root.join('spec', 'fixtures', 'files', 'avatar.jpg')),
+          io: File.open(Rails.root.join('test', 'fixtures', 'files', 'avatar.jpg')),
           filename: 'avatar.jpg',
           content_type: 'image/jpeg'
         )

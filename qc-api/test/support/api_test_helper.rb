@@ -1,11 +1,11 @@
-# Helper methods for request specs
-module RequestSpecHelper
+# Helper methods for API integration tests
+module ApiTestHelper
   # Parse JSON response to ruby hash
   def json
     JSON.parse(response.body, symbolize_names: true)
   end
 
-  # Get auth headers for a user
+  # Get auth headers for a user using Devise JWT
   def auth_headers_for(user)
     Devise::JWT::TestHelpers.auth_headers({}, user)
   end
@@ -28,27 +28,27 @@ module RequestSpecHelper
   end
 
   # Assert JSON API response structure
-  def expect_jsonapi_response(type, count = nil)
-    expect(response).to have_http_status(:ok)
-    expect(json).to have_key(:data)
+  def assert_jsonapi_response(type, count = nil)
+    assert_response :success
+    assert json.key?(:data), "Response should have :data key"
 
     if count
-      expect(json[:data]).to be_an(Array)
-      expect(json[:data].length).to eq(count)
-      expect(json[:data].first[:type]).to eq(type.to_s) if json[:data].any?
+      assert_kind_of Array, json[:data]
+      assert_equal count, json[:data].length
+      assert_equal type.to_s, json[:data].first[:type] if json[:data].any?
     else
-      expect(json[:data][:type]).to eq(type.to_s)
+      assert_equal type.to_s, json[:data][:type]
     end
   end
 
   # Assert error response
-  def expect_error_response(status, message = nil)
-    expect(response).to have_http_status(status)
-    expect(json).to have_key(:errors)
+  def assert_error_response(status, message = nil)
+    assert_response status
+    assert json.key?(:errors), "Response should have :errors key"
 
     if message
       error_messages = json[:errors].map { |e| e[:detail] || e[:title] }.join(', ')
-      expect(error_messages).to include(message)
+      assert_includes error_messages, message
     end
   end
 
@@ -62,5 +62,17 @@ module RequestSpecHelper
     {
       file: fixture_file_upload(file_path, content_type)
     }
+  end
+
+  # Helper to assert successful JSON response with optional data check
+  def assert_success_response(expected_data = nil)
+    assert_response :success
+
+    if expected_data
+      parsed = JSON.parse(response.body, symbolize_names: true)
+      expected_data.each do |key, value|
+        assert_equal value, parsed[key], "Expected #{key} to be #{value}"
+      end
+    end
   end
 end

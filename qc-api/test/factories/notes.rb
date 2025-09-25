@@ -29,7 +29,7 @@ FactoryBot.define do
     trait :with_attachments do
       after(:create) do |note|
         note.attachments.attach(
-          io: File.open(Rails.root.join('spec', 'fixtures', 'files', 'document.pdf')),
+          io: File.open(Rails.root.join('test', 'fixtures', 'files', 'document.pdf')),
           filename: 'document.pdf',
           content_type: 'application/pdf'
         )

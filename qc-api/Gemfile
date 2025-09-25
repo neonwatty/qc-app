@@ -56,23 +56,31 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  # Testing framework
-  gem "rspec-rails", "~> 7.1"
-
-  # Testing helpers
+  # Testing helpers (work with both RSpec and Minitest)
   gem "factory_bot_rails"
   gem "faker"
   gem "dotenv-rails"
 end
 
 group :test do
-  # Additional testing gems for comprehensive coverage
-  gem "shoulda-matchers", "~> 6.0"
+  # Minitest extensions
+  gem "minitest-rails", "~> 8.0"
+  gem "minitest-reporters"
+  gem "minitest-spec-rails"  # For spec-style syntax if desired
+
+  # Additional testing gems (compatible with Minitest)
   gem "database_cleaner-active_record"
   gem "simplecov", require: false
   gem "webmock"
   gem "vcr"
-  gem "rspec-json_expectations"
+
+  # Minitest assertion helpers
+  gem "minitest-matchers_vaccine"  # Provides shoulda-style matchers for Minitest
+
+  # RSpec gems (commented out after migration to Minitest)
+  # gem "rspec-rails", "~> 7.1"
+  # gem "rspec-json_expectations"
+  # gem "shoulda-matchers", "~> 6.0"
 end
 
 group :development do
