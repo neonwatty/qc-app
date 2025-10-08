@@ -2,7 +2,6 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '../hooks/redux'
 import { fetchCurrentUser } from '../store/slices/authSlice'
-import { Navigation } from '@components/Navigation'
 
 const ProtectedLayout = () => {
   const location = useLocation()
@@ -32,12 +31,9 @@ const ProtectedLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        <Outlet />
-      </main>
-    </div>
+    <main className="container mx-auto px-4 py-8 max-w-7xl">
+      <Outlet />
+    </main>
   )
 }
 
