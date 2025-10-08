@@ -11,7 +11,7 @@ export const store = configureStore({
     checkIn: checkInReducer,
     notification: notificationReducer,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types

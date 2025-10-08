@@ -1,24 +1,46 @@
-import React, { useEffect, useState, useCallback, ReactNode } from 'react'
-import { authManager } from '@/api/auth'
-import type { User } from '@/types'
-import type { LoginRequest, RegisterRequest } from '@/api/auth'
-import { AuthContext, type AuthContextValue } from './auth.context'
+'use client'
+
+import React, { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react'
+import { authService } from '@/services/auth.service'
+import type {
+  AuthUser,
+  LoginCredentials,
+  RegisterData,
+  AuthError,
+  PasswordChangeRequest
+} from '@/types/auth'
+
+interface AuthContextValue {
+  user: AuthUser | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: AuthError | null
+  login: (credentials: LoginCredentials) => Promise<void>
+  register: (data: RegisterData) => Promise<void>
+  logout: () => Promise<void>
+  updateProfile: (data: Partial<AuthUser>) => Promise<void>
+  changePassword: (data: PasswordChangeRequest) => Promise<void>
+  clearError: () => void
+  refreshUser: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 interface AuthProviderProps {
-  children: ReactNode
+  children: React.ReactNode
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<AuthError | null>(null)
 
-  // Initialize auth on mount
+  // Initialize auth state on mount
   useEffect(() => {
     const initAuth = async () => {
       try {
         setIsLoading(true)
-        const currentUser = await authManager.initialize()
+        const currentUser = await authService.getCurrentUser()
         setUser(currentUser)
       } catch (err) {
         console.error('Failed to initialize auth:', err)
@@ -29,112 +51,149 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     initAuth()
-
-    // Register logout callback
-    const unsubscribe = authManager.onLogout(() => {
-      setUser(null)
-    })
-
-    return unsubscribe
   }, [])
 
-  // Login
-  const login = useCallback(async (credentials: LoginRequest): Promise<User> => {
+  // Auto-refresh token before expiry
+  useEffect(() => {
+    if (!user) return
+
+    const checkTokenExpiry = setInterval(async () => {
+      try {
+        // Check if token needs refresh (5 minutes before expiry)
+        const tokenData = localStorage.getItem('auth_tokens')
+        if (tokenData) {
+          const { expiresAt } = JSON.parse(tokenData)
+          const fiveMinutesBeforeExpiry = expiresAt - 5 * 60 * 1000
+
+          if (Date.now() >= fiveMinutesBeforeExpiry) {
+            await authService.refreshAccessToken()
+          }
+        }
+      } catch (err) {
+        console.error('Token refresh failed:', err)
+        // If refresh fails, clear the auth state
+        // Don't call logout here to avoid dependency cycle
+        authService.logout().catch(console.error)
+        setUser(null)
+      }
+    }, 60000) // Check every minute
+
+    return () => clearInterval(checkTokenExpiry)
+  }, [user])
+
+  const login = useCallback(async (credentials: LoginCredentials) => {
     try {
       setError(null)
-      const response = await authManager.login(credentials)
+      setIsLoading(true)
+      const response = await authService.login(credentials)
       setUser(response.user)
-      return response.user
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'
-      setError(errorMessage)
+      setError({ message: errorMessage })
       throw err
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
-  // Register
-  const register = useCallback(async (data: RegisterRequest): Promise<User> => {
+  const register = useCallback(async (data: RegisterData) => {
     try {
       setError(null)
-      const response = await authManager.register(data)
+      setIsLoading(true)
+      const response = await authService.register(data)
       setUser(response.user)
-      return response.user
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Registration failed'
-      setError(errorMessage)
+      setError({ message: errorMessage })
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const logout = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      await authService.logout()
+      setUser(null)
+      setError(null)
+    } catch (err) {
+      console.error('Logout error:', err)
+      // Even if logout fails, clear local state
+      setUser(null)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const updateProfile = useCallback(async (data: Partial<AuthUser>) => {
+    if (!user) {
+      throw new Error('No user logged in')
+    }
+
+    try {
+      setError(null)
+      const updatedUser = await authService.updateProfile(user.id, data)
+      setUser(updatedUser)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Profile update failed'
+      setError({ message: errorMessage })
+      throw err
+    }
+  }, [user])
+
+  const changePassword = useCallback(async (data: PasswordChangeRequest) => {
+    try {
+      setError(null)
+      await authService.changePassword(data)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Password change failed'
+      setError({ message: errorMessage })
       throw err
     }
   }, [])
 
-  // Logout
-  const logout = useCallback(async () => {
-    try {
-      await authManager.logout()
-      setUser(null)
-    } catch (err) {
-      console.error('Logout error:', err)
-      // Even if logout fails, clear local auth
-      authManager.clearAuth()
-      setUser(null)
-    }
+  const clearError = useCallback(() => {
+    setError(null)
   }, [])
 
-  // Refresh user
   const refreshUser = useCallback(async () => {
     try {
-      const currentUser = await authManager.getCurrentUser(true)
+      const currentUser = await authService.getCurrentUser()
       setUser(currentUser)
     } catch (err) {
       console.error('Failed to refresh user:', err)
     }
   }, [])
 
-  // Update profile
-  const updateProfile = useCallback(async (data: Partial<User>): Promise<User> => {
-    if (!user) throw new Error('No user logged in')
+  const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated: !!user && authService.isAuthenticated(),
+      isLoading,
+      error,
+      login,
+      register,
+      logout,
+      updateProfile,
+      changePassword,
+      clearError,
+      refreshUser
+    }),
+    [user, isLoading, error, login, register, logout, updateProfile, changePassword, clearError, refreshUser]
+  )
 
-    try {
-      setError(null)
-      const updatedUser = await authManager.updateProfile(user.id, data)
-      setUser(updatedUser)
-      return updatedUser
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Profile update failed'
-      setError(errorMessage)
-      throw err
-    }
-  }, [user])
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
 
-  // Change password
-  const changePassword = useCallback(async (oldPassword: string, newPassword: string) => {
-    try {
-      setError(null)
-      await authManager.changePassword(oldPassword, newPassword)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Password change failed'
-      setError(errorMessage)
-      throw err
-    }
-  }, [])
-
-  // Clear error
-  const clearError = useCallback(() => {
-    setError(null)
-  }, [])
-
-  const value: AuthContextValue = {
-    user,
-    isAuthenticated: !!(user && authManager.isAuthenticated()),
-    isLoading,
-    error,
-    login,
-    register,
-    logout,
-    refreshUser,
-    clearError,
-    updateProfile,
-    changePassword,
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
   }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return context
 }

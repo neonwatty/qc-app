@@ -1,6 +1,6 @@
-import type { CheckIn, Note, ActionItem } from './index'
+import { CheckIn, Note, ActionItem, Category } from './index'
 
-export type CheckInStep =
+export type CheckInStep = 
   | 'welcome'
   | 'category-selection'
   | 'category-discussion'
@@ -36,13 +36,10 @@ export type CheckInSession = {
 }
 
 export type CheckInAction =
-  | { type: 'START_CHECKIN'; payload: { categories: string[] } }
+  | { type: 'START_CHECKIN'; payload: { categories: string[]; checkIn?: CheckIn } }
   | { type: 'GO_TO_STEP'; payload: { step: CheckInStep } }
   | { type: 'COMPLETE_STEP'; payload: { step: CheckInStep } }
-  | {
-      type: 'SET_CATEGORY_PROGRESS'
-      payload: { categoryId: string; progress: Partial<CategoryProgress> }
-    }
+  | { type: 'SET_CATEGORY_PROGRESS'; payload: { categoryId: string; progress: Partial<CategoryProgress> } }
   | { type: 'ADD_DRAFT_NOTE'; payload: { note: Note } }
   | { type: 'UPDATE_DRAFT_NOTE'; payload: { noteId: string; updates: Partial<Note> } }
   | { type: 'REMOVE_DRAFT_NOTE'; payload: { noteId: string } }
@@ -54,11 +51,18 @@ export type CheckInAction =
   | { type: 'COMPLETE_CHECKIN' }
   | { type: 'ABANDON_CHECKIN' }
   | { type: 'RESTORE_SESSION'; payload: { session: CheckInSession } }
+  | { type: 'SYNC_FROM_PARTNER'; payload: { updates: any } }
+  | { type: 'SET_ERROR'; payload: { error: string } }
+  | { type: 'SET_LOADING'; payload: { loading: boolean } }
+  | { type: 'SET_PARTNER_CONNECTED'; payload: { connected: boolean } }
+  | { type: 'ROLLBACK_CHANGE'; payload: { change: any } }
 
 export type CheckInContextState = {
   session: CheckInSession | null
   isLoading: boolean
   error: string | null
+  pendingChanges?: any[]
+  partnerConnected?: boolean
 }
 
 export type CheckInContextValue = CheckInContextState & {

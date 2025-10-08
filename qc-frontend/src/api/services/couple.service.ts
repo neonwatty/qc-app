@@ -72,6 +72,11 @@ class CoupleService {
     }>(`/couples/${coupleId}/milestones`)
     return response.data.milestones
   }
+
+  async updateSettings(coupleId: string, settings: any): Promise<Couple> {
+    const response = await apiClient.patch<{ couple: Couple }>(`/couples/${coupleId}/settings`, { settings })
+    return response.data.couple
+  }
 }
 
 export default new CoupleService()

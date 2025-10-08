@@ -46,6 +46,8 @@ export interface Note {
   content: string
   privacy: 'private' | 'shared' | 'draft'
   authorId: string
+  coupleId?: string
+  isPrivate?: boolean
   categoryId?: string
   checkInId?: string
   createdAt: Date
@@ -58,7 +60,9 @@ export interface ActionItem {
   title: string
   description?: string
   assignedTo?: string
+  createdBy?: string
   dueDate?: Date
+  priority?: 'low' | 'medium' | 'high'
   completed: boolean
   checkInId: string
   createdAt: Date
@@ -96,13 +100,7 @@ export interface Reminder {
   updatedAt: Date
 }
 
-export type RequestCategory =
-  | 'activity'
-  | 'task'
-  | 'reminder'
-  | 'conversation'
-  | 'date-night'
-  | 'custom'
+export type RequestCategory = 'activity' | 'task' | 'reminder' | 'conversation' | 'date-night' | 'custom'
 export type RequestPriority = 'low' | 'medium' | 'high'
 export type RequestStatus = 'pending' | 'accepted' | 'declined' | 'converted'
 
@@ -158,21 +156,14 @@ export interface Milestone {
   description: string
   achievedAt: Date
   icon: string
-  category:
-    | 'communication'
-    | 'trust'
-    | 'growth'
-    | 'celebration'
-    | 'consistency'
-    | 'goals'
-    | 'connection'
+  category: 'communication' | 'trust' | 'growth' | 'celebration' | 'consistency' | 'goals' | 'connection'
   coupleId: string
   achieved?: boolean
   points?: number
   rarity?: 'common' | 'rare' | 'epic' | 'legendary'
   progress?: number
   targetDate?: Date
-  data?: unknown
+  data?: any
 }
 
 export interface SessionSettings {

@@ -44,6 +44,14 @@ export const fetchStatistics = createAsyncThunk('couple/fetchStatistics', async 
   return statistics
 })
 
+export const updateCoupleSettings = createAsyncThunk(
+  'couple/updateSettings',
+  async ({ coupleId, settings }: { coupleId: string; settings: any }) => {
+    const updatedCouple = await coupleService.updateSettings(coupleId, settings)
+    return updatedCouple
+  }
+)
+
 const coupleSlice = createSlice({
   name: 'couple',
   initialState,
@@ -99,8 +107,8 @@ const coupleSlice = createSlice({
 
     // Update settings
     builder.addCase(updateCoupleSettings.fulfilled, (state, action) => {
-      if (state.couple) {
-        state.couple.settings = action.payload.settings
+      if (state.couple && action.payload) {
+        state.couple = action.payload
       }
     })
   },

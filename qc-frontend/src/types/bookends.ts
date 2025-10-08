@@ -47,7 +47,7 @@ export const QUICK_TOPICS = [
   { id: 'plans', label: 'Upcoming plans', icon: '📅' },
   { id: 'appreciation', label: 'Appreciation moment', icon: '🙏' },
   { id: 'concern', label: 'Something on my mind', icon: '💬' },
-  { id: 'goals', label: 'Our shared goals', icon: '🎯' },
+  { id: 'goals', label: 'Our shared goals', icon: '🎯' }
 ]
 
 // Emoji scale for feelings
@@ -56,17 +56,17 @@ export const FEELING_EMOJIS = [
   { value: 2, emoji: '😕', label: 'Concerned' },
   { value: 3, emoji: '😐', label: 'Neutral' },
   { value: 4, emoji: '😊', label: 'Good' },
-  { value: 5, emoji: '😍', label: 'Great' },
+  { value: 5, emoji: '😍', label: 'Great' }
 ]
 
 // Mock partner topic templates
 export const PARTNER_TOPIC_TEMPLATES = [
-  "How we handled last week's conflict",
+  'How we handled last week\'s conflict',
   'Planning for the upcoming holiday',
   'Budget review and financial goals',
   'Family visit preparations',
   'Work-life balance check',
   'Intimacy and connection',
   'Household responsibilities',
-  'Future dreams and aspirations',
+  'Future dreams and aspirations'
 ]

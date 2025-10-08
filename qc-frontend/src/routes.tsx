@@ -1,37 +1,37 @@
 import type { RouteObject } from 'react-router-dom'
 
-// Lazy load page components for better performance
-import { lazy } from 'react'
-
 // Layout components
 import RootLayout from './layouts/RootLayout'
 import ProtectedLayout from './layouts/ProtectedLayout'
 
-// Lazy load pages
-const HomePage = lazy(() => import('./pages/HomePage'))
-const DashboardPage = lazy(() => import('./pages/DashboardPage'))
-const CheckInPage = lazy(() => import('./pages/CheckInPage'))
-const NotesPage = lazy(() => import('./pages/NotesPage'))
-const GrowthPage = lazy(() => import('./pages/GrowthPage'))
-const RemindersPage = lazy(() => import('./pages/RemindersPage'))
-const RequestsPage = lazy(() => import('./pages/RequestsPage'))
-const SettingsPage = lazy(() => import('./pages/SettingsPage'))
-const LoveLanguagesPage = lazy(() => import('./pages/LoveLanguagesPage'))
-const LoveLanguageActionsPage = lazy(() => import('./pages/LoveLanguageActionsPage'))
-const OnboardingPage = lazy(() => import('./pages/OnboardingPage'))
+// Direct imports - no lazy loading
+// Named exports
+import { HomePage } from './pages/HomePage'
+import { DashboardPage } from './pages/DashboardPage'
+import { CheckInPage } from './pages/CheckInPage'
+import { OnboardingPage } from './pages/OnboardingPage'
 
-// Test pages (development only)
-const TestButtonPage = lazy(() => import('./pages/test/TestButtonPage'))
-const TestMobileFormsPage = lazy(() => import('./pages/test/TestMobileFormsPage'))
-const TestMotionPage = lazy(() => import('./pages/test/TestMotionPage'))
-const TestPersistencePage = lazy(() => import('./pages/test/TestPersistencePage'))
-const TestSessionSettingsPage = lazy(() => import('./pages/test/TestSessionSettingsPage'))
-const TestSkeletonsPage = lazy(() => import('./pages/test/TestSkeletonsPage'))
-const TestTypesPage = lazy(() => import('./pages/test/TestTypesPage'))
+// Default exports
+import NotesPage from './pages/NotesPage'
+import GrowthPage from './pages/GrowthPage'
+import RemindersPage from './pages/RemindersPage'
+import RequestsPage from './pages/RequestsPage'
+import SettingsPage from './pages/SettingsPage'
+import LoveLanguagesPage from './pages/LoveLanguagesPage'
+import LoveLanguageActionsPage from './pages/LoveLanguageActionsPage'
 
-// Error pages
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const ErrorPage = lazy(() => import('./pages/ErrorPage'))
+// Test pages (default exports)
+import TestButtonPage from './pages/test/TestButtonPage'
+import TestMobileFormsPage from './pages/test/TestMobileFormsPage'
+import TestMotionPage from './pages/test/TestMotionPage'
+import TestPersistencePage from './pages/test/TestPersistencePage'
+import TestSessionSettingsPage from './pages/test/TestSessionSettingsPage'
+import TestSkeletonsPage from './pages/test/TestSkeletonsPage'
+import TestTypesPage from './pages/test/TestTypesPage'
+
+// Error pages (default exports)
+import NotFoundPage from './pages/NotFoundPage'
+import ErrorPage from './pages/ErrorPage'
 
 export const routes: RouteObject[] = [
   {
@@ -132,17 +132,3 @@ export const routes: RouteObject[] = [
     ]
   }
 ]
-
-// Helper function to check if user is authenticated
-export const isAuthenticated = (): boolean => {
-  // Check for auth token in localStorage
-  const token = localStorage.getItem('auth_token')
-  return !!token
-}
-
-// Helper function to get default redirect path after login
-export const getDefaultPath = (): string => {
-  // Check if user has completed onboarding
-  const hasCompletedOnboarding = localStorage.getItem('onboarding_complete')
-  return hasCompletedOnboarding ? '/dashboard' : '/onboarding'
-}
