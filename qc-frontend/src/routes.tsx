@@ -10,6 +10,7 @@ import { HomePage } from './pages/HomePage'
 import { DashboardPage } from './pages/DashboardPage'
 import { CheckInPage } from './pages/CheckInPage'
 import { OnboardingPage } from './pages/OnboardingPage'
+import { LoginPage } from './pages/LoginPage'
 
 // Default exports
 import NotesPage from './pages/NotesPage'
@@ -42,6 +43,10 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <HomePage />
+      },
+      {
+        path: 'login',
+        element: <LoginPage />
       },
       {
         path: 'onboarding',
