@@ -17,7 +17,7 @@ export async function login(page: Page, user: typeof testUsers[keyof typeof test
   await page.goto('/login')
   await page.getByLabel('Email').fill(user.email)
   await page.getByLabel('Password').fill(user.password)
-  await page.getByRole('button', { name: 'Log in' }).click()
+  await page.getByRole('button', { name: 'Sign in' }).click()
   await expect(page).toHaveURL('/dashboard')
 }
 
@@ -74,4 +74,14 @@ export async function verifyDashboardStats(page: Page, expectedStats: {
       page.getByTestId('action-items-count').getByText(String(expectedStats.actionItems))
     ).toBeVisible()
   }
+}
+
+/**
+ * Check if the current page is showing a 404 error page
+ * @param page Playwright Page object
+ * @returns true if the page shows 404 error, false otherwise
+ */
+export async function isNotFoundPage(page: Page): Promise<boolean> {
+  const notFoundText = page.getByText(/404|page not found/i)
+  return await notFoundText.isVisible({ timeout: 1000 }).catch(() => false)
 }

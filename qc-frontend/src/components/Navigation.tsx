@@ -14,7 +14,6 @@ import {
   Home,
   Heart,
   MessageCircle,
-  Target,
   TrendingUp,
   Settings,
   LogOut,
@@ -27,7 +26,6 @@ const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: Home },
   { path: '/checkin', label: 'Check-in', icon: Heart },
   { path: '/notes', label: 'Notes', icon: MessageCircle },
-  { path: '/action-items', label: 'Action Items', icon: Target },
   { path: '/growth', label: 'Growth', icon: TrendingUp },
 ]
 
