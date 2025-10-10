@@ -56,6 +56,9 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
+  # Find unused code [https://github.com/seattlerb/debride]
+  gem "debride", require: false
+
   # Testing helpers (work with both RSpec and Minitest)
   gem "factory_bot_rails"
   gem "faker"

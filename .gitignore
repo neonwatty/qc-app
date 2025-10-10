@@ -196,3 +196,17 @@ dist
 # TodoQ
 .todoq/*.db-shm
 .todoq/*.db-wal
+
+# Playwright Test Results
+test-results/
+playwright-report/
+
+# Local Test Scripts
+qc.sh
+test-auth.sh
+
+# Code Analysis Reports (keep README.md)
+code-analysis-reports/*.txt
+code-analysis-reports/*.json
+code-analysis-reports/*.md
+!code-analysis-reports/README.md

@@ -1,0 +1,69 @@
+# Debride configuration for QC API
+# Find unused methods and classes in Ruby/Rails code
+
+# Paths to analyze
+paths:
+  - app/
+  - lib/
+
+# Files/patterns to exclude from analysis
+exclude:
+  - db/migrate/**/*.rb           # Migration files often have unused methods
+  - db/seeds/**/*.rb              # Seed files
+  - test/**/*.rb                  # Test files
+  - config/**/*.rb                # Configuration files
+  - bin/**/*                      # Binary scripts
+  - vendor/**/*                   # Vendor code
+  - node_modules/**/*             # Node modules (if any)
+  - tmp/**/*                      # Temporary files
+  - log/**/*                      # Log files
+  - public/**/*                   # Public assets
+  - storage/**/*                  # Storage files
+
+# Whitelist - methods to ignore (commonly used but may appear unused)
+whitelist:
+  # Rails lifecycle methods
+  - before_action
+  - after_action
+  - around_action
+  - before_save
+  - after_save
+  - before_create
+  - after_create
+  - before_update
+  - after_update
+  - before_destroy
+  - after_destroy
+  - before_validation
+  - after_validation
+
+  # Rails API methods
+  - index
+  - show
+  - create
+  - update
+  - destroy
+
+  # ActiveJob methods
+  - perform
+  - perform_later
+
+  # ActionCable methods
+  - subscribed
+  - unsubscribed
+  - receive
+  - broadcast
+
+  # Devise/JWT methods
+  - jwt_revoked?
+  - on_jwt_dispatch
+
+  # Serializer methods
+  - attributes
+
+  # Common Rails methods
+  - call
+  - initialize
+  - to_s
+  - to_json
+  - as_json
