@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# Get the directory where this script is located and the project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR/.."
+
 # Create logs directory first
-mkdir -p logs
+mkdir -p "$PROJECT_ROOT/logs"
 
 # Colors for output
 RED='\033[0;31m'
@@ -97,7 +101,7 @@ kill_port 5173
 
 # Setup Rails API
 print_status "Setting up Rails API..."
-cd qc-api
+cd "$PROJECT_ROOT/qc-api"
 
 # Remove stale PID file if it exists
 if [ -f "tmp/pids/server.pid" ]; then
@@ -144,7 +148,7 @@ fi
 print_status "Rails API server started successfully on port 3000"
 
 # Setup React Frontend
-cd ../qc-frontend
+cd "$PROJECT_ROOT/qc-frontend"
 
 # Check if dependencies need to be installed
 if [ ! -d "node_modules" ]; then
@@ -182,7 +186,7 @@ echo "Press CTRL+C to stop all services"
 echo ""
 
 # Keep script running and show logs
-tail -f logs/rails.log logs/vite.log 2>/dev/null &
+tail -f "$PROJECT_ROOT/logs/rails.log" "$PROJECT_ROOT/logs/vite.log" 2>/dev/null &
 
 # Wait for background processes
 wait $RAILS_PID $VITE_PID

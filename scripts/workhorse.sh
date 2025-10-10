@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e  # Exit on any error
 
+# Get the directory where this script is located and the project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR/.."
+
 # Get number of tasks from command line argument (default to 1)
 NUM_TASKS=${1:-1}
 
@@ -62,7 +66,7 @@ for ((i=1; i<=NUM_TASKS; i++)); do
             fi
             
             # Ensure we're in the correct directory
-            cd /Users/jeremywatt/Desktop/qc-app
+            cd "$PROJECT_ROOT"
 
             # Stage all changes
             git add .

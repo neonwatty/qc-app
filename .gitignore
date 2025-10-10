@@ -7,9 +7,11 @@
 # Testing
 /coverage
 *.png
+/test-results/
+/playwright-report/
 
-# Development scripts
-/scripts/
+# Code analysis reports
+/code-analysis-reports/
 
 # Next.js
 /.next/

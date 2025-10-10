@@ -85,4 +85,5 @@ end
 
 group :development do
   gem "bullet"
+  gem "debride"  # Find potentially unused methods
 end
