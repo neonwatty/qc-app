@@ -82,6 +82,19 @@ export const createRequestErrorInterceptor = () => {
 // Response interceptor configuration
 export const createResponseInterceptor = () => {
   return (response: AxiosResponse): AxiosResponse => {
+    // Extract JWT token from Authorization header if present (from Devise JWT)
+    const authHeader = response.headers['authorization']
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7)
+
+      // If this is a login/register response, add token to response data
+      if (response.config.url?.includes('/sign_in') || response.config.url?.includes('/sign_up')) {
+        if (response.data?.data) {
+          response.data.data.token = token
+        }
+      }
+    }
+
     // Log in development
     if (import.meta.env.DEV) {
       const requestDuration = calculateRequestDuration(response.config)
@@ -91,6 +104,7 @@ export const createResponseInterceptor = () => {
         statusText: response.statusText,
         duration: `${requestDuration}ms`,
         data: response.data,
+        headers: response.headers,
       })
     }
 

@@ -25,7 +25,7 @@ class SessionSettings < ApplicationRecord
   # Associations
   belongs_to :couple
   has_many :check_ins, dependent: :nullify
-  has_many :proposals, class_name: 'SessionSettingsProposal', dependent: :destroy
+  has_many :proposals, class_name: 'SessionSettingsProposal', foreign_key: 'current_settings_id', dependent: :destroy
 
   # Validations
   validates :session_duration, numericality: { greater_than: 0, less_than_or_equal_to: 120 }

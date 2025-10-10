@@ -17,9 +17,9 @@ if Rails.env.development? || Rails.env.test?
   CheckIn.destroy_all
   Milestone.destroy_all
   Reminder.destroy_all
-  SessionSetting.destroy_all
+  SessionSettings.destroy_all
   Category.destroy_all
-  CoupleInvitation.destroy_all
+  RelationshipRequest.destroy_all
   Couple.destroy_all
   User.destroy_all
 
@@ -145,27 +145,22 @@ if Rails.env.development?
     email: 'sam@example.com',
     password: 'password123',
     password_confirmation: 'password123',
-    name: 'Sam Martinez',
-    pronouns: 'he/him',
-    love_languages: ['receiving_gifts', 'quality_time']
+    name: 'Sam Martinez'
   )
 
   riley = User.create!(
     email: 'riley@example.com',
     password: 'password123',
     password_confirmation: 'password123',
-    name: 'Riley Johnson',
-    pronouns: 'they/them',
-    love_languages: ['words_of_affirmation', 'acts_of_service']
+    name: 'Riley Johnson'
   )
 
   couple2 = Couple.create!(
-    name: 'Sam & Riley',
-    anniversary: 8.months.ago
+    name: 'Sam & Riley'
   )
 
-  sam.update!(couple: couple2)
-  riley.update!(couple: couple2)
+  couple2.users << sam
+  couple2.users << riley
 
   Rails.logger.info "✅ Created demo couples"
 
@@ -175,7 +170,7 @@ if Rails.env.development?
   # Skip creating duplicate data for Alex & Jordan
   if false
     # Original Alex & Jordan data creation (now handled by AlexJordanCouple::Seeder)
-    session_setting = SessionSetting.create!(
+    session_setting = SessionSettings.create!(
       couple: couple1,
       frequency: 'weekly',
       reminder_day: 'sunday',
@@ -196,7 +191,6 @@ if Rails.env.development?
     5.times do |i|
       # Check-in for couple 1
       check_in = CheckIn.create!(
-        couple: couple1,
         participants: [alex.id, jordan.id],
         started_at: (5 - i).weeks.ago,
         completed_at: (5 - i).weeks.ago + 45.minutes,
@@ -212,12 +206,10 @@ if Rails.env.development?
     3.times do
       Note.create!(
         content: Faker::Lorem.paragraph(sentence_count: 3),
-        privacy_level: ['private', 'shared'].sample,
+        privacy: ['private', 'shared'].sample,
         check_in: check_in,
         category: default_categories.sample,
-        user: [alex, jordan].sample,
-        couple: couple1,
-        sentiment_score: rand(0.3..0.9)
+        author: [alex, jordan].sample,
       )
     end
 

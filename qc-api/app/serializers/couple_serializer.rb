@@ -26,11 +26,10 @@ class CoupleSerializer
       theme: couple.theme || 'system',
       session_settings: couple.session_settings&.first ? {
         id: couple.session_settings.first.id,
-        session_duration: couple.session_settings.first.default_duration_minutes,
-        timeouts_per_partner: couple.session_settings.first.max_extensions || 3,
-        timeout_duration: couple.session_settings.first.extension_duration_minutes || 5,
-        turn_based_mode: couple.session_settings.first.respond_to?(:turn_based_mode) ?
-                        couple.session_settings.first.turn_based_mode : false,
+        session_duration: couple.session_settings.first.session_duration,
+        timeouts_per_partner: couple.session_settings.first.timeouts_per_partner || 3,
+        timeout_duration: couple.session_settings.first.timeout_duration || 5,
+        turn_based_mode: couple.session_settings.first.turn_based_mode || false,
         allow_extensions: couple.session_settings.first.allow_extensions
       } : nil,
       pending_session_proposal: couple.pending_session_proposal

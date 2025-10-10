@@ -109,6 +109,19 @@ const Hero = () => {
           </motion.div>
         </motion.div>
 
+        {/* Sign In Link */}
+        <motion.div
+          className="mt-6"
+          variants={staggerFadeUp}
+        >
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="font-semibold text-rose-600 hover:text-rose-700 underline underline-offset-2 transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </motion.div>
+
       </motion.div>
     </section>
   )

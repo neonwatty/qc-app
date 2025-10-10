@@ -60,9 +60,13 @@ class JwtMiddleware
       '/auth/sign_in',
       '/auth/password',
       '/auth/confirmation',
+      '/api/auth/sign_up',
+      '/api/auth/sign_in',
+      '/api/auth/password',
+      '/api/auth/refresh',
       '/api/v1/public'
     ]
-    
+
     public_paths.any? { |p| path.start_with?(p) }
   end
 

@@ -25,17 +25,35 @@ export interface RefreshTokenResponse {
 
 class AuthService {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>('/auth/login', credentials)
-    return response.data
+    // Wrap credentials in 'user' object as expected by Devise
+    const response = await apiClient.post<{ data: { user: User; token: string; refresh_token: string } }>('/auth/sign_in', {
+      user: credentials
+    })
+
+    // Map Rails response to frontend AuthResponse format
+    return {
+      user: response.data.data.user,
+      token: response.data.data.token,
+      refreshToken: response.data.data.refresh_token, // Map refresh_token to refreshToken
+    }
   }
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>('/auth/register', data)
-    return response.data
+    // Wrap data in 'user' object as expected by Devise
+    const response = await apiClient.post<{ data: { user: User; token: string; refresh_token: string } }>('/auth/sign_up', {
+      user: data
+    })
+
+    // Map Rails response to frontend AuthResponse format
+    return {
+      user: response.data.data.user,
+      token: response.data.data.token,
+      refreshToken: response.data.data.refresh_token, // Map refresh_token to refreshToken
+    }
   }
 
   async logout(): Promise<void> {
-    await apiClient.post('/auth/logout')
+    await apiClient.delete('/auth/sign_out')
   }
 
   async getCurrentUser(): Promise<User> {

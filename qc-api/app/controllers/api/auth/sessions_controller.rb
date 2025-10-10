@@ -7,10 +7,30 @@ module Api
 
       # POST /api/auth/sign_in
       def create
-        self.resource = warden.authenticate!(auth_options)
-        sign_in(resource_name, resource)
+        Rails.logger.info "=== SessionsController#create called ==="
+        Rails.logger.info "Params: #{params.inspect}"
+        Rails.logger.info "User params present: #{params[:user].present?}"
+
+        # Find user by email
+        user = User.find_by(email: params[:user][:email])
+
+        # Validate password
+        if user && user.valid_password?(params[:user][:password])
+          self.resource = user
+          # Don't use sign_in for API-only JWT auth (no sessions)
+        else
+          render json: {
+            status: { code: 401, message: "Invalid credentials." },
+            errors: ["Email or password is incorrect"]
+          }, status: :unauthorized
+          return
+        end
 
         if resource
+          # Generate JWT access token
+          jwt_payload = resource.jwt_payload
+          access_token = JWT.encode(jwt_payload, Rails.application.config.jwt.secret_key, 'HS256')
+
           # Generate refresh token
           refresh_token = resource.generate_refresh_token
 
@@ -18,6 +38,9 @@ module Api
           couple_data = if resource.current_couple
             CoupleSerializer.new(resource.current_couple).serializable_hash[:data][:attributes]
           end
+
+          # Add JWT to Authorization header
+          response.headers['Authorization'] = "Bearer #{access_token}"
 
           render json: {
             status: { code: 200, message: "Logged in successfully." },

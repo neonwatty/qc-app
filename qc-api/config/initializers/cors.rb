@@ -7,8 +7,8 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    # In development, allow requests from localhost
-    origins ENV.fetch("FRONTEND_URL") { "http://localhost:3000" }
+    # In development, allow requests from localhost (Vite on 5173, Rails on 3000)
+    origins ENV.fetch("FRONTEND_URL") { "http://localhost:5173" }
 
     resource "*",
       headers: :any,
