@@ -6,14 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MainTabView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var couples: [Couple]
     @State private var selectedTab: Tab = .dashboard
 
     var body: some View {
         TabView(selection: $selectedTab) {
             // Dashboard Tab
-            DashboardPlaceholderView()
+            DashboardViewWrapper(couple: couples.first)
                 .tabItem {
                     Label("Dashboard", systemImage: "house.fill")
                 }
@@ -176,6 +179,37 @@ struct SettingsPlaceholderView: View {
     }
 }
 
+// MARK: - Dashboard Wrapper
+
+struct DashboardViewWrapper: View {
+    let couple: Couple?
+
+    var body: some View {
+        if let couple = couple {
+            DashboardView(couple: couple)
+        } else {
+            // Onboarding placeholder - no couple yet
+            NavigationStack {
+                VStack(spacing: 20) {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.pink)
+
+                    Text("Welcome to Quality Control")
+                        .font(.title)
+                        .fontWeight(.bold)
+
+                    Text("Onboarding flow coming in Week 6")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .navigationTitle("Welcome")
+            }
+        }
+    }
+}
+
 #Preview {
     MainTabView()
+        .modelContainer(PreviewContainer.create())
 }
