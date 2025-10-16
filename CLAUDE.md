@@ -4,148 +4,264 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Quality Control (QC) is a relationship check-in iOS app mockup project. The current phase involves creating a high-fidelity web prototype using Next.js to validate UX concepts before native iOS development.
+Quality Control (QC) is a native iOS relationship check-in app built with Swift and SwiftUI. This project is in active development, transforming a Next.js proof-of-concept into a production-ready iOS application.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15+ (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui (built on Radix UI)
-- **Animations**: Framer Motion
-- **State Management**: React Context + useReducer + Local Storage
-- **Icons**: Lucide React
-- **Date Handling**: date-fns
+- **Language**: Swift 5.0+
+- **UI Framework**: SwiftUI 100%
+- **Persistence**: SwiftData (iOS 17+)
+- **Architecture**: MVVM + Coordinators
+- **Minimum iOS**: 17.0+
+- **Xcode**: 16.0+
+- **Testing**: XCTest
 
 ## Development Commands
 
 ```bash
-# Install dependencies
-npm install
+# Open project in Xcode
+open QualityControl/QualityControl.xcodeproj
 
-# Run development server (with Turbopack)
-npm run dev
+# Build for simulator (via xcodebuild MCP)
+build_sim({
+  projectPath: "/Users/jeremywatt/Desktop/qc-app/QualityControl/QualityControl.xcodeproj",
+  scheme: "QualityControl",
+  simulatorName: "iPhone 16"
+})
 
-# Build for production
-npm run build
+# Build and run
+build_run_sim({
+  projectPath: "/Users/jeremywatt/Desktop/qc-app/QualityControl/QualityControl.xcodeproj",
+  scheme: "QualityControl",
+  simulatorName: "iPhone 16"
+})
 
-# Run production build
-npm start
+# Run tests
+test_sim({
+  projectPath: "/Users/jeremywatt/Desktop/qc-app/QualityControl/QualityControl.xcodeproj",
+  scheme: "QualityControl",
+  simulatorName: "iPhone 16"
+})
 
-# Type checking
-npm run type-check
-
-# Linting
-npm run lint
-
-# Format code
-npm run format
-
-# Testing
-npm test              # Run all tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Run tests with coverage report
-npm run test:ci       # Run tests in CI mode
-
-# Run a single test file
-npm test -- path/to/test.spec.ts
+# Clean build
+clean({
+  projectPath: "/Users/jeremywatt/Desktop/qc-app/QualityControl/QualityControl.xcodeproj",
+  scheme: "QualityControl"
+})
 ```
 
 ## Architecture Overview
 
-The project follows a mobile-first design approach with these core systems:
+The project follows MVVM + Coordinators pattern:
 
-### Check-in Flow System
-- 6-step flow: Welcome → Category Selection → Category Discussion → Reflection → Action Items → Completion
-- Dual-privacy note system (private vs shared notes)
-- Progress tracking with visual timeline
-- Managed via CheckInContext provider with session persistence in localStorage
-- Session bookends (preparation and reflection) via BookendsContext
+### Directory Structure
 
-### State Management
-- **CheckInContext**: Manages active check-in sessions with reducer pattern for complex state
-- **ThemeContext**: Handles dark/light mode preferences
-- **SessionSettingsContext**: Customizable check-in session settings
-- **BookendsContext**: Pre and post-session prompts
-- Session data persisted to localStorage with auto-save and SSR safety
-- Demo data auto-initialized for "Alex & Jordan" couple
-
-### Data Structure
-- **CheckInSession**: Central state tracking flow progress, categories, notes, and completion
-- **Category**: Discussion topics (default + custom) with associated prompts
-- **Note**: Content with privacy levels (private/shared/draft) and timestamps
-- **Milestone**: Relationship achievements tracked in Growth Gallery
-- **ActionItem**: Tasks with assignment, due dates, priorities, and completion tracking
-- **Reminder**: Scheduled prompts for check-ins and partner moments
-
-### Project Structure
 ```
-src/
-├── app/                  # Next.js App Router pages
-│   ├── dashboard/       # Main hub with stats
-│   ├── checkin/         # Multi-step check-in flow
-│   ├── notes/           # Notes management and search
-│   ├── growth/          # Growth Gallery milestones
-│   ├── settings/        # App customization
-│   ├── reminders/       # Notification management
-│   └── test-*/          # Development test pages
-├── components/
-│   ├── ui/              # shadcn/ui base components
-│   ├── layout/          # Navigation and layout
-│   ├── dashboard/       # Dashboard-specific components
-│   ├── checkin/         # Check-in flow components
-│   ├── notes/           # Note management components
-│   ├── growth/          # Growth timeline components
-│   └── providers/       # Context provider wrappers
-├── contexts/            # React Context providers with reducers
-├── types/               # TypeScript type definitions
-├── lib/
-│   ├── mock-data.ts     # Demo data generation
-│   ├── storage.ts       # Local storage utilities with SSR safety
-│   ├── animations.ts    # Framer Motion presets
-│   └── utils.ts         # Utility functions and cn() helper
-└── test-utils/          # Jest setup and browser API mocks
+QualityControl/
+├── Models/                  # SwiftData models
+│   ├── User/               # User.swift, Couple.swift
+│   ├── CheckIn/            # CheckInSession.swift, Category.swift, ActionItem.swift
+│   ├── Note/               # Note.swift (with NotePrivacy enum)
+│   ├── Reminder/           # Reminder.swift
+│   ├── Growth/             # Milestone.swift
+│   ├── LoveLanguage/       # LoveLanguage.swift
+│   └── Request/            # RelationshipRequest.swift
+├── Views/                  # SwiftUI views
+│   ├── Dashboard/          # Main dashboard (Week 3)
+│   ├── CheckIn/            # 6-step check-in flow (Week 3-4)
+│   ├── Notes/              # Notes management (Week 4)
+│   ├── Growth/             # Growth Gallery (Week 5)
+│   ├── Settings/           # App settings (Week 7-8)
+│   └── Shared/             # ContentView.swift, MainTabView.swift
+├── ViewModels/             # ObservableObject VMs (start Week 3)
+├── Services/               # Business logic layer (start Week 3)
+├── Coordinators/           # Navigation coordination (TBD)
+├── Utilities/              # MockDataGenerator.swift, PreviewContainer.swift
+└── Resources/              # Assets, Info.plist
+
+Tests/
+├── QualityControlTests/    # Unit tests
+└── QualityControlUITests/  # UI tests
 ```
 
-## Task Management
+## Data Models
 
-Tasks are tracked in multiple ways:
-- `qc-tasks.json`: Structured task definitions with QC-X.X numbering and dependencies
-- `.todoq/`: SQLite-based local task tracking
-- Test pages at `/test-*` routes for component and feature validation
+All models use SwiftData `@Model` macro. Key models:
+
+### Core Models
+- **User** - User profile with relationships to Couple, Notes, Reminders, LoveLanguages
+- **Couple** - Relationship entity with Users, CheckIns, Milestones, Requests
+- **CheckInSession** - Check-in with status tracking, progress, notes, action items
+- **Category** - Discussion topics with prompts and customization
+- **Note** - Content with privacy levels (private/shared/draft)
+
+### Supporting Models
+- **ActionItem** - Tasks with priority, assignment, completion tracking
+- **Reminder** - Scheduled notifications with categories and frequency
+- **Milestone** - Relationship achievements tracked in Growth Gallery
+- **LoveLanguage** - User preferences for expressions of love
+- **RelationshipRequest** - Asynchronous partner communication
+
+### Enums
+- `NotePrivacy`: `.private`, `.shared`, `.draft`
+- `CheckInStatus`: `.inProgress`, `.completed`, `.abandoned`
+- `CheckInStep`: `.welcome`, `.categorySelection`, `.categoryDiscussion`, `.reflection`, `.actionItems`, `.completion`
+- `Priority`: `.low`, `.medium`, `.high`
+- `ReminderCategory`, `ReminderFrequency`, `LoveLanguageCategory`, `RequestType`, `RequestStatus`
+
+## Current Status
+
+**Week 1: COMPLETE ✅**
+- SwiftData models defined (10 models)
+- Tab bar navigation with 5 tabs
+- Mock data generator utilities
+- Project compiles and runs successfully
+
+**Week 2: IN PROGRESS**
+- Design system (colors, typography, spacing)
+- Animation presets
+- Common UI components
+- Theme support
 
 ## Key Implementation Notes
 
-1. **Mobile-First Design**: All components start with mobile viewport (375px) and scale up
-2. **Mock Data**: Use localStorage for demo persistence, auto-login as demo couple on first visit
-3. **Animations**: Consistent use of Framer Motion presets from `lib/animations.ts`
-4. **Privacy Model**: Three-tier system (private/shared/draft) with visual indicators
-5. **Responsive Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
-6. **Type Safety**: Comprehensive TypeScript types in `src/types/` directory
-7. **Error Boundaries**: Wrapped components for graceful error handling
-8. **Performance**: Lazy loading, code splitting, and Turbopack for fast development
+1. **SwiftData Relationships**: Use `@Relationship` macro with proper delete rules
+2. **Model Properties**: Use distinct names (e.g., `categoryDescription` instead of `description` to avoid conflicts)
+3. **Navigation**: Tab-based for main sections, NavigationStack for hierarchical flows
+4. **Preview Support**: Use `PreviewContainer.create()` for SwiftUI previews with demo data
+5. **Mock Data**: `MockDataGenerator` provides sample data for all models
+6. **SF Symbols**: Use system icons (`systemImage:`) for consistency
 
-## Testing Approach
+## Development Workflow
 
-### Jest Configuration
-- Test files: `src/**/*.{test,spec}.{ts,tsx}` or in `__tests__` folders
-- Environment: jsdom with custom browser API mocks
-- Coverage: Excludes Next.js pages, layouts, and generated files
-- Mocks: Framer Motion, Next.js router, Lucide icons configured in setup
+### Week-by-Week Plan
+See `plans/05-feature-roadmap.md` for detailed weekly breakdown:
+- **Weeks 1-2**: Foundation & Design System
+- **Weeks 3-4**: Core UI (Dashboard, Check-in, Notes)
+- **Weeks 5-6**: Features Part 1 (Growth, Reminders, Love Languages, Onboarding)
+- **Weeks 7-8**: Features Part 2 (Requests, Settings, Polish)
+- **Weeks 9-10**: Integration (CloudKit, Notifications, Widgets)
+- **Weeks 11-12**: Testing & Launch
 
-### Test Guidelines
-- Component rendering verification with React Testing Library
-- User flow completion testing (check-in should take < 5 minutes)
-- Responsive design testing across viewports
-- Animation performance monitoring
-- LocalStorage persistence validation
-- Mock browser APIs configured in `src/test-utils/mockBrowserAPIs.ts`
+### Adding New Features
 
-## Build Configuration
+1. **Model** (if needed):
+   - Create SwiftData model in appropriate Models/ subdirectory
+   - Add to schema in `QualityControlApp.swift`
+   - Update `MockDataGenerator` with sample data
 
-### Next.js Settings
-- Static export enabled for GitHub Pages deployment
-- Bundle optimization for large libraries (Framer Motion, Radix UI)
-- Turbopack configuration for SVG loading
-- Separated type checking from build process for speed
-- Webpack customization for optimal chunk splitting
+2. **View**:
+   - Create SwiftUI view in appropriate Views/ subdirectory
+   - Use `PreviewContainer.create()` for previews
+   - Follow existing naming conventions
+
+3. **ViewModel** (Week 3+):
+   - Create `@Observable` or `ObservableObject` class
+   - Inject services via initializer
+   - Handle async operations with `@MainActor`
+
+4. **Service** (Week 3+):
+   - Business logic and data operations
+   - Protocol-based for testability
+   - Singleton pattern (`.shared`) when appropriate
+
+### Testing Approach
+
+- **Unit Tests**: XCTest for models, view models, services
+- **UI Tests**: Test critical user flows
+- **Preview Testing**: Use PreviewContainer for visual verification
+- **Simulator Testing**: Use xcodebuild MCP for automated testing
+
+## Reference Materials
+
+### POC Reference
+The Next.js proof-of-concept is preserved in `archive/web-poc` branch:
+```bash
+git checkout archive/web-poc
+```
+
+Screenshots from POC available in `plans/screenshots/`:
+- Dashboard, Check-in flow, Notes, Growth Gallery, Love Languages, Settings, Requests, Onboarding
+
+### Planning Documents
+- **plans/README.md** - Overview and table of contents
+- **plans/01-overview.md** - Project goals and high-level architecture
+- **plans/02-current-state-analysis.md** - POC feature analysis
+- **plans/03-ios-architecture.md** - Technical architecture with code examples
+- **plans/05-feature-roadmap.md** - 12-week implementation timeline
+- **plans/06-production-features.md** - POC → Production feature gaps
+
+## Code Style Guidelines
+
+### Swift Conventions
+- Follow [Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
+- Use descriptive names (prefer clarity over brevity)
+- Prefer value types (struct) over reference types (class) when possible
+- Use `@MainActor` for UI-related code
+- Document public APIs with doc comments
+
+### SwiftUI Patterns
+- Extract subviews for better readability
+- Use `@State` for local view state
+- Use `@Environment` for shared dependencies
+- Prefer declarative over imperative
+- Use ViewBuilder for conditional views
+
+### File Organization
+- One type per file
+- Group related files in subdirectories
+- Keep files under 300 lines when possible
+- Use `// MARK: -` for section organization
+
+## Common Tasks
+
+### Running on Simulator
+```swift
+// Use xcodebuild MCP tools
+build_run_sim({
+  projectPath: "...",
+  scheme: "QualityControl",
+  simulatorName: "iPhone 16"
+})
+```
+
+### Taking Screenshots
+```swift
+screenshot({ simulatorUuid: "UUID" })
+```
+
+### Interacting with UI
+```swift
+// Get UI hierarchy first
+describe_ui({ simulatorUuid: "UUID" })
+
+// Then tap/swipe using precise coordinates
+tap({ simulatorUuid: "UUID", x: 100, y: 200 })
+```
+
+## Troubleshooting
+
+### Build Errors
+- Clean build folder: Use `clean()` MCP tool
+- Verify all models are in schema (QualityControlApp.swift)
+- Check for naming conflicts in model properties
+
+### Simulator Issues
+- List available simulators: `list_sims()`
+- Boot specific simulator: `boot_sim({ simulatorUuid: "..." })`
+- Open Simulator.app: `open_sim()`
+
+### SwiftData Issues
+- Check relationships have proper inverse
+- Verify delete rules are set correctly
+- Use `.unique` attribute for IDs
+- Remember to add new models to ModelContainer schema
+
+## Notes for Claude
+
+- **Always use xcodebuild MCP** for building, running, and testing iOS projects
+- **Check Week 1 commit** for examples of model implementation
+- **Reference plans/** directory for feature specifications
+- **POC screenshots** in plans/screenshots/ show expected UI/UX
+- **Test on iPhone 16 simulator** (iOS 18.1) by default
+- **Follow the 12-week plan** in plans/05-feature-roadmap.md for feature priority

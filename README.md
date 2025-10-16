@@ -1,253 +1,242 @@
-# QC - Quality Control for Relationships
+# Quality Control (QC) - iOS App
 
-A modern web application designed to help couples maintain healthy relationships through regular, structured check-ins. Built with Next.js and optimized for mobile devices.
+**A relationship check-in app built with Swift and SwiftUI**
 
-![QC App](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-ISC-green.svg)
-![Next.js](https://img.shields.io/badge/Next.js-15.5-black.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)
+![Platform](https://img.shields.io/badge/platform-iOS-blue.svg)
+![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)
+![iOS](https://img.shields.io/badge/iOS-17.0+-green.svg)
+![Xcode](https://img.shields.io/badge/Xcode-16.0+-blue.svg)
 
 ## 🎯 Overview
 
-QC (Quality Control) is a relationship maintenance tool that facilitates regular check-ins between partners. It provides structure for meaningful conversations, tracks relationship health over time, and helps couples build better communication habits.
+Quality Control is a native iOS app designed to help couples maintain healthy relationships through regular, structured check-ins. The app provides tools for meaningful conversations, progress tracking, and relationship growth.
 
 ### Key Features
 
-- **Structured Check-ins**: Guided conversations across key relationship dimensions
-- **Dual Privacy System**: Private notes for personal reflection, shared notes for joint observations  
-- **Progress Tracking**: Visual timeline of relationship milestones and growth
-- **Action Items**: Convert discussions into concrete, accountable next steps
-- **Mobile Optimized**: Full touch support with gesture controls and haptic feedback
-- **Streak Tracking**: Gamification to encourage consistent check-in habits
+- **Structured Check-ins**: 6-step guided flow across customizable relationship categories
+- **Dual Privacy System**: Private notes for personal reflection, shared notes for joint observations
+- **Progress Tracking**: Visual Growth Gallery with milestones and relationship timeline
+- **Action Items**: Convert discussions into concrete, trackable tasks
+- **Love Languages**: Track and share preferred expressions of affection
+- **Relationship Requests**: Asynchronous communication system for partners
+- **SwiftData Persistence**: Local-first data storage with CloudKit sync (coming soon)
+
+## 🏗 Architecture
+
+**Pattern:** MVVM + Coordinators
+**UI Framework:** SwiftUI 100%
+**Persistence:** SwiftData (iOS 17+)
+**Cloud Sync:** CloudKit (Phase 2)
+**Minimum iOS:** 17.0+
+
+### Project Structure
+
+```
+QualityControl/
+├── Models/                # SwiftData models
+│   ├── User/             # User & Couple
+│   ├── CheckIn/          # Session, Category, ActionItem
+│   ├── Note/             # Notes with privacy levels
+│   ├── Reminder/         # Notification scheduling
+│   ├── Growth/           # Milestones
+│   ├── LoveLanguage/     # Love language tracking
+│   └── Request/          # Relationship requests
+├── Views/                # SwiftUI views
+│   ├── Dashboard/        # Main hub
+│   ├── CheckIn/          # Check-in flow
+│   ├── Notes/            # Note management
+│   ├── Growth/           # Growth Gallery
+│   └── Settings/         # App settings
+├── ViewModels/           # ObservableObject view models
+├── Services/             # Business logic
+├── Utilities/            # Helpers and extensions
+└── Resources/            # Assets and configs
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
-- Modern web browser with localStorage support
+- macOS 15.0+ (Sequoia)
+- Xcode 16.0+
+- iOS 17.0+ device or simulator
+- Apple Developer account (for device testing)
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
 git clone https://github.com/neonwatty/qc-app.git
 cd qc-app
 ```
 
-2. Install dependencies:
+2. **Open in Xcode:**
 ```bash
-npm install
+open QualityControl/QualityControl.xcodeproj
 ```
 
-3. Start the development server:
+3. **Select a simulator:**
+   - iPhone 16, 16 Pro, or 16 Pro Max recommended
+   - iOS 18.1 simulator
+
+4. **Build and run:**
+   - Press `⌘R` or click the Play button
+   - App will launch with demo data
+
+### Development Commands
+
 ```bash
-npm run dev
+# Build for simulator
+xcodebuild -project QualityControl.xcodeproj -scheme QualityControl -sdk iphonesimulator
+
+# Run tests
+xcodebuild test -project QualityControl.xcodeproj -scheme QualityControl -destination 'platform=iOS Simulator,name=iPhone 16'
+
+# Clean build folder
+xcodebuild clean -project QualityControl.xcodeproj -scheme QualityControl
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+## 📱 Current Status
 
-The app will auto-login with demo data for "Alex & Jordan" couple.
+**Week 1 Complete** ✅
 
-## 📱 Usage Guide
+- [x] SwiftData models (10 models)
+- [x] Tab bar navigation
+- [x] Mock data generator
+- [x] Project structure
+- [x] Builds successfully on simulator
 
-### Dashboard
-The main hub showing:
-- Current streak and last check-in
-- Activity feed with recent notes
-- Quick action buttons
-- Relationship statistics
+**Next (Week 2)**
 
-### Starting a Check-in
-1. Click "Start Check-in" from dashboard
-2. Select 2-5 categories to discuss
-3. For each category:
-   - Review guided prompts
-   - Add private notes (only you see these)
-   - Add shared notes (both partners see these)
-4. Rate current mood and energy
-5. Create action items with assignments
-6. Celebrate completion!
+- [ ] Design system (colors, typography, spacing)
+- [ ] Animation presets
+- [ ] Common UI components
+- [ ] Theme support (dark/light mode)
 
-### Notes System
-- **Private Notes**: Personal reflections and thoughts
-- **Shared Notes**: Joint observations and agreements
-- **Draft Notes**: Work in progress, not yet shared
-- All notes are searchable and filterable by category
-
-### Growth Gallery
-- Track relationship milestones with photos
-- Visual timeline of your journey together
-- Add custom milestones and celebrations
-
-### Settings
-- Customize check-in reminders
-- Add custom discussion categories
-- Adjust privacy preferences
-- Export your data
-- Reset demo data
+See `plans/` directory for the complete 12-week roadmap.
 
 ## 🛠 Development
 
 ### Tech Stack
 
-- **Framework**: Next.js 15.5 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Custom components with shadcn/ui base
-- **Animations**: Framer Motion
-- **State**: React Context + Local Storage
-- **Icons**: Lucide React
+| Component | Technology |
+|-----------|-----------|
+| UI Framework | SwiftUI |
+| Data Persistence | SwiftData |
+| Cloud Sync | CloudKit (planned) |
+| Notifications | UNUserNotificationCenter |
+| Architecture | MVVM + Coordinators |
+| Testing | XCTest |
 
-### Project Structure
+### Data Models
 
-```
-src/
-├── app/                  # Next.js app router pages
-│   ├── dashboard/       # Main dashboard
-│   ├── checkin/         # Check-in flow
-│   ├── notes/           # Notes management
-│   ├── growth/          # Growth gallery
-│   └── settings/        # App settings
-├── components/
-│   ├── ui/              # Reusable UI components
-│   ├── layout/          # Layout components
-│   └── [feature]/       # Feature-specific components
-├── lib/
-│   ├── storage.ts       # Local storage utilities
-│   ├── mock-data.ts     # Demo data
-│   ├── animations.ts    # Animation configs
-│   └── demo-reset.ts    # Demo reset utilities
-├── hooks/               # Custom React hooks
-├── contexts/            # React Context providers
-└── types/               # TypeScript definitions
-```
+**Core Entities:**
+- **User** - Individual user profile
+- **Couple** - Relationship pairing
+- **CheckInSession** - Check-in with progress tracking
+- **Category** - Discussion topics
+- **Note** - Content with privacy levels (private/shared/draft)
+- **ActionItem** - Tasks with assignments
+- **Reminder** - Scheduled notifications
+- **Milestone** - Relationship achievements
+- **LoveLanguage** - Preferred expressions of love
+- **RelationshipRequest** - Partner communication
 
-### Available Scripts
+All models use SwiftData with type-safe relationships.
 
-```bash
-npm run dev        # Start development server
-npm run build      # Build for production
-npm run start      # Run production build
-npm run lint       # Run ESLint
-npm run type-check # Run TypeScript checks
-npm run format     # Format with Prettier
-```
+## 📊 Features Implementation Status
 
-### Mobile Optimizations
-
-The app includes extensive mobile optimizations:
-- **Touch targets**: Minimum 44px for accessibility
-- **Gestures**: Swipe navigation and pull-to-refresh
-- **Haptic feedback**: Touch feedback on interactions
-- **Safe areas**: Support for notched devices
-- **Performance**: Hardware acceleration and lazy loading
+| Feature | Status | Week |
+|---------|--------|------|
+| Foundation | ✅ Complete | 1 |
+| Design System | 📅 Planned | 2 |
+| Dashboard | 📅 Planned | 3 |
+| Check-in Flow | 📅 Planned | 3-4 |
+| Notes System | 📅 Planned | 4 |
+| Growth Gallery | 📅 Planned | 5 |
+| Reminders | 📅 Planned | 5 |
+| Love Languages | 📅 Planned | 6 |
+| Requests | 📅 Planned | 7 |
+| Settings | 📅 Planned | 7-8 |
+| CloudKit Sync | 📅 Planned | 9 |
+| Notifications | 📅 Planned | 10 |
+| Widgets | 📅 Planned | 10 |
 
 ## 🧪 Testing
 
-### Manual Testing Checklist
-
-- [ ] Complete full check-in flow
-- [ ] Test both private and shared notes
-- [ ] Verify action item creation
-- [ ] Check mobile responsiveness
-- [ ] Test offline functionality
-- [ ] Verify data persistence
-- [ ] Test demo reset function
-
-### Browser Support
-
-- Chrome 90+
-- Safari 14+
-- Firefox 88+
-- Edge 90+
-- Mobile Safari (iOS 14+)
-- Chrome Mobile (Android 8+)
-
-## 🔄 Demo Reset
-
-To reset the demo data:
-
-1. **Via UI**: Settings → Demo Controls → Reset Demo Data
-2. **Via Console**: 
-```javascript
-import { resetDemoData } from '@/lib/demo-reset'
-resetDemoData()
-```
-
-This restores the initial demo state with sample data for Alex & Jordan.
-
-## 📊 Data Management
-
-### Local Storage
-All data is stored locally in the browser using localStorage:
-- User profiles
-- Check-in history
-- Notes (private and shared)
-- Milestones
-- Settings
-
-### Data Export
-Users can export their data as JSON from Settings → Data → Export.
-
-### Privacy
-- No data is sent to external servers
-- Private notes are clearly marked and separated
-- All data remains on the user's device
-
-## 🚢 Deployment
-
-### Production Build
+### Running Tests
 
 ```bash
-npm run build
-npm run start
+# All tests
+⌘U in Xcode
+
+# Specific test file
+xcodebuild test -project QualityControl.xcodeproj -scheme QualityControl -only-testing:QualityControlTests/YourTestFile
+
+# UI tests
+xcodebuild test -project QualityControl.xcodeproj -scheme QualityControl -only-testing:QualityControlUITests
 ```
 
-### Environment Variables
+### Test Coverage Goals
 
-Create `.env.local` for environment-specific config:
-```env
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-NEXT_PUBLIC_APP_NAME=QC
+- Unit tests: 80%+ coverage
+- Critical paths: 100% coverage
+- UI tests for main flows
+
+## 📖 Documentation
+
+Comprehensive planning documentation available in `plans/`:
+
+- **[README.md](./plans/README.md)** - Overview and table of contents
+- **[01-overview.md](./plans/01-overview.md)** - Project goals and architecture
+- **[02-current-state-analysis.md](./plans/02-current-state-analysis.md)** - POC analysis
+- **[03-ios-architecture.md](./plans/03-ios-architecture.md)** - Technical specifications
+- **[05-feature-roadmap.md](./plans/05-feature-roadmap.md)** - 12-week implementation plan
+- **[06-production-features.md](./plans/06-production-features.md)** - MVP to production gap
+
+## 🔗 Reference
+
+**Next.js POC:**
+The original web proof-of-concept is preserved in the `archive/web-poc` branch:
+```bash
+git checkout archive/web-poc
 ```
 
-### Deployment Platforms
+Live demo: https://neonwatty.github.io/qc-app/
 
-Recommended platforms:
-- **Vercel**: Optimal for Next.js apps
-- **Netlify**: Good alternative with easy setup
-- **Railway**: Full-stack deployment option
+**Screenshots:**
+POC screenshots captured for reference are available in `plans/screenshots/`.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We're in active development! Contributions welcome.
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+3. Follow Swift style guidelines
+4. Write tests for new features
+5. Commit changes (`git commit -m 'Add AmazingFeature'`)
+6. Push to branch (`git push origin feature/AmazingFeature`)
+7. Open a Pull Request
 
 ### Code Style
 
-- Follow TypeScript best practices
-- Use functional components with hooks
-- Maintain existing code formatting
-- Write meaningful commit messages
-- Add comments for complex logic
+- Follow Swift API Design Guidelines
+- Use SwiftLint for style checking
+- Prefer value types over reference types
+- Write self-documenting code with clear names
+- Add doc comments for public APIs
 
 ## 📝 License
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the ISC License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
-- Built with [Next.js](https://nextjs.org/)
-- UI components inspired by [shadcn/ui](https://ui.shadcn.com/)
-- Icons from [Lucide](https://lucide.dev/)
-- Animations powered by [Framer Motion](https://www.framer.com/motion/)
+- Built with [SwiftUI](https://developer.apple.com/xcode/swiftui/)
+- Data persistence via [SwiftData](https://developer.apple.com/xcode/swiftdata/)
+- Icons from SF Symbols
+- Inspired by evidence-based relationship research
 
 ## 📧 Contact
 
@@ -256,19 +245,30 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 ## 🗺 Roadmap
 
-### Version 1.1 (Planned)
-- [ ] Cloud sync with encryption
-- [ ] Partner invitations
-- [ ] Data visualization charts
-- [ ] Notification system
-- [ ] PWA support
+### Phase 1: MVP (Weeks 1-8)
+- ✅ Foundation
+- 📅 Core UI implementation
+- 📅 All POC features
+- 📅 Polish and testing
 
-### Version 2.0 (Future)
-- [ ] Native mobile apps
-- [ ] Video check-ins
-- [ ] Therapist mode
-- [ ] Multi-language support
-- [ ] AI-powered insights
+### Phase 2: Integration (Weeks 9-10)
+- 📅 CloudKit sync
+- 📅 Push notifications
+- 📅 Home Screen widgets
+- 📅 Shortcuts support
+
+### Phase 3: Launch (Weeks 11-12)
+- 📅 TestFlight beta
+- 📅 App Store submission
+- 📅 Marketing materials
+- 📅 Launch 🚀
+
+### Future (Post-MVP)
+- Apple Watch companion app
+- Live Activities support
+- Advanced analytics
+- Multi-language support
+- iPad optimization
 
 ---
 
