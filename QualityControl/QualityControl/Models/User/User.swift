@@ -19,10 +19,6 @@ final class User {
     @Relationship(deleteRule: .nullify, inverse: \Couple.users)
     var couple: Couple?
 
-    @Relationship(deleteRule: .cascade) var notes: [Note]?
-    @Relationship(deleteRule: .cascade) var reminders: [Reminder]?
-    @Relationship(deleteRule: .cascade) var loveLanguages: [LoveLanguage]?
-
     init(id: UUID = UUID(), name: String, email: String) {
         self.id = id
         self.name = name
