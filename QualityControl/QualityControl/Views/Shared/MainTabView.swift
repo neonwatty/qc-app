@@ -30,7 +30,7 @@ struct MainTabView: View {
                 .tag(Tab.checkIn)
 
             // Notes Tab
-            NotesPlaceholderView()
+            NotesListView()
                 .tabItem {
                     Label("Notes", systemImage: "note.text")
                 }
