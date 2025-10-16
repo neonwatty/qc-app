@@ -11,6 +11,7 @@ import SwiftData
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var couples: [Couple]
+    @Query private var users: [User]
     @State private var selectedTab: Tab = .dashboard
 
     var body: some View {
@@ -44,11 +45,19 @@ struct MainTabView: View {
                 .tag(Tab.growth)
 
             // Settings Tab
-            SettingsPlaceholderView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
-                .tag(Tab.settings)
+            if let currentUser = users.first {
+                SettingsView(currentUserId: currentUser.id)
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape.fill")
+                    }
+                    .tag(Tab.settings)
+            } else {
+                SettingsPlaceholderView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape.fill")
+                    }
+                    .tag(Tab.settings)
+            }
         }
         .tint(.pink)
     }
