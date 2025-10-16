@@ -37,7 +37,7 @@ final class Reminder {
     }
 }
 
-enum ReminderCategory: String, Codable {
+enum ReminderCategory: String, Codable, CaseIterable {
     case checkIn
     case habit
     case actionItem
@@ -45,7 +45,7 @@ enum ReminderCategory: String, Codable {
     case specialOccasion
 }
 
-enum ReminderFrequency: String, Codable {
+enum ReminderFrequency: String, Codable, CaseIterable {
     case once
     case daily
     case weekly

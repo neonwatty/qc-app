@@ -37,7 +37,7 @@ struct MainTabView: View {
                 .tag(Tab.notes)
 
             // Growth Tab
-            GrowthPlaceholderView()
+            GrowthView()
                 .tabItem {
                     Label("Growth", systemImage: "chart.line.uptrend.xyaxis")
                 }
@@ -133,27 +133,6 @@ struct NotesPlaceholderView: View {
                     .foregroundColor(.secondary)
             }
             .navigationTitle("Notes")
-        }
-    }
-}
-
-struct GrowthPlaceholderView: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.system(size: 60))
-                    .foregroundColor(.pink)
-
-                Text("Growth Gallery")
-                    .font(.title)
-                    .fontWeight(.bold)
-
-                Text("Coming in Week 5")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .navigationTitle("Growth")
         }
     }
 }
