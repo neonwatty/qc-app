@@ -74,7 +74,9 @@ class GrowthViewModel {
         modelContext.insert(milestone)
         try modelContext.save()
 
-        milestones.insert(milestone, at: 0)
+        // Append to milestones array to maintain insertion order
+        // (Newly added milestones have achievedAt = nil, so they naturally go at end when sorted)
+        milestones.append(milestone)
     }
 
     func markMilestoneAchieved(_ milestone: Milestone) throws {
@@ -189,19 +191,21 @@ class GrowthViewModel {
         case .week:
             let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
             filtered = filtered.filter { milestone in
-                guard let achievedAt = milestone.achievedAt else { return false }
+                // Include pending milestones (not yet achieved) regardless of time
+                // Only filter achieved milestones by their achievement date
+                guard let achievedAt = milestone.achievedAt else { return true }
                 return achievedAt >= weekAgo
             }
         case .month:
             let monthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
             filtered = filtered.filter { milestone in
-                guard let achievedAt = milestone.achievedAt else { return false }
+                guard let achievedAt = milestone.achievedAt else { return true }
                 return achievedAt >= monthAgo
             }
         case .year:
             let yearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date())!
             filtered = filtered.filter { milestone in
-                guard let achievedAt = milestone.achievedAt else { return false }
+                guard let achievedAt = milestone.achievedAt else { return true }
                 return achievedAt >= yearAgo
             }
         case .all:

@@ -602,7 +602,8 @@ final class RemindersViewModelTests: XCTestCase {
     }
 
     func testGroupedRemindersWithToday() throws {
-        let today = Calendar.current.startOfDay(for: Date()).addingTimeInterval(3600)
+        // Schedule reminder for later today (current time + 2 hours to ensure it's in future)
+        let today = Date().addingTimeInterval(7200) // 2 hours from now
 
         _ = try viewModel.createReminder(
             title: "Today Reminder",
@@ -615,10 +616,20 @@ final class RemindersViewModelTests: XCTestCase {
         viewModel.setFilter(.all)
         let groups = viewModel.groupedReminders()
 
-        // Should have a "Today" group
-        XCTAssertTrue(groups.contains { $0.title == "Today" })
-        let todayGroup = groups.first { $0.title == "Today" }
-        XCTAssertEqual(todayGroup?.reminders.count, 1)
+        // Should have a "Today" group if the reminder is still today
+        // (Only check if the scheduled time is still on the same day)
+        let calendar = Calendar.current
+        if calendar.isDateInToday(today) {
+            XCTAssertTrue(groups.contains { $0.title == "Today" })
+            let todayGroup = groups.first { $0.title == "Today" }
+            XCTAssertEqual(todayGroup?.reminders.count, 1)
+        } else {
+            // If we're near midnight and adding 2 hours puts us in tomorrow,
+            // check for Tomorrow group instead
+            XCTAssertTrue(groups.contains { $0.title == "Tomorrow" })
+            let tomorrowGroup = groups.first { $0.title == "Tomorrow" }
+            XCTAssertEqual(tomorrowGroup?.reminders.count, 1)
+        }
     }
 
     func testGroupedRemindersWithTomorrow() throws {

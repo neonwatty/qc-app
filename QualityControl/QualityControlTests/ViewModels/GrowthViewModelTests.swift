@@ -285,32 +285,35 @@ final class GrowthViewModelTests: XCTestCase {
         let calendar = Calendar.current
         let now = Date()
 
-        // Create milestones with different achievement dates
-        let recentAchieved = Milestone(title: "Recent", description: "D1", category: "Growth", coupleId: testCoupleId)
-        recentAchieved.isAchieved = true
-        recentAchieved.achievedAt = calendar.date(byAdding: .day, value: -3, to: now)
+        // Add three milestones in order: Recent, Old, Pending
+        try viewModel.addMilestone(title: "Recent", description: "D1", category: "Growth")
+        try viewModel.addMilestone(title: "Old", description: "D2", category: "Communication")
+        try viewModel.addMilestone(title: "Pending", description: "D3", category: "Trust")
 
-        let oldAchieved = Milestone(title: "Old", description: "D2", category: "Communication", coupleId: testCoupleId)
-        oldAchieved.isAchieved = true
-        oldAchieved.achievedAt = calendar.date(byAdding: .day, value: -30, to: now)
-
-        let pending = Milestone(title: "Pending", description: "D3", category: "Trust", coupleId: testCoupleId)
-
-        try viewModel.addMilestone(title: recentAchieved.title, description: recentAchieved.milestoneDescription, category: recentAchieved.category)
-        try viewModel.addMilestone(title: oldAchieved.title, description: oldAchieved.milestoneDescription, category: oldAchieved.category)
-        try viewModel.addMilestone(title: pending.title, description: pending.milestoneDescription, category: pending.category)
-
-        // Mark first two as achieved
+        // Now mark them as achieved with appropriate dates
+        // milestones[0] = "Recent" - mark with recent date
         try viewModel.markMilestoneAchieved(viewModel.milestones[0])
-        viewModel.milestones[0].achievedAt = recentAchieved.achievedAt
-        try viewModel.markMilestoneAchieved(viewModel.milestones[1])
-        viewModel.milestones[1].achievedAt = oldAchieved.achievedAt
+        viewModel.milestones[0].achievedAt = calendar.date(byAdding: .day, value: -3, to: now)
 
-        // Test week filter
+        // milestones[1] = "Old" - mark with old date
+        try viewModel.markMilestoneAchieved(viewModel.milestones[1])
+        viewModel.milestones[1].achievedAt = calendar.date(byAdding: .day, value: -30, to: now)
+
+        // milestones[2] = "Pending" - leave as pending (not marked as achieved)
+
+        // Test week filter - should include:
+        // - "Recent" (achieved within week)
+        // - "Pending" (not achieved, so included regardless of time)
+        // Should exclude:
+        // - "Old" (achieved over a week ago)
         viewModel.selectedTimeRange = .week
         let weekFiltered = viewModel.filteredMilestones
-        XCTAssertEqual(weekFiltered.count, 1)
-        XCTAssertEqual(weekFiltered.first?.title, "Recent")
+        XCTAssertEqual(weekFiltered.count, 2)
+
+        let titles = Set(weekFiltered.map { $0.title })
+        XCTAssertTrue(titles.contains("Recent"))
+        XCTAssertTrue(titles.contains("Pending"))
+        XCTAssertFalse(titles.contains("Old"))
     }
 
     func testFilteredMilestonesAllTimeRange() throws {
