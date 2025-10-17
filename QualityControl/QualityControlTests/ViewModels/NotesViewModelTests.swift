@@ -13,27 +13,14 @@ import SwiftData
 @MainActor
 final class NotesViewModelTests: XCTestCase {
 
+    var modelContainer: ModelContainer!
     var modelContext: ModelContext!
     var viewModel: NotesViewModel!
     var testUserId: UUID!
 
     override func setUp() async throws {
-        // Create in-memory model container with complete schema
-        let schema = Schema([
-            User.self,
-            Couple.self,
-            CheckInSession.self,
-            QualityControl.Category.self,
-            Note.self,
-            ActionItem.self,
-            Reminder.self,
-            Milestone.self,
-            LoveLanguage.self,
-            RelationshipRequest.self
-        ])
-        let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: configuration)
-        modelContext = container.mainContext
+        // Use TestModelContext helper for consistent container management
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         // Create test user
         testUserId = UUID()
@@ -47,8 +34,9 @@ final class NotesViewModelTests: XCTestCase {
 
     override func tearDown() {
         viewModel = nil
-        modelContext = nil
         testUserId = nil
+        modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests
