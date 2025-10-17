@@ -23,6 +23,5 @@ final class Couple {
         self.id = id
         self.relationshipStartDate = relationshipStartDate
         self.createdAt = Date()
-        self.users = []
     }
 }

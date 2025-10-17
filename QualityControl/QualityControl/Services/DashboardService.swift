@@ -118,14 +118,15 @@ class DashboardService {
             let descriptor = FetchDescriptor<Reminder>(
                 predicate: #Predicate { reminder in
                     reminder.userId == userId &&
-                    reminder.isActive &&
-                    reminder.scheduledFor > now
+                    reminder.isActive
                 },
                 sortBy: [SortDescriptor(\.scheduledFor, order: .forward)]
             )
 
             if let reminders = try? modelContext.fetch(descriptor) {
-                allReminders.append(contentsOf: reminders)
+                // Filter for future reminders in Swift (not in predicate)
+                let futureReminders = reminders.filter { $0.scheduledFor > now }
+                allReminders.append(contentsOf: futureReminders)
             }
         }
 
