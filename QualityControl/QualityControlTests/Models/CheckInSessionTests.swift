@@ -14,11 +14,12 @@ import SwiftData
 final class CheckInSessionTests: XCTestCase {
 
     var modelContext: ModelContext!
+    var modelContainer: ModelContainer!
     var testCouple: Couple!
     var testSession: CheckInSession!
 
     override func setUp() async throws {
-        modelContext = try TestModelContext.create()
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         testCouple = Couple(relationshipStartDate: Date())
         modelContext.insert(testCouple)
@@ -33,6 +34,7 @@ final class CheckInSessionTests: XCTestCase {
         testSession = nil
         testCouple = nil
         modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests

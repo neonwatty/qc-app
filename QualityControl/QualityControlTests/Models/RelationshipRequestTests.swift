@@ -14,12 +14,13 @@ import SwiftData
 final class RelationshipRequestTests: XCTestCase {
 
     var modelContext: ModelContext!
+    var modelContainer: ModelContainer!
     var testUser1: User!
     var testUser2: User!
     var testRequest: RelationshipRequest!
 
     override func setUp() async throws {
-        modelContext = try TestModelContext.create()
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         testUser1 = User(name: "User 1", email: "user1@example.com")
         testUser2 = User(name: "User 2", email: "user2@example.com")
@@ -43,6 +44,7 @@ final class RelationshipRequestTests: XCTestCase {
         testUser1 = nil
         testUser2 = nil
         modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests

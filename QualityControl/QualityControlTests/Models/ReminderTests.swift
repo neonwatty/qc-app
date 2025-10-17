@@ -14,11 +14,12 @@ import SwiftData
 final class ReminderTests: XCTestCase {
 
     var modelContext: ModelContext!
+    var modelContainer: ModelContainer!
     var testUser: User!
     var testReminder: Reminder!
 
     override func setUp() async throws {
-        modelContext = try TestModelContext.create()
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         testUser = User(name: "Test User", email: "test@example.com")
         modelContext.insert(testUser)
@@ -40,6 +41,7 @@ final class ReminderTests: XCTestCase {
         testReminder = nil
         testUser = nil
         modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests

@@ -14,11 +14,12 @@ import SwiftData
 final class ActionItemTests: XCTestCase {
 
     var modelContext: ModelContext!
+    var modelContainer: ModelContainer!
     var testCheckInSession: CheckInSession!
     var testActionItem: ActionItem!
 
     override func setUp() async throws {
-        modelContext = try TestModelContext.create()
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         let couple = Couple(relationshipStartDate: Date())
         modelContext.insert(couple)
@@ -36,6 +37,7 @@ final class ActionItemTests: XCTestCase {
         testActionItem = nil
         testCheckInSession = nil
         modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests

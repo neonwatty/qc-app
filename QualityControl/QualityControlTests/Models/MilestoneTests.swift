@@ -14,11 +14,12 @@ import SwiftData
 final class MilestoneTests: XCTestCase {
 
     var modelContext: ModelContext!
+    var modelContainer: ModelContainer!
     var testCouple: Couple!
     var testMilestone: Milestone!
 
     override func setUp() async throws {
-        modelContext = try TestModelContext.create()
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         testCouple = Couple(relationshipStartDate: Date())
         modelContext.insert(testCouple)
@@ -38,6 +39,7 @@ final class MilestoneTests: XCTestCase {
         testMilestone = nil
         testCouple = nil
         modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests

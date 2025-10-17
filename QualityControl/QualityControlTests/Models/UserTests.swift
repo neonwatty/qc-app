@@ -57,7 +57,7 @@ final class UserTests: XCTestCase {
 
     func testNameUpdatePersists() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -75,7 +75,7 @@ final class UserTests: XCTestCase {
 
     func testEmailUpdatePersists() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -93,7 +93,7 @@ final class UserTests: XCTestCase {
 
     func testAvatarURLUpdatePersists() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -140,7 +140,7 @@ final class UserTests: XCTestCase {
 
     func testCanAssignCouple() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -160,7 +160,7 @@ final class UserTests: XCTestCase {
 
     func testCoupleRelationshipBidirectional() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -179,7 +179,7 @@ final class UserTests: XCTestCase {
 
     func testCanRemoveCoupleRelationship() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
 
@@ -200,7 +200,7 @@ final class UserTests: XCTestCase {
 
     func testUserPersistsInContext() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -216,7 +216,7 @@ final class UserTests: XCTestCase {
 
     func testUserCanBeDeleted() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -233,7 +233,7 @@ final class UserTests: XCTestCase {
 
     func testMultipleUsersPersist() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -257,7 +257,7 @@ final class UserTests: XCTestCase {
 
     func testFetchUserById() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -278,7 +278,7 @@ final class UserTests: XCTestCase {
 
     func testFetchUserByEmail() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()
@@ -299,7 +299,7 @@ final class UserTests: XCTestCase {
 
     func testFetchUserByName() throws {
         // Setup
-        let context = try TestModelContext.create()
+        let (container, context) = try TestModelContext.create()
         let testUser = User(name: "Test User", email: "test@example.com")
         context.insert(testUser)
         try context.save()

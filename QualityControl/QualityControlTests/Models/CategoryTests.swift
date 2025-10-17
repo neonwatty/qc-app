@@ -14,10 +14,11 @@ import SwiftData
 final class CategoryTests: XCTestCase {
 
     var modelContext: ModelContext!
+    var modelContainer: ModelContainer!
     var testCategory: QualityControl.Category!
 
     override func setUp() async throws {
-        modelContext = try TestModelContext.create()
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         testCategory = QualityControl.Category(name: "Communication", description: "Test description", icon: "bubble.left.and.bubble.right")
         modelContext.insert(testCategory)
@@ -27,6 +28,7 @@ final class CategoryTests: XCTestCase {
     override func tearDown() async throws {
         testCategory = nil
         modelContext = nil
+        modelContainer = nil
     }
 
     // MARK: - Initialization Tests
