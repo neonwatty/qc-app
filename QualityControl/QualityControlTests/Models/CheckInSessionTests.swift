@@ -423,11 +423,10 @@ final class CheckInSessionTests: XCTestCase {
 
         let targetStatus: CheckInStatus = .completed
 
-        // When
-        let descriptor = FetchDescriptor<CheckInSession>(
-            predicate: #Predicate { $0.status == targetStatus }
-        )
-        let sessions = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<CheckInSession>()
+        let allSessions = try modelContext.fetch(descriptor)
+        let sessions = allSessions.filter { $0.status == targetStatus }
 
         // Then
         XCTAssertCount(sessions, 1)

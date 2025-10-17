@@ -310,11 +310,10 @@ final class ActionItemTests: XCTestCase {
 
         let targetPriority: Priority = .high
 
-        // When
-        let descriptor = FetchDescriptor<ActionItem>(
-            predicate: #Predicate { $0.priority == targetPriority }
-        )
-        let items = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<ActionItem>()
+        let allItems = try modelContext.fetch(descriptor)
+        let items = allItems.filter { $0.priority == targetPriority }
 
         // Then
         XCTAssertCount(items, 1)

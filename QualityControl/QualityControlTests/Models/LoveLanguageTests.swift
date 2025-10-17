@@ -405,11 +405,10 @@ final class LoveLanguageTests: XCTestCase {
 
         let targetCategory: LoveLanguageCategory = .words
 
-        // When
-        let descriptor = FetchDescriptor<LoveLanguage>(
-            predicate: #Predicate { $0.category == targetCategory }
-        )
-        let languages = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<LoveLanguage>()
+        let allLanguages = try modelContext.fetch(descriptor)
+        let languages = allLanguages.filter { $0.category == targetCategory }
 
         // Then
         XCTAssertCount(languages, 1)
@@ -426,11 +425,10 @@ final class LoveLanguageTests: XCTestCase {
 
         let targetImportance: Importance = .essential
 
-        // When
-        let descriptor = FetchDescriptor<LoveLanguage>(
-            predicate: #Predicate { $0.importance == targetImportance }
-        )
-        let languages = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<LoveLanguage>()
+        let allLanguages = try modelContext.fetch(descriptor)
+        let languages = allLanguages.filter { $0.importance == targetImportance }
 
         // Then
         XCTAssertCount(languages, 1)
@@ -447,11 +445,10 @@ final class LoveLanguageTests: XCTestCase {
 
         let targetPrivacy: NotePrivacy = .private
 
-        // When
-        let descriptor = FetchDescriptor<LoveLanguage>(
-            predicate: #Predicate { $0.privacy == targetPrivacy }
-        )
-        let languages = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<LoveLanguage>()
+        let allLanguages = try modelContext.fetch(descriptor)
+        let languages = allLanguages.filter { $0.privacy == targetPrivacy }
 
         // Then
         XCTAssertCount(languages, 1)

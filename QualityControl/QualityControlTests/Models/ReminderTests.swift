@@ -380,11 +380,10 @@ final class ReminderTests: XCTestCase {
 
         let targetCategory: ReminderCategory = .checkIn
 
-        // When
-        let descriptor = FetchDescriptor<Reminder>(
-            predicate: #Predicate { $0.category == targetCategory }
-        )
-        let reminders = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<Reminder>()
+        let allReminders = try modelContext.fetch(descriptor)
+        let reminders = allReminders.filter { $0.category == targetCategory }
 
         // Then
         XCTAssertCount(reminders, 1)

@@ -367,11 +367,10 @@ final class NoteTests: XCTestCase {
 
         let targetPrivacy: NotePrivacy = .shared
 
-        // When
-        let descriptor = FetchDescriptor<Note>(
-            predicate: #Predicate { $0.privacy == targetPrivacy }
-        )
-        let notes = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<Note>()
+        let allNotes = try modelContext.fetch(descriptor)
+        let notes = allNotes.filter { $0.privacy == targetPrivacy }
 
         // Then
         XCTAssertCount(notes, 1)

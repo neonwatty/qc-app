@@ -462,11 +462,10 @@ final class RelationshipRequestTests: XCTestCase {
 
         let targetStatus: RequestStatus = .pending
 
-        // When
-        let descriptor = FetchDescriptor<RelationshipRequest>(
-            predicate: #Predicate { $0.status == targetStatus }
-        )
-        let requests = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<RelationshipRequest>()
+        let allRequests = try modelContext.fetch(descriptor)
+        let requests = allRequests.filter { $0.status == targetStatus }
 
         // Then
         XCTAssertCount(requests, 1)
@@ -483,11 +482,10 @@ final class RelationshipRequestTests: XCTestCase {
 
         let targetType: RequestType = .dateNight
 
-        // When
-        let descriptor = FetchDescriptor<RelationshipRequest>(
-            predicate: #Predicate { $0.requestType == targetType }
-        )
-        let requests = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<RelationshipRequest>()
+        let allRequests = try modelContext.fetch(descriptor)
+        let requests = allRequests.filter { $0.requestType == targetType }
 
         // Then
         XCTAssertCount(requests, 1)
@@ -504,11 +502,10 @@ final class RelationshipRequestTests: XCTestCase {
 
         let targetPriority: Priority = .high
 
-        // When
-        let descriptor = FetchDescriptor<RelationshipRequest>(
-            predicate: #Predicate { $0.priority == targetPriority }
-        )
-        let requests = try modelContext.fetch(descriptor)
+        // When - Fetch all and filter (enum predicates not supported)
+        let descriptor = FetchDescriptor<RelationshipRequest>()
+        let allRequests = try modelContext.fetch(descriptor)
+        let requests = allRequests.filter { $0.priority == targetPriority }
 
         // Then
         XCTAssertCount(requests, 1)
