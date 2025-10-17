@@ -37,13 +37,15 @@ struct QCButton: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: foregroundColor))
                         .scaleEffect(0.8)
-                } else if let icon = icon {
-                    Image(systemName: icon)
-                        .font(iconFont)
-                }
+                } else {
+                    if let icon = icon {
+                        Image(systemName: icon)
+                            .font(iconFont)
+                    }
 
-                Text(title)
-                    .font(textFont)
+                    Text(title)
+                        .font(textFont)
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: height)
@@ -96,48 +98,36 @@ struct QCButton: View {
     }
 
     private var foregroundColor: Color {
-        if isDisabled {
-            return QCColors.textDisabled
-        }
-
         switch variant {
-        case .primary:
-            return QCColors.textOnPrimary
-        case .secondary:
-            return QCColors.primary
+        case .primary, .secondary:
+            return .white
         case .tertiary:
-            return QCColors.textPrimary
+            return QCColors.primary
         }
     }
 
     private var backgroundColor: Color {
-        if isDisabled {
-            return QCColors.backgroundTertiary
-        }
-
         switch variant {
         case .primary:
             return QCColors.primary
         case .secondary:
-            return Color.clear
+            return QCColors.secondary
         case .tertiary:
-            return QCColors.backgroundSecondary
+            return Color.clear
         }
     }
 
     private var borderColor: Color {
         switch variant {
-        case .primary:
+        case .primary, .secondary:
             return Color.clear
-        case .secondary:
-            return isDisabled ? QCColors.border : QCColors.primary
         case .tertiary:
-            return Color.clear
+            return QCColors.primary
         }
     }
 
     private var borderWidth: CGFloat {
-        variant == .secondary ? 2 : 0
+        variant == .tertiary ? 2 : 0
     }
 
     private var opacity: Double {
