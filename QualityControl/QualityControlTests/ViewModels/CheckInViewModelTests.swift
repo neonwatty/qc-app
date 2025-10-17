@@ -354,4 +354,52 @@ final class CheckInViewModelTests: XCTestCase {
         // Then
         XCTAssertFalse(description.isEmpty)
     }
+
+    // MARK: - Additional Coverage Tests
+
+    func testInitialState() {
+        // Given - fresh ViewModel with no session
+        let vm = CheckInViewModel(modelContext: modelContext, session: nil)
+
+        // Then - verify initial state
+        XCTAssertNil(vm.session)
+        XCTAssertEqual(vm.currentStep, .welcome)
+        XCTAssertTrue(vm.selectedCategories.isEmpty)
+        XCTAssertTrue(vm.actionItems.isEmpty)
+        XCTAssertTrue(vm.sessionNotes.isEmpty)
+        XCTAssertTrue(vm.discussionNotes.isEmpty)
+        XCTAssertFalse(vm.isLoading)
+        XCTAssertNil(vm.error)
+    }
+
+    func testSessionStateRestoration() throws {
+        // Given - session with existing state
+        testSession.currentStep = .reflection
+        testSession.reflection = "My reflection"
+        try modelContext.save()
+
+        // When - create new ViewModel with this session
+        let vm = CheckInViewModel(modelContext: modelContext, session: testSession)
+
+        // Then - state should be restored
+        XCTAssertEqual(vm.currentStep, .reflection)
+        XCTAssertEqual(vm.sessionNotes, "My reflection")
+    }
+
+    func testMultipleCategorySelection() {
+        // Given - multiple categories
+        let category1 = QualityControl.Category(name: "Cat1", description: "Desc1", icon: "heart")
+        let category2 = QualityControl.Category(name: "Cat2", description: "Desc2", icon: "star")
+        modelContext.insert(category1)
+        modelContext.insert(category2)
+
+        // When - select multiple categories
+        viewModel.toggleCategory(category1)
+        viewModel.toggleCategory(category2)
+
+        // Then - both should be selected
+        XCTAssertEqual(viewModel.selectedCategories.count, 2)
+        XCTAssertTrue(viewModel.isCategorySelected(category1))
+        XCTAssertTrue(viewModel.isCategorySelected(category2))
+    }
 }
