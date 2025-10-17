@@ -18,6 +18,10 @@ struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel: DashboardViewModel?
     @State private var showCheckIn = false
+    @State private var showNotes = false
+    @State private var showGrowth = false
+    @State private var showReminders = false
+    @State private var showRequests = false
 
     let couple: Couple?
 
@@ -58,8 +62,13 @@ struct DashboardView: View {
                 if viewModel.showPrepBanner {
                     PrepBanner(
                         onPrepare: {
-                            // TODO: Navigate to prep flow
-                            print("Prepare topics")
+                            // Start check-in flow for prep
+                            do {
+                                let _ = try viewModel.startCheckIn()
+                                showCheckIn = true
+                            } catch {
+                                print("Error starting check-in: \(error)")
+                            }
                         },
                         onDismiss: {
                             viewModel.dismissPrepBanner()
@@ -105,6 +114,22 @@ struct DashboardView: View {
                         }
                     }
                 )
+            }
+        }
+        .navigationDestination(isPresented: $showNotes) {
+            NotesListView()
+        }
+        .navigationDestination(isPresented: $showGrowth) {
+            GrowthView()
+        }
+        .navigationDestination(isPresented: $showReminders) {
+            RemindersListView()
+        }
+        .navigationDestination(isPresented: $showRequests) {
+            if let couple = couple, let user = couple.users?.first {
+                RequestsListView(currentUserId: user.id)
+            } else {
+                Text("No user found")
             }
         }
     }
@@ -157,23 +182,19 @@ struct DashboardView: View {
 
             // Other Quick Actions
             QuickActionCard.notes {
-                // TODO: Navigate to notes
-                print("View notes")
+                showNotes = true
             }
 
             QuickActionCard.growth {
-                // TODO: Navigate to growth
-                print("View growth")
+                showGrowth = true
             }
 
             QuickActionCard.reminders {
-                // TODO: Navigate to reminders
-                print("View reminders")
+                showReminders = true
             }
 
             QuickActionCard.requests {
-                // TODO: Navigate to requests
-                print("View requests")
+                showRequests = true
             }
         }
     }
