@@ -12,6 +12,7 @@ import SwiftData
 @MainActor
 final class MinimalSwiftDataTest: XCTestCase {
 
+    var modelContainer: ModelContainer!  // FIXED: Keep container in scope
     var modelContext: ModelContext!
 
     override func setUp() async throws {
@@ -25,10 +26,10 @@ final class MinimalSwiftDataTest: XCTestCase {
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
 
         print("🔍 MinimalTest: Creating ModelContainer")
-        let container = try ModelContainer(for: schema, configurations: [configuration])
+        modelContainer = try ModelContainer(for: schema, configurations: [configuration])
 
         print("🔍 MinimalTest: Accessing mainContext")
-        modelContext = container.mainContext
+        modelContext = modelContainer.mainContext
 
         print("🔍 MinimalTest: Creating test user")
         let testUser = User(name: "Test", email: "test@test.com")
@@ -45,6 +46,7 @@ final class MinimalSwiftDataTest: XCTestCase {
     override func tearDown() async throws {
         print("🔍 MinimalTest: tearDown started")
         modelContext = nil
+        modelContainer = nil  // FIXED: Cleanup container too
         print("✅ MinimalTest: tearDown completed")
     }
 

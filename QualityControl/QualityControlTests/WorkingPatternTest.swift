@@ -12,29 +12,10 @@ import SwiftData
 @MainActor
 final class WorkingPatternTest: XCTestCase {
 
-    // Helper method to create context (NOT in setUp override!)
-    func createTestContext() throws -> ModelContext {
-        let schema = Schema([
-            User.self,
-            Couple.self,
-            CheckInSession.self,
-            Category.self,
-            ActionItem.self,
-            Note.self,
-            Reminder.self,
-            Milestone.self,
-            LoveLanguage.self,
-            RelationshipRequest.self
-        ])
-        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        return container.mainContext
-    }
-
     // Test 1: User model test
     func testUserCreation() throws {
-        // Create context inline
-        let context = try createTestContext()
+        // Create context using shared helper (keeps container in scope!)
+        let (container, context) = try TestModelContext.create()
 
         // Create and save user
         let user = User(name: "Test User", email: "test@test.com")
@@ -50,7 +31,7 @@ final class WorkingPatternTest: XCTestCase {
 
     // Test 2: Couple model test
     func testCoupleCreation() throws {
-        let context = try createTestContext()
+        let (container, context) = try TestModelContext.create()
 
         let couple = Couple(relationshipStartDate: Date())
         context.insert(couple)
@@ -63,7 +44,7 @@ final class WorkingPatternTest: XCTestCase {
 
     // Test 3: Multiple models test
     func testMultipleModels() throws {
-        let context = try createTestContext()
+        let (container, context) = try TestModelContext.create()
 
         // Create user
         let user = User(name: "User 1", email: "user1@test.com")
@@ -96,7 +77,7 @@ final class WorkingPatternTest: XCTestCase {
 
     // Test 4: Multiple saves in one test
     func testMultipleSaves() throws {
-        let context = try createTestContext()
+        let (container, context) = try TestModelContext.create()
 
         // First save
         let user1 = User(name: "User 1", email: "user1@test.com")

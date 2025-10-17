@@ -16,7 +16,8 @@ final class SetUpLifecycleTest: XCTestCase {
     var containerA: ModelContainer!
     var contextA: ModelContext!
 
-    // Test B: Only store context, create container inline
+    // Test B: Store BOTH container and context (fixed pattern)
+    var containerB: ModelContainer!
     var contextB: ModelContext!
 
     // Test A1: Classic setUp/tearDown with stored container + context
@@ -47,14 +48,14 @@ final class SetUpLifecycleTest: XCTestCase {
         contextA = nil
     }
 
-    // Test B: setUp/tearDown pattern matching MinimalSwiftDataTest
+    // Test B: setUp/tearDown pattern - FIXED to keep container in scope
     func testMatchingMinimalPattern() throws {
-        print("🔍 Test B: Matching MinimalSwiftDataTest pattern - first test")
+        print("🔍 Test B: Matching MinimalSwiftDataTest pattern - first test (FIXED)")
 
         let schema = Schema([User.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        contextB = container.mainContext
+        containerB = try ModelContainer(for: schema, configurations: [configuration])
+        contextB = containerB.mainContext
 
         let user1 = User(name: "B1", email: "b1@test.com")
         contextB.insert(user1)
@@ -63,17 +64,19 @@ final class SetUpLifecycleTest: XCTestCase {
         try contextB.save()
         print("✅ Test B: Save successful in first test")
 
+        // Cleanup
+        containerB = nil
         contextB = nil
     }
 
-    // Test C: Second test to check if multiple tests with same pattern work
+    // Test C: Second test to check if multiple tests with same pattern work - FIXED
     func testMatchingMinimalPattern2() throws {
-        print("🔍 Test C: Matching MinimalSwiftDataTest pattern - second test")
+        print("🔍 Test C: Matching MinimalSwiftDataTest pattern - second test (FIXED)")
 
         let schema = Schema([User.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        contextB = container.mainContext
+        containerB = try ModelContainer(for: schema, configurations: [configuration])
+        contextB = containerB.mainContext
 
         let user1 = User(name: "C1", email: "c1@test.com")
         contextB.insert(user1)
@@ -82,19 +85,22 @@ final class SetUpLifecycleTest: XCTestCase {
         try contextB.save()
         print("✅ Test C: Save successful in second test")
 
+        // Cleanup
+        containerB = nil
         contextB = nil
     }
 
-    // Test D: Using setUp() method exactly like MinimalSwiftDataTest
+    // Test D: Using setUp() method - FIXED to keep container in scope
+    var containerD: ModelContainer!
     var contextD: ModelContext!
 
     override func setUp() async throws {
-        print("🔍 Test D: setUp called")
+        print("🔍 Test D: setUp called (FIXED)")
 
         let schema = Schema([User.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        contextD = container.mainContext
+        containerD = try ModelContainer(for: schema, configurations: [configuration])
+        contextD = containerD.mainContext
 
         let setupUser = User(name: "Setup", email: "setup@test.com")
         contextD.insert(setupUser)
@@ -106,6 +112,7 @@ final class SetUpLifecycleTest: XCTestCase {
 
     override func tearDown() async throws {
         print("🔍 Test D: tearDown called")
+        containerD = nil
         contextD = nil
         print("✅ Test D: tearDown complete")
     }

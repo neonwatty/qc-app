@@ -81,6 +81,10 @@ struct NoteCard: View {
                 Label("Delete", systemImage: "trash")
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityHint("Tap to edit, or use the context menu for more options")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - View Components
@@ -122,6 +126,32 @@ struct NoteCard: View {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: note.updatedAt, relativeTo: Date())
+    }
+
+    private var accessibilityLabel: String {
+        var components: [String] = []
+
+        // Privacy status
+        components.append("\(note.privacy.displayName) note")
+
+        // Content preview (first 100 characters)
+        let contentPreview = note.content.prefix(100)
+        components.append(String(contentPreview))
+
+        // Category
+        if let category = category {
+            components.append("in \(category.name) category")
+        }
+
+        // Check-in link
+        if checkIn != nil {
+            components.append("linked to check-in")
+        }
+
+        // Timestamp
+        components.append("from \(formattedDate)")
+
+        return components.joined(separator: ", ")
     }
 }
 

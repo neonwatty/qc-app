@@ -12,17 +12,19 @@ import SwiftData
 @MainActor
 final class SetUpSaveTest: XCTestCase {
 
+    var containerWithSave: ModelContainer!  // FIXED: Store container
     var contextWithSave: ModelContext!
+    var containerWithoutSave: ModelContainer!  // FIXED: Store container
     var contextWithoutSave: ModelContext!
 
-    // Pattern 1: setUp creates context and DOES save
+    // Pattern 1: setUp creates context and DOES save - FIXED
     func testSetUpWithSave() throws {
-        print("🔍 Pattern 1 setUp: Creating context and saving")
+        print("🔍 Pattern 1 setUp: Creating context and saving (FIXED)")
 
         let schema = Schema([User.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        contextWithSave = container.mainContext
+        containerWithSave = try ModelContainer(for: schema, configurations: [configuration])
+        contextWithSave = containerWithSave.mainContext
 
         let user = User(name: "Setup", email: "setup@test.com")
         contextWithSave.insert(user)
@@ -40,17 +42,19 @@ final class SetUpSaveTest: XCTestCase {
         try contextWithSave.save()
         print("✅ Pattern 1 test: Save successful")
 
+        // Cleanup
+        containerWithSave = nil
         contextWithSave = nil
     }
 
-    // Pattern 2: setUp creates context but DOES NOT save
+    // Pattern 2: setUp creates context but DOES NOT save - FIXED
     func testSetUpWithoutSave() throws {
-        print("🔍 Pattern 2 setUp: Creating context WITHOUT saving")
+        print("🔍 Pattern 2 setUp: Creating context WITHOUT saving (FIXED)")
 
         let schema = Schema([User.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        contextWithoutSave = container.mainContext
+        containerWithoutSave = try ModelContainer(for: schema, configurations: [configuration])
+        contextWithoutSave = containerWithoutSave.mainContext
 
         let user = User(name: "Setup", email: "setup@test.com")
         contextWithoutSave.insert(user)
@@ -69,19 +73,22 @@ final class SetUpSaveTest: XCTestCase {
         try contextWithoutSave.save()
         print("✅ Pattern 2 test: Second save successful")
 
+        // Cleanup
+        containerWithoutSave = nil
         contextWithoutSave = nil
     }
 
-    // Pattern 3: Split across setUp/tearDown exactly like original tests
+    // Pattern 3: Split across setUp/tearDown exactly like original tests - FIXED
+    var container3: ModelContainer!  // FIXED: Store container
     var context3: ModelContext!
 
     override func setUp() async throws {
-        print("🔍 Pattern 3: setUp override called")
+        print("🔍 Pattern 3: setUp override called (FIXED)")
 
         let schema = Schema([User.self])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: schema, configurations: [configuration])
-        context3 = container.mainContext
+        container3 = try ModelContainer(for: schema, configurations: [configuration])
+        context3 = container3.mainContext
 
         // DON'T save in setUp, just create context
         print("✅ Pattern 3: setUp complete (no save)")
@@ -89,6 +96,7 @@ final class SetUpSaveTest: XCTestCase {
 
     override func tearDown() async throws {
         print("🔍 Pattern 3: tearDown called")
+        container3 = nil
         context3 = nil
     }
 

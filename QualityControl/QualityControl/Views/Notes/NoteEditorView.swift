@@ -27,6 +27,7 @@ struct NoteEditorView: View {
     @State private var selectedCheckInId: UUID?
     @State private var showError: Bool = false
     @State private var errorMessage: String = ""
+    @State private var showTemplates: Bool = false
 
     // MARK: - Initialization
 
@@ -109,6 +110,16 @@ struct NoteEditorView: View {
                     }
                 }
 
+                if !isEditMode && content.isEmpty {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            showTemplates = true
+                        } label: {
+                            Image(systemName: "doc.text.image")
+                        }
+                    }
+                }
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button(isEditMode ? "Save" : "Create") {
                         saveNote()
@@ -120,6 +131,9 @@ struct NoteEditorView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(errorMessage)
+            }
+            .sheet(isPresented: $showTemplates) {
+                templatesSheet
             }
             .onAppear {
                 loadExistingNote()
@@ -140,6 +154,31 @@ struct NoteEditorView: View {
                 .foregroundColor(QCColors.textSecondary)
         }
         .padding(.vertical, QCSpacing.xs)
+    }
+
+    private var templatesSheet: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: QCSpacing.md) {
+                    ForEach(NoteTemplate.allTemplates) { template in
+                        TemplateCard(template: template) {
+                            applyTemplate(template)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Note Templates")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Cancel") {
+                        showTemplates = false
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
     }
 
     // MARK: - Computed Properties
@@ -192,11 +231,20 @@ struct NoteEditorView: View {
                 )
             }
 
+            HapticFeedback.success()
             dismiss()
         } catch {
+            HapticFeedback.error()
             errorMessage = error.localizedDescription
             showError = true
         }
+    }
+
+    private func applyTemplate(_ template: NoteTemplate) {
+        HapticFeedback.lightImpact()
+        content = template.content
+        selectedPrivacy = template.suggestedPrivacy
+        showTemplates = false
     }
 
     // MARK: - Helper Methods
@@ -234,6 +282,123 @@ struct NoteEditorView: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+}
+
+// MARK: - Supporting Types
+
+struct NoteTemplate: Identifiable {
+    let id = UUID()
+    let title: String
+    let icon: String
+    let content: String
+    let suggestedPrivacy: NotePrivacy
+
+    static let allTemplates: [NoteTemplate] = [
+        NoteTemplate(
+            title: "Gratitude",
+            icon: "heart.fill",
+            content: "Today I'm grateful for...\n\n• \n• \n• ",
+            suggestedPrivacy: .shared
+        ),
+        NoteTemplate(
+            title: "Things I Love About You",
+            icon: "star.fill",
+            content: "Things I love about my partner:\n\n• \n• \n• ",
+            suggestedPrivacy: .shared
+        ),
+        NoteTemplate(
+            title: "Date Night Ideas",
+            icon: "calendar.badge.plus",
+            content: "Date ideas we could try:\n\n• \n• \n• ",
+            suggestedPrivacy: .shared
+        ),
+        NoteTemplate(
+            title: "Relationship Goals",
+            icon: "target",
+            content: "Our relationship goals:\n\nShort-term:\n• \n\nLong-term:\n• ",
+            suggestedPrivacy: .shared
+        ),
+        NoteTemplate(
+            title: "Discussion Topics",
+            icon: "bubble.left.and.bubble.right.fill",
+            content: "Topics to discuss:\n\n• \n• \n• ",
+            suggestedPrivacy: .draft
+        ),
+        NoteTemplate(
+            title: "Personal Reflection",
+            icon: "book.fill",
+            content: "Personal thoughts and reflections:\n\n",
+            suggestedPrivacy: .private
+        ),
+        NoteTemplate(
+            title: "Appreciation",
+            icon: "hands.sparkles.fill",
+            content: "I appreciate when you...\n\n• \n• \n• ",
+            suggestedPrivacy: .shared
+        ),
+        NoteTemplate(
+            title: "Dreams & Wishes",
+            icon: "sparkles",
+            content: "Dreams and wishes for our future:\n\n• \n• \n• ",
+            suggestedPrivacy: .shared
+        )
+    ]
+}
+
+private struct TemplateCard: View {
+    let template: NoteTemplate
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: QCSpacing.md) {
+                Image(systemName: template.icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(privacyColor)
+                    .frame(width: 40)
+
+                VStack(alignment: .leading, spacing: QCSpacing.xs) {
+                    Text(template.title)
+                        .font(QCTypography.heading6)
+                        .foregroundColor(QCColors.textPrimary)
+
+                    HStack(spacing: 4) {
+                        Image(systemName: privacyIcon)
+                            .font(.system(size: 10))
+                        Text(template.suggestedPrivacy.displayName)
+                            .font(QCTypography.captionSmall)
+                    }
+                    .foregroundColor(privacyColor)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(QCColors.textTertiary)
+            }
+            .padding(QCSpacing.md)
+            .background(QCColors.backgroundSecondary)
+            .qcCardCornerRadius()
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var privacyIcon: String {
+        switch template.suggestedPrivacy {
+        case .private: return "lock.fill"
+        case .shared: return "person.2.fill"
+        case .draft: return "doc.text.fill"
+        }
+    }
+
+    private var privacyColor: Color {
+        switch template.suggestedPrivacy {
+        case .private: return QCColors.info
+        case .shared: return QCColors.success
+        case .draft: return QCColors.warning
+        }
     }
 }
 
