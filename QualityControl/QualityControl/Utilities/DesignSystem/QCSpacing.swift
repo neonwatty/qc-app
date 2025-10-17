@@ -156,6 +156,11 @@ extension View {
     func qcButtonCornerRadius() -> some View {
         self.cornerRadius(QCSpacing.radiusSM)
     }
+
+    /// Apply progress bar corner radius
+    func qcProgressBarCornerRadius() -> some View {
+        self.cornerRadius(QCSpacing.radiusXS / 2)
+    }
 }
 
 // MARK: - Preview

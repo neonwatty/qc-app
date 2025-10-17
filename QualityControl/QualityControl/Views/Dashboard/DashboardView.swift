@@ -94,8 +94,18 @@ struct DashboardView: View {
             }
         }
         .sheet(isPresented: $showCheckIn) {
-            // TODO: Check-in flow view
-            Text("Check-in Flow")
+            if let couple = couple {
+                CheckInFlowView(
+                    modelContext: modelContext,
+                    couple: couple,
+                    onComplete: {
+                        showCheckIn = false
+                        Task {
+                            await viewModel.refresh()
+                        }
+                    }
+                )
+            }
         }
     }
 
