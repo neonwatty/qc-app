@@ -20,23 +20,8 @@ final class CheckInServiceTests: XCTestCase {
     var testCategory: QualityControl.Category!
 
     override func setUp() async throws {
-        // Create in-memory container for testing
-        let schema = Schema([
-            User.self,
-            Couple.self,
-            CheckInSession.self,
-            Category.self,
-            ActionItem.self,
-            Note.self,
-            Reminder.self,
-            Milestone.self,
-            LoveLanguage.self,
-            RelationshipRequest.self
-        ])
-
-        let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
-        modelContainer = try ModelContainer(for: schema, configurations: configuration)
-        modelContext = modelContainer.mainContext
+        // Use TestModelContext helper for consistent container management
+        (modelContainer, modelContext) = try TestModelContext.create()
 
         // Initialize service
         checkInService = CheckInService(modelContext: modelContext)
