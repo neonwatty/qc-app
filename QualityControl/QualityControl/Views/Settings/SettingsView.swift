@@ -94,7 +94,7 @@ struct SettingsView: View {
                 )
             }
 
-            NavigationLink(destination: Text("Discussion Categories")) {
+            NavigationLink(destination: DiscussionCategoriesView()) {
                 SettingsRow(
                     icon: "square.grid.3x3.fill",
                     iconColor: QCColors.info,
@@ -103,7 +103,7 @@ struct SettingsView: View {
                 )
             }
 
-            NavigationLink(destination: Text("Notifications")) {
+            NavigationLink(destination: NotificationsView()) {
                 SettingsRow(
                     icon: "bell.fill",
                     iconColor: QCColors.warning,
@@ -118,7 +118,7 @@ struct SettingsView: View {
 
     private var preferencesSection: some View {
         Section {
-            NavigationLink(destination: Text("Privacy & Sharing")) {
+            NavigationLink(destination: PrivacySharingView()) {
                 SettingsRow(
                     icon: "lock.shield.fill",
                     iconColor: QCColors.success,
@@ -127,7 +127,7 @@ struct SettingsView: View {
                 )
             }
 
-            NavigationLink(destination: Text("Appearance")) {
+            NavigationLink(destination: AppearanceView()) {
                 SettingsRow(
                     icon: "paintbrush.fill",
                     iconColor: QCColors.secondary,
@@ -136,7 +136,7 @@ struct SettingsView: View {
                 )
             }
 
-            NavigationLink(destination: Text("Check-in Schedule")) {
+            NavigationLink(destination: CheckInScheduleView()) {
                 SettingsRow(
                     icon: "clock.fill",
                     iconColor: QCColors.primary,
@@ -151,7 +151,7 @@ struct SettingsView: View {
 
     private var aboutSection: some View {
         Section {
-            NavigationLink(destination: Text("About")) {
+            NavigationLink(destination: AboutView()) {
                 SettingsRow(
                     icon: "info.circle.fill",
                     iconColor: QCColors.info,
