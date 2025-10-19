@@ -1,17 +1,43 @@
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+xcuserdata/
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# Periphery
+.build/
+periphery_report.txt
+
+# Testing
+/coverage
+*.png
+
 # Dependencies
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# Testing
-/coverage
-*.png
-
-# Development scripts
+# Development scripts (legacy)
 /scripts/
 
-# Next.js
+# Next.js (legacy from POC)
 /.next/
 /out/
 

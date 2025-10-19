@@ -222,10 +222,12 @@ struct RemindersListView: View {
     }
 
     private func snoozeReminder(_ reminder: Reminder) {
-        do {
-            try viewModel?.snoozeReminder(reminder, minutes: 30)
-        } catch {
-            print("Error snoozing reminder: \(error)")
+        Task {
+            do {
+                try await viewModel?.snoozeReminder(reminder, minutes: 30)
+            } catch {
+                print("Error snoozing reminder: \(error)")
+            }
         }
     }
 }

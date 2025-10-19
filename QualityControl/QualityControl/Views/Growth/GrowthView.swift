@@ -17,6 +17,7 @@ struct GrowthView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var couples: [Couple]
     @State private var viewModel: GrowthViewModel?
+    @State private var showAddMilestone = false
 
     // MARK: - Body
 
@@ -50,6 +51,11 @@ struct GrowthView: View {
             }
             .refreshable {
                 await viewModel?.refresh()
+            }
+            .sheet(isPresented: $showAddMilestone) {
+                if let viewModel = viewModel {
+                    AddMilestoneSheet(viewModel: viewModel)
+                }
             }
         }
     }
@@ -131,7 +137,7 @@ struct GrowthView: View {
 
     private var addButton: some View {
         Button {
-            // TODO: Show add milestone sheet
+            showAddMilestone = true
         } label: {
             Image(systemName: "plus.circle.fill")
                 .font(.system(size: 20))

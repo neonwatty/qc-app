@@ -84,6 +84,13 @@ struct DashboardView: View {
                     statsSection(stats: stats, viewModel: viewModel)
                 }
 
+                // Upcoming Reminders
+                if let user = couple?.users?.first {
+                    RemindersCard(userId: user.id) {
+                        showReminders = true
+                    }
+                }
+
                 // Recent Activity
                 if viewModel.hasRecentActivity {
                     recentActivitySection(viewModel: viewModel)

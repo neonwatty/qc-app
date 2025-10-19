@@ -184,35 +184,37 @@ struct ReminderEditorView: View {
     // MARK: - Actions
 
     private func saveReminder() {
-        do {
-            let trimmedTitle = title.trimmingCharacters(in: .whitespaces)
-            let trimmedMessage = message.trimmingCharacters(in: .whitespaces)
+        Task {
+            do {
+                let trimmedTitle = title.trimmingCharacters(in: .whitespaces)
+                let trimmedMessage = message.trimmingCharacters(in: .whitespaces)
 
-            if let reminder = reminderToEdit {
-                // Update existing reminder
-                try viewModel.updateReminder(
-                    reminder,
-                    title: trimmedTitle,
-                    message: trimmedMessage,
-                    scheduledFor: scheduledFor,
-                    frequency: frequency,
-                    category: category
-                )
-            } else {
-                // Create new reminder
-                _ = try viewModel.createReminder(
-                    title: trimmedTitle,
-                    message: trimmedMessage,
-                    scheduledFor: scheduledFor,
-                    frequency: frequency,
-                    category: category
-                )
+                if let reminder = reminderToEdit {
+                    // Update existing reminder
+                    try await viewModel.updateReminder(
+                        reminder,
+                        title: trimmedTitle,
+                        message: trimmedMessage,
+                        scheduledFor: scheduledFor,
+                        frequency: frequency,
+                        category: category
+                    )
+                } else {
+                    // Create new reminder
+                    _ = try await viewModel.createReminder(
+                        title: trimmedTitle,
+                        message: trimmedMessage,
+                        scheduledFor: scheduledFor,
+                        frequency: frequency,
+                        category: category
+                    )
+                }
+
+                dismiss()
+            } catch {
+                errorMessage = "Failed to save reminder: \(error.localizedDescription)"
+                showError = true
             }
-
-            dismiss()
-        } catch {
-            errorMessage = "Failed to save reminder: \(error.localizedDescription)"
-            showError = true
         }
     }
 

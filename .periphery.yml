@@ -1,0 +1,43 @@
+# Periphery Configuration for QualityControl iOS App
+# Identifies unused code in the Swift project
+
+# Project configuration
+project: QualityControl/QualityControl.xcodeproj
+schemes:
+  - QualityControl
+
+# Build targets to scan
+targets:
+  - QualityControl
+
+# Index store path (speeds up subsequent scans)
+index-store-path: .build/index-store
+
+# Exclude paths (utilities, mocks, generated code)
+exclude:
+  - "*/Utilities/MockDataGenerator.swift"  # Mock data for previews
+  - "*/Utilities/PreviewContainer.swift"   # Preview helpers
+  - "**/Preview Content/**"                # Preview assets
+  - "**/Assets.xcassets/**"                # Asset catalogs
+
+# Retain declarations that might appear unused but are needed
+retain-public: true  # Keep public APIs
+retain-objc-accessible: true  # Keep @objc declarations
+retain-objc-annotated: true  # Keep Objective-C annotated code
+
+# SwiftUI specific retentions
+retain-codable-properties: true  # Keep Codable synthesized properties
+retain-unused-protocol-func-params: false  # Report unused protocol parameters
+
+# Output format
+format: xcode  # Xcode-friendly output for clicking through to issues
+
+# Verbosity
+verbose: false
+quiet: false
+
+# Treat unused code as warnings (set to true for stricter enforcement)
+strict: false
+
+# Clean build before scanning (recommended for accuracy)
+clean-build: true

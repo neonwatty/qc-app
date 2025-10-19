@@ -10,6 +10,12 @@ import SwiftData
 
 @main
 struct QualityControlApp: App {
+
+    init() {
+        // Initialize NotificationService on app launch
+        _ = NotificationService.shared
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             User.self,
@@ -41,7 +47,7 @@ struct QualityControlApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            AppRootView()
         }
         .modelContainer(sharedModelContainer)
     }
@@ -89,5 +95,26 @@ struct QualityControlApp: App {
         try? context.save()
 
         print("✅ Demo data initialized successfully")
+    }
+}
+
+// MARK: - App Root View
+
+/// Root view that manages onboarding vs main app flow
+struct AppRootView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var couples: [Couple]
+    @State private var isOnboardingComplete = false
+
+    var body: some View {
+        Group {
+            if couples.isEmpty && !isOnboardingComplete {
+                // Show onboarding for first-time users
+                OnboardingFlowView(isOnboardingComplete: $isOnboardingComplete)
+            } else {
+                // Show main app
+                MainTabView()
+            }
+        }
     }
 }

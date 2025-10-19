@@ -29,6 +29,50 @@ class RemindersViewModel {
     init(modelContext: ModelContext, userId: UUID) {
         self.modelContext = modelContext
         self.userId = userId
+        setupNotificationObserver()
+    }
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: .reminderActionReceived,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self,
+                  let userInfo = notification.userInfo,
+                  let reminderId = userInfo["reminderId"] as? UUID,
+                  let action = userInfo["action"] as? String else {
+                return
+            }
+
+            Task { @MainActor in
+                await self.handleAction(action, for: reminderId)
+            }
+        }
+    }
+
+    private func handleAction(_ action: String, for reminderId: UUID) async {
+        guard let reminder = reminders.first(where: { $0.id == reminderId }) else {
+            return
+        }
+
+        do {
+            switch action {
+            case "COMPLETE_ACTION":
+                try completeReminder(reminder)
+            case "SNOOZE_15_ACTION":
+                try await snoozeReminder(reminder, minutes: 15)
+            case "SNOOZE_60_ACTION":
+                try await snoozeReminder(reminder, minutes: 60)
+            case "DISMISS_ACTION":
+                // Just dismiss - no action needed
+                break
+            default:
+                break
+            }
+        } catch {
+            self.error = error
+        }
     }
 
     // MARK: - Data Loading
@@ -64,7 +108,7 @@ class RemindersViewModel {
         scheduledFor: Date,
         frequency: ReminderFrequency,
         category: ReminderCategory
-    ) throws -> Reminder {
+    ) async throws -> Reminder {
         let reminder = Reminder(
             title: title,
             message: message,
@@ -76,6 +120,11 @@ class RemindersViewModel {
 
         modelContext.insert(reminder)
         try modelContext.save()
+
+        // Schedule notification
+        if reminder.isActive {
+            try await NotificationService.shared.scheduleNotification(for: reminder)
+        }
 
         reminders.append(reminder)
         reminders.sort { $0.scheduledFor < $1.scheduledFor }
@@ -91,7 +140,7 @@ class RemindersViewModel {
         scheduledFor: Date,
         frequency: ReminderFrequency,
         category: ReminderCategory
-    ) throws {
+    ) async throws {
         reminder.title = title
         reminder.message = message
         reminder.scheduledFor = scheduledFor
@@ -99,11 +148,22 @@ class RemindersViewModel {
         reminder.category = category
 
         try modelContext.save()
+
+        // Reschedule notification
+        if reminder.isActive {
+            try await NotificationService.shared.rescheduleNotification(for: reminder)
+        } else {
+            NotificationService.shared.cancelNotification(for: reminder)
+        }
+
         reminders.sort { $0.scheduledFor < $1.scheduledFor }
         applyFilter()
     }
 
     func deleteReminder(_ reminder: Reminder) throws {
+        // Cancel notification before deleting
+        NotificationService.shared.cancelNotification(for: reminder)
+
         modelContext.delete(reminder)
         try modelContext.save()
 
@@ -112,7 +172,9 @@ class RemindersViewModel {
     }
 
     func deleteReminders(_ remindersToDelete: [Reminder]) throws {
+        // Cancel notifications for each reminder
         for reminder in remindersToDelete {
+            NotificationService.shared.cancelNotification(for: reminder)
             modelContext.delete(reminder)
         }
         try modelContext.save()
@@ -128,23 +190,42 @@ class RemindersViewModel {
         reminder.isActive = false
         reminder.completedAt = Date()
 
+        // Cancel notification when completing
+        NotificationService.shared.cancelNotification(for: reminder)
+
         try modelContext.save()
         applyFilter()
     }
 
-    func snoozeReminder(_ reminder: Reminder, minutes: Int) throws {
+    func snoozeReminder(_ reminder: Reminder, minutes: Int) async throws {
         let newDate = Calendar.current.date(byAdding: .minute, value: minutes, to: Date()) ?? Date()
         reminder.scheduledFor = newDate
+        reminder.isSnoozed = true
+        reminder.snoozeUntil = newDate
 
         try modelContext.save()
+
+        // Reschedule notification with new time
+        if reminder.isActive {
+            try await NotificationService.shared.rescheduleNotification(for: reminder)
+        }
+
         reminders.sort { $0.scheduledFor < $1.scheduledFor }
         applyFilter()
     }
 
-    func toggleReminder(_ reminder: Reminder) throws {
+    func toggleReminder(_ reminder: Reminder) async throws {
         reminder.isActive.toggle()
 
         try modelContext.save()
+
+        // Schedule or cancel notification based on new state
+        if reminder.isActive {
+            try await NotificationService.shared.scheduleNotification(for: reminder)
+        } else {
+            NotificationService.shared.cancelNotification(for: reminder)
+        }
+
         applyFilter()
     }
 

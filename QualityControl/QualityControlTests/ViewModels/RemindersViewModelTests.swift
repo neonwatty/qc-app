@@ -51,14 +51,14 @@ final class RemindersViewModelTests: XCTestCase {
 
     // MARK: - CRUD Operation Tests
 
-    func testCreateReminder() throws {
+    func testCreateReminder() async throws {
         let title = "Daily Check-in"
         let message = "Time for check-in"
         let scheduledFor = Date().addingTimeInterval(3600)
         let frequency = ReminderFrequency.daily
         let category = ReminderCategory.checkIn
 
-        let reminder = try viewModel.createReminder(
+        let reminder = try await viewModel.createReminder(
             title: title,
             message: message,
             scheduledFor: scheduledFor,
@@ -75,8 +75,8 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.filteredReminders.count, 1)
     }
 
-    func testCreateMultipleReminders() throws {
-        _ = try viewModel.createReminder(
+    func testCreateMultipleReminders() async throws {
+        _ = try await viewModel.createReminder(
             title: "Reminder 1",
             message: "Message 1",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -84,7 +84,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Reminder 2",
             message: "Message 2",
             scheduledFor: Date().addingTimeInterval(7200),
@@ -95,11 +95,11 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.reminders.count, 2)
     }
 
-    func testCreateReminderSortsByScheduledTime() throws {
+    func testCreateReminderSortsByScheduledTime() async throws {
         let later = Date().addingTimeInterval(7200)
         let earlier = Date().addingTimeInterval(3600)
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Later",
             message: "Later reminder",
             scheduledFor: later,
@@ -107,7 +107,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Earlier",
             message: "Earlier reminder",
             scheduledFor: earlier,
@@ -119,8 +119,8 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.reminders.last?.title, "Later")
     }
 
-    func testUpdateReminder() throws {
-        let reminder = try viewModel.createReminder(
+    func testUpdateReminder() async throws {
+        let reminder = try await viewModel.createReminder(
             title: "Original",
             message: "Original message",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -129,7 +129,7 @@ final class RemindersViewModelTests: XCTestCase {
         )
 
         let newDate = Date().addingTimeInterval(7200)
-        try viewModel.updateReminder(
+        try await viewModel.updateReminder(
             reminder,
             title: "Updated",
             message: "Updated message",
@@ -144,8 +144,8 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(reminder.category, .habit)
     }
 
-    func testDeleteReminder() throws {
-        let reminder = try viewModel.createReminder(
+    func testDeleteReminder() async throws {
+        let reminder = try await viewModel.createReminder(
             title: "To Delete",
             message: "Delete me",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -155,14 +155,14 @@ final class RemindersViewModelTests: XCTestCase {
 
         XCTAssertEqual(viewModel.reminders.count, 1)
 
-        try viewModel.deleteReminder(reminder)
+        try await viewModel.deleteReminder(reminder)
 
         XCTAssertEqual(viewModel.reminders.count, 0)
         XCTAssertEqual(viewModel.filteredReminders.count, 0)
     }
 
-    func testDeleteMultipleReminders() throws {
-        let reminder1 = try viewModel.createReminder(
+    func testDeleteMultipleReminders() async throws {
+        let reminder1 = try await viewModel.createReminder(
             title: "R1",
             message: "M1",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -170,7 +170,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        let reminder2 = try viewModel.createReminder(
+        let reminder2 = try await viewModel.createReminder(
             title: "R2",
             message: "M2",
             scheduledFor: Date().addingTimeInterval(7200),
@@ -178,7 +178,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .habit
         )
 
-        let reminder3 = try viewModel.createReminder(
+        let reminder3 = try await viewModel.createReminder(
             title: "R3",
             message: "M3",
             scheduledFor: Date().addingTimeInterval(10800),
@@ -188,7 +188,7 @@ final class RemindersViewModelTests: XCTestCase {
 
         XCTAssertEqual(viewModel.reminders.count, 3)
 
-        try viewModel.deleteReminders([reminder1, reminder3])
+        try await viewModel.deleteReminders([reminder1, reminder3])
 
         XCTAssertEqual(viewModel.reminders.count, 1)
         XCTAssertEqual(viewModel.reminders.first?.id, reminder2.id)
@@ -196,8 +196,8 @@ final class RemindersViewModelTests: XCTestCase {
 
     // MARK: - Reminder Action Tests
 
-    func testCompleteReminder() throws {
-        let reminder = try viewModel.createReminder(
+    func testCompleteReminder() async throws {
+        let reminder = try await viewModel.createReminder(
             title: "Complete me",
             message: "Test",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -208,15 +208,15 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertTrue(reminder.isActive)
         XCTAssertNil(reminder.completedAt)
 
-        try viewModel.completeReminder(reminder)
+        try await viewModel.completeReminder(reminder)
 
         XCTAssertFalse(reminder.isActive)
         XCTAssertNotNil(reminder.completedAt)
     }
 
-    func testSnoozeReminder() throws {
+    func testSnoozeReminder() async throws {
         let originalDate = Date().addingTimeInterval(3600)
-        let reminder = try viewModel.createReminder(
+        let reminder = try await viewModel.createReminder(
             title: "Snooze me",
             message: "Test",
             scheduledFor: originalDate,
@@ -224,7 +224,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        try viewModel.snoozeReminder(reminder, minutes: 30)
+        try await viewModel.snoozeReminder(reminder, minutes: 30)
 
         // Scheduled time should be ~30 minutes from now
         let now = Date()
@@ -233,8 +233,8 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertLessThan(timeDifference, 31 * 60) // At most 31 minutes
     }
 
-    func testToggleReminder() throws {
-        let reminder = try viewModel.createReminder(
+    func testToggleReminder() async throws {
+        let reminder = try await viewModel.createReminder(
             title: "Toggle me",
             message: "Test",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -244,10 +244,10 @@ final class RemindersViewModelTests: XCTestCase {
 
         XCTAssertTrue(reminder.isActive)
 
-        try viewModel.toggleReminder(reminder)
+        try await viewModel.toggleReminder(reminder)
         XCTAssertFalse(reminder.isActive)
 
-        try viewModel.toggleReminder(reminder)
+        try await viewModel.toggleReminder(reminder)
         XCTAssertTrue(reminder.isActive)
     }
 
@@ -346,8 +346,8 @@ final class RemindersViewModelTests: XCTestCase {
 
     // MARK: - Filter Tests
 
-    func testFilterAll() throws {
-        _ = try viewModel.createReminder(
+    func testFilterAll() async throws {
+        _ = try await viewModel.createReminder(
             title: "Active",
             message: "M1",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -355,14 +355,14 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        let completed = try viewModel.createReminder(
+        let completed = try await viewModel.createReminder(
             title: "Completed",
             message: "M2",
             scheduledFor: Date().addingTimeInterval(7200),
             frequency: .once,
             category: .habit
         )
-        try viewModel.completeReminder(completed)
+        try await viewModel.completeReminder(completed)
 
         viewModel.setFilter(.all)
 
@@ -371,9 +371,9 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.filteredReminders.first?.title, "Active")
     }
 
-    func testFilterUpcoming() throws {
+    func testFilterUpcoming() async throws {
         let futureDate = Date().addingTimeInterval(3600)
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Upcoming",
             message: "M1",
             scheduledFor: futureDate,
@@ -382,7 +382,7 @@ final class RemindersViewModelTests: XCTestCase {
         )
 
         let pastDate = Date().addingTimeInterval(-3600)
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Overdue",
             message: "M2",
             scheduledFor: pastDate,
@@ -396,9 +396,9 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.filteredReminders.first?.title, "Upcoming")
     }
 
-    func testFilterOverdue() throws {
+    func testFilterOverdue() async throws {
         let futureDate = Date().addingTimeInterval(3600)
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Upcoming",
             message: "M1",
             scheduledFor: futureDate,
@@ -407,7 +407,7 @@ final class RemindersViewModelTests: XCTestCase {
         )
 
         let pastDate = Date().addingTimeInterval(-3600)
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Overdue",
             message: "M2",
             scheduledFor: pastDate,
@@ -421,8 +421,8 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.filteredReminders.first?.title, "Overdue")
     }
 
-    func testFilterCompleted() throws {
-        _ = try viewModel.createReminder(
+    func testFilterCompleted() async throws {
+        _ = try await viewModel.createReminder(
             title: "Active",
             message: "M1",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -430,14 +430,14 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        let completed = try viewModel.createReminder(
+        let completed = try await viewModel.createReminder(
             title: "Completed",
             message: "M2",
             scheduledFor: Date().addingTimeInterval(7200),
             frequency: .once,
             category: .habit
         )
-        try viewModel.completeReminder(completed)
+        try await viewModel.completeReminder(completed)
 
         viewModel.setFilter(.completed)
 
@@ -447,12 +447,12 @@ final class RemindersViewModelTests: XCTestCase {
 
     // MARK: - Statistics Tests
 
-    func testUpcomingCount() throws {
+    func testUpcomingCount() async throws {
         let futureDate1 = Date().addingTimeInterval(3600)
         let futureDate2 = Date().addingTimeInterval(7200)
         let pastDate = Date().addingTimeInterval(-3600)
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Upcoming 1",
             message: "M1",
             scheduledFor: futureDate1,
@@ -460,7 +460,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Upcoming 2",
             message: "M2",
             scheduledFor: futureDate2,
@@ -468,7 +468,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .habit
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Overdue",
             message: "M3",
             scheduledFor: pastDate,
@@ -479,12 +479,12 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.upcomingCount, 2)
     }
 
-    func testOverdueCount() throws {
+    func testOverdueCount() async throws {
         let futureDate = Date().addingTimeInterval(3600)
         let pastDate1 = Date().addingTimeInterval(-3600)
         let pastDate2 = Date().addingTimeInterval(-7200)
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Upcoming",
             message: "M1",
             scheduledFor: futureDate,
@@ -492,7 +492,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Overdue 1",
             message: "M2",
             scheduledFor: pastDate1,
@@ -500,7 +500,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .habit
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Overdue 2",
             message: "M3",
             scheduledFor: pastDate2,
@@ -511,26 +511,26 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.overdueCount, 2)
     }
 
-    func testCompletedCount() throws {
-        let reminder1 = try viewModel.createReminder(
+    func testCompletedCount() async throws {
+        let reminder1 = try await viewModel.createReminder(
             title: "Completed 1",
             message: "M1",
             scheduledFor: Date().addingTimeInterval(3600),
             frequency: .once,
             category: .checkIn
         )
-        try viewModel.completeReminder(reminder1)
+        try await viewModel.completeReminder(reminder1)
 
-        let reminder2 = try viewModel.createReminder(
+        let reminder2 = try await viewModel.createReminder(
             title: "Completed 2",
             message: "M2",
             scheduledFor: Date().addingTimeInterval(7200),
             frequency: .once,
             category: .habit
         )
-        try viewModel.completeReminder(reminder2)
+        try await viewModel.completeReminder(reminder2)
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Active",
             message: "M3",
             scheduledFor: Date().addingTimeInterval(10800),
@@ -541,8 +541,8 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.completedCount, 2)
     }
 
-    func testActiveCount() throws {
-        _ = try viewModel.createReminder(
+    func testActiveCount() async throws {
+        _ = try await viewModel.createReminder(
             title: "Active 1",
             message: "M1",
             scheduledFor: Date().addingTimeInterval(3600),
@@ -550,7 +550,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Active 2",
             message: "M2",
             scheduledFor: Date().addingTimeInterval(7200),
@@ -558,25 +558,25 @@ final class RemindersViewModelTests: XCTestCase {
             category: .habit
         )
 
-        let completed = try viewModel.createReminder(
+        let completed = try await viewModel.createReminder(
             title: "Completed",
             message: "M3",
             scheduledFor: Date().addingTimeInterval(10800),
             frequency: .once,
             category: .actionItem
         )
-        try viewModel.completeReminder(completed)
+        try await viewModel.completeReminder(completed)
 
         XCTAssertEqual(viewModel.activeCount, 2)
     }
 
     // MARK: - Grouping Tests
 
-    func testGroupedRemindersWithOverdue() throws {
+    func testGroupedRemindersWithOverdue() async throws {
         let futureDate = Date().addingTimeInterval(3600)
         let pastDate = Date().addingTimeInterval(-3600)
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Upcoming",
             message: "M1",
             scheduledFor: futureDate,
@@ -584,7 +584,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Overdue",
             message: "M2",
             scheduledFor: pastDate,
@@ -601,11 +601,11 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertEqual(overdueGroup?.reminders.count, 1)
     }
 
-    func testGroupedRemindersWithToday() throws {
+    func testGroupedRemindersWithToday() async throws {
         // Schedule reminder for later today (current time + 2 hours to ensure it's in future)
         let today = Date().addingTimeInterval(7200) // 2 hours from now
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Today Reminder",
             message: "M1",
             scheduledFor: today,
@@ -632,10 +632,10 @@ final class RemindersViewModelTests: XCTestCase {
         }
     }
 
-    func testGroupedRemindersWithTomorrow() throws {
+    func testGroupedRemindersWithTomorrow() async throws {
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Tomorrow Reminder",
             message: "M1",
             scheduledFor: tomorrow,
@@ -659,11 +659,11 @@ final class RemindersViewModelTests: XCTestCase {
         XCTAssertTrue(groups.isEmpty)
     }
 
-    func testGroupedRemindersSortsByDate() throws {
+    func testGroupedRemindersSortsByDate() async throws {
         let date1 = Date().addingTimeInterval(3600)
         let date2 = Date().addingTimeInterval(7200)
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Later",
             message: "M1",
             scheduledFor: date2,
@@ -671,7 +671,7 @@ final class RemindersViewModelTests: XCTestCase {
             category: .checkIn
         )
 
-        _ = try viewModel.createReminder(
+        _ = try await viewModel.createReminder(
             title: "Earlier",
             message: "M2",
             scheduledFor: date1,

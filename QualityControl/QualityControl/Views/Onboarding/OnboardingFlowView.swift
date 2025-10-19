@@ -14,17 +14,49 @@ struct OnboardingFlowView: View {
     // MARK: - Properties
 
     @Environment(\.modelContext) private var modelContext
-    @State private var viewModel: OnboardingViewModel
+    @State private var viewModel: OnboardingViewModel?
     @Binding var isOnboardingComplete: Bool
 
     init(isOnboardingComplete: Binding<Bool>) {
         _isOnboardingComplete = isOnboardingComplete
-        _viewModel = State(initialValue: OnboardingViewModel(
-            modelContext: ModelContext(ModelContainer.shared)
-        ))
     }
 
     // MARK: - Body
+
+    var body: some View {
+        Group {
+            if let unwrappedViewModel = viewModel {
+                OnboardingContentView(viewModel: unwrappedViewModel, onComplete: { completeOnboarding() })
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            if viewModel == nil {
+                viewModel = OnboardingViewModel(modelContext: modelContext)
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func completeOnboarding() {
+        Task {
+            do {
+                try await viewModel?.completeOnboarding()
+                isOnboardingComplete = true
+            } catch {
+                print("Onboarding error: \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - Onboarding Content View
+
+private struct OnboardingContentView: View {
+    @Bindable var viewModel: OnboardingViewModel
+    let onComplete: () -> Void
 
     var body: some View {
         ZStack {
@@ -57,18 +89,14 @@ struct OnboardingFlowView: View {
                     RemindersStepView(viewModel: viewModel)
                         .tag(OnboardingStep.reminders)
 
-                    CompletionStepView(viewModel: viewModel, onComplete: {
-                        completeOnboarding()
-                    })
-                    .tag(OnboardingStep.completion)
+                    CompletionStepView(viewModel: viewModel, onComplete: onComplete)
+                        .tag(OnboardingStep.completion)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: viewModel.currentStep)
             }
         }
     }
-
-    // MARK: - Subviews
 
     private var progressHeader: some View {
         VStack(spacing: QCSpacing.sm) {
@@ -98,19 +126,6 @@ struct OnboardingFlowView: View {
         }
         .padding()
         .background(QCColors.surfaceCard)
-    }
-
-    // MARK: - Actions
-
-    private func completeOnboarding() {
-        Task {
-            do {
-                try await viewModel.completeOnboarding()
-                isOnboardingComplete = true
-            } catch {
-                print("Onboarding error: \(error)")
-            }
-        }
     }
 }
 
