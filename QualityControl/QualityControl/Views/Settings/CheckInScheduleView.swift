@@ -14,9 +14,11 @@ struct CheckInScheduleView: View {
 
     @AppStorage("checkInFrequency") private var checkInFrequency = "weekly"
     @AppStorage("checkInDay") private var checkInDay = 0 // Sunday = 0
-    @AppStorage("checkInTime") private var checkInTime = Date()
+    @AppStorage("checkInTimeInterval") private var checkInTimeInterval: TimeInterval = Date().timeIntervalSinceReferenceDate
     @AppStorage("enableFlexibleSchedule") private var enableFlexibleSchedule = false
     @AppStorage("reminderBefore") private var reminderBefore = 60 // minutes
+
+    @State private var checkInTime = Date()
 
     private let weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -31,6 +33,12 @@ struct CheckInScheduleView: View {
         }
         .navigationTitle("Check-in Schedule")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            checkInTime = Date(timeIntervalSinceReferenceDate: checkInTimeInterval)
+        }
+        .onChange(of: checkInTime) { oldValue, newValue in
+            checkInTimeInterval = newValue.timeIntervalSinceReferenceDate
+        }
     }
 
     // MARK: - Sections

@@ -76,7 +76,8 @@ TEST_SUITES=(
 TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
-SKIPPED_SUITES=0
+PASSED_WITH_SKIPS=0
+TOTAL_SKIPPED_TESTS=0
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Quality Control Test Suite Runner${NC}"
@@ -90,21 +91,29 @@ for TEST_SUITE in "${TEST_SUITES[@]}"; do
     echo -e "${YELLOW}Running: ${TEST_SUITE}${NC}"
 
     # Run the test suite and capture result
-    if xcodebuild test \
+    xcodebuild test \
         -project "$PROJECT_PATH" \
         -scheme "$SCHEME" \
         -destination "$DESTINATION" \
         -only-testing:"QualityControlTests/$TEST_SUITE" \
-        2>&1 | tee /tmp/test_output.txt | grep -E "Test Suite|Test Case|passed|failed" | tail -5; then
+        2>&1 | tee /tmp/test_output.txt | grep -E "Test Suite|Test Case|passed|failed|skipped" | tail -5
 
-        # Check if tests passed
-        if grep -q "Test Suite.*passed" /tmp/test_output.txt; then
+    # Check if build succeeded or failed
+    if grep -q "\*\* TEST SUCCEEDED \*\*" /tmp/test_output.txt; then
+        # Count skipped tests in this suite
+        SKIPPED_COUNT=$(grep -c "skipped on" /tmp/test_output.txt || echo "0")
+
+        if [ "$SKIPPED_COUNT" -gt 0 ]; then
+            echo -e "${YELLOW}⏭  $TEST_SUITE PASSED ($SKIPPED_COUNT tests skipped)${NC}"
+            ((PASSED_WITH_SKIPS++))
+            ((TOTAL_SKIPPED_TESTS+=SKIPPED_COUNT))
+        else
             echo -e "${GREEN}✓ $TEST_SUITE PASSED${NC}"
             ((PASSED_TESTS++))
-        else
-            echo -e "${RED}✗ $TEST_SUITE FAILED${NC}"
-            ((FAILED_TESTS++))
         fi
+    elif grep -q "\*\* TEST FAILED \*\*" /tmp/test_output.txt; then
+        echo -e "${RED}✗ $TEST_SUITE FAILED${NC}"
+        ((FAILED_TESTS++))
     else
         echo -e "${RED}✗ $TEST_SUITE FAILED TO RUN${NC}"
         ((FAILED_TESTS++))
@@ -119,12 +128,22 @@ echo -e "${BLUE}Test Summary${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 echo "Total Test Suites: ${#TEST_SUITES[@]}"
-echo -e "${GREEN}Passed: $PASSED_TESTS${NC}"
-echo -e "${RED}Failed: $FAILED_TESTS${NC}"
+echo -e "${GREEN}✓ Passed: $PASSED_TESTS${NC}"
+
+if [ $PASSED_WITH_SKIPS -gt 0 ]; then
+    echo -e "${YELLOW}⏭  Passed with Skips: $PASSED_WITH_SKIPS ($TOTAL_SKIPPED_TESTS total skipped tests)${NC}"
+fi
+
+echo -e "${RED}✗ Failed: $FAILED_TESTS${NC}"
 echo ""
 
 if [ $FAILED_TESTS -eq 0 ]; then
-    echo -e "${GREEN}All tests passed! 🎉${NC}"
+    if [ $TOTAL_SKIPPED_TESTS -gt 0 ]; then
+        echo -e "${GREEN}All tests passed! 🎉${NC}"
+        echo -e "${YELLOW}Note: $TOTAL_SKIPPED_TESTS tests skipped (run on physical device for full coverage)${NC}"
+    else
+        echo -e "${GREEN}All tests passed! 🎉${NC}"
+    fi
     exit 0
 else
     echo -e "${RED}Some tests failed. Review output above for details.${NC}"

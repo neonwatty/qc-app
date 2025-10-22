@@ -17,8 +17,10 @@ struct NotificationsView: View {
     @AppStorage("partnerRequests") private var partnerRequests = true
     @AppStorage("milestoneNotifications") private var milestoneNotifications = true
     @AppStorage("noteSharing") private var noteSharing = true
-    @AppStorage("dailyReminderTime") private var dailyReminderTime = Date()
+    @AppStorage("dailyReminderTimeInterval") private var dailyReminderTimeInterval: TimeInterval = Date().timeIntervalSinceReferenceDate
     @AppStorage("reminderFrequency") private var reminderFrequency = "daily"
+
+    @State private var dailyReminderTime = Date()
 
     @State private var showPermissionAlert = false
 
@@ -42,6 +44,12 @@ struct NotificationsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Please enable notifications in your device settings to receive Quality Control reminders.")
+        }
+        .onAppear {
+            dailyReminderTime = Date(timeIntervalSinceReferenceDate: dailyReminderTimeInterval)
+        }
+        .onChange(of: dailyReminderTime) { oldValue, newValue in
+            dailyReminderTimeInterval = newValue.timeIntervalSinceReferenceDate
         }
     }
 
