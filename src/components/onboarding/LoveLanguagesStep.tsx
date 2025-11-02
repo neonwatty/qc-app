@@ -98,10 +98,10 @@ export function LoveLanguagesStep({
             <Sparkles className="w-8 h-8 text-purple-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Deb's Love Languages
+            Deb&apos;s Love Languages
           </h2>
           <p className="text-gray-600">
-            Here's what makes your partner feel most loved
+            Here&apos;s what makes your partner feel most loved
           </p>
         </div>
 
@@ -140,7 +140,7 @@ export function LoveLanguagesStep({
 
         <div className="bg-purple-50 rounded-lg p-4">
           <p className="text-sm text-gray-700">
-            💡 <strong>Tip:</strong> Try expressing love in Deb's languages this week and see how they respond!
+            💡 <strong>Tip:</strong> Try expressing love in Deb&apos;s languages this week and see how they respond!
           </p>
         </div>
 

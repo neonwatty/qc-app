@@ -32,29 +32,6 @@ export function TurnIndicator({
   const [turnsCompleted, setTurnsCompleted] = useState({ user: 0, partner: 0 })
   const [showWarning, setShowWarning] = useState(false)
 
-  useEffect(() => {
-    if (!settings.turnBasedMode || !isActive) return
-
-    const interval = setInterval(() => {
-      setTurnTimeRemaining((prev) => {
-        if (prev <= 1) {
-          handleTurnSwitch()
-          return settings.turnDuration || 90
-        }
-        
-        // Show warning at 10 seconds
-        if (prev === 10) {
-          setShowWarning(true)
-          setTimeout(() => setShowWarning(false), 3000)
-        }
-        
-        return prev - 1
-      })
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [currentSpeaker, isActive, settings])
-
   const handleTurnSwitch = useCallback(() => {
     const nextSpeaker = currentSpeaker === 'user' ? 'partner' : 'user'
     setCurrentSpeaker(nextSpeaker)
@@ -64,6 +41,29 @@ export function TurnIndicator({
     }))
     onTurnEnd?.()
   }, [currentSpeaker, onTurnEnd])
+
+  useEffect(() => {
+    if (!settings.turnBasedMode || !isActive) return
+
+    const interval = setInterval(() => {
+      setTurnTimeRemaining((prev) => {
+        if (prev <= 1) {
+          handleTurnSwitch()
+          return settings.turnDuration || 90
+        }
+
+        // Show warning at 10 seconds
+        if (prev === 10) {
+          setShowWarning(true)
+          setTimeout(() => setShowWarning(false), 3000)
+        }
+
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [currentSpeaker, isActive, settings, handleTurnSwitch])
 
   const handleSkipTurn = () => {
     setTurnTimeRemaining(settings.turnDuration || 90)

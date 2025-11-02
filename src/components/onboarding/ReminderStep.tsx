@@ -175,7 +175,7 @@ export function ReminderStep({
                 Every {getDayLabel(selectedDay)} at {getTimeLabel(selectedTime)}
               </p>
               <p className="text-sm text-gray-700 mt-2">
-                "Time for your check-in with Deb! 💕"
+                &ldquo;Time for your check-in with Deb! 💕&rdquo;
               </p>
               {additionalReminder && (
                 <p className="text-sm text-pink-600 mt-1">

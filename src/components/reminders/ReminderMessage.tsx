@@ -171,8 +171,8 @@ export function ReminderMessage({ reminder, onComplete, onSnooze, onReschedule, 
                       <div className="flex items-start gap-2">
                         <Heart className="w-4 h-4 text-purple-600 mt-0.5" />
                         <div>
-                          <p className="text-xs font-medium text-purple-700 mb-1">Deb's request:</p>
-                          <p className="text-sm italic text-gray-700">"{reminder.requestMessage}"</p>
+                          <p className="text-xs font-medium text-purple-700 mb-1">Deb&apos;s request:</p>
+                          <p className="text-sm italic text-gray-700">&ldquo;{reminder.requestMessage}&rdquo;</p>
                         </div>
                       </div>
                     </div>

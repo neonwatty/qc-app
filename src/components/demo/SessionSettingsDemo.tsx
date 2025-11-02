@@ -188,7 +188,7 @@ export function SessionSettingsDemo() {
                         A
                       </div>
                       <div>
-                        <p className="text-sm font-medium">Alex's Turn</p>
+                        <p className="text-sm font-medium">Alex&apos;s Turn</p>
                         <p className="text-lg font-mono font-bold">1:15</p>
                       </div>
                     </div>

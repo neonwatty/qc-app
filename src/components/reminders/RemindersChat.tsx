@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Filter, Bell, Calendar, Search, Check } from 'lucide-react'
+import { Plus, Filter, Bell, Calendar, Search, Check, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
@@ -152,6 +152,7 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Relationship Reminders</h2>
               <div className="flex gap-2">
+                {/* TODO: Implement partner reminder requests feature
                 <Button
                   onClick={() => setShowRequestModal(true)}
                   variant="outline"
@@ -160,6 +161,7 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
                   <Users className="w-4 h-4 mr-2" />
                   Request from Partner
                 </Button>
+                */}
                 <Button
                   onClick={() => setShowCreateForm(!showCreateForm)}
                   className="bg-pink-600 hover:bg-pink-700"
@@ -216,6 +218,7 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
           </Card>
 
           {/* Pending Requests */}
+          {/* TODO: Implement partner reminder requests feature
           {pendingRequests.length > 0 && (
             <div className="space-y-2 mb-4">
               {pendingRequests.map(request => (
@@ -229,6 +232,7 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
               ))}
             </div>
           )}
+          */}
 
           {/* Messages */}
           <div className="space-y-2">
@@ -317,11 +321,13 @@ export function RemindersChat({ reminders: initialReminders }: RemindersChatProp
       </div>
 
       {/* Request Modal */}
+      {/* TODO: Implement partner reminder requests feature
       <ReminderRequestModal
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
         onSubmit={handleNewRequest}
       />
+      */}
     </div>
   )
 }

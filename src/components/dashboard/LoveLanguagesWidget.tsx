@@ -78,7 +78,7 @@ export function LoveLanguagesWidget() {
           <div className="space-y-2">
             <h4 className="text-sm font-medium text-gray-900 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-yellow-500" />
-              Today's Actions
+              Today&apos;s Actions
             </h4>
             {todayActions.map((action) => (
               <div
@@ -114,7 +114,7 @@ export function LoveLanguagesWidget() {
         {/* Partner Languages Preview */}
         {partnerLanguages.length > 0 && (
           <div className="pt-2 border-t">
-            <p className="text-xs text-gray-600 mb-2">Partner's Top Language:</p>
+            <p className="text-xs text-gray-600 mb-2">Partner&apos;s Top Language:</p>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="text-xs text-gray-700">
                 {partnerLanguages[0].category}

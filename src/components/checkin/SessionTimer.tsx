@@ -328,7 +328,7 @@ export function SessionTimer({
       <Dialog open={showExtensionDialog} onOpenChange={setShowExtensionDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Time's Up!</DialogTitle>
+            <DialogTitle>Time&apos;s Up!</DialogTitle>
             <DialogDescription>
               Your session time has ended. Would you like to extend for another 5 minutes?
             </DialogDescription>

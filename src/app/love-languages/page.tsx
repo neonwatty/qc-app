@@ -82,7 +82,7 @@ export default function LoveLanguagesPage() {
               </TabsTrigger>
               <TabsTrigger value="partner" className="text-gray-700 data-[state=active]:text-gray-900">
                 <Sparkles className="h-4 w-4 mr-2" />
-                Partner's Languages ({partnerLanguages.length})
+                Partner&apos;s Languages ({partnerLanguages.length})
               </TabsTrigger>
             </TabsList>
             <Button onClick={() => setShowAddDialog(true)}>
@@ -158,7 +158,7 @@ export default function LoveLanguagesPage() {
                 <CardHeader>
                   <CardTitle className="text-gray-900">No Shared Languages Yet</CardTitle>
                   <CardDescription className="text-gray-700">
-                    Your partner hasn't shared any love languages yet. Encourage them to add and share theirs!
+                    Your partner hasn&apos;t shared any love languages yet. Encourage them to add and share theirs!
                   </CardDescription>
                 </CardHeader>
               </Card>

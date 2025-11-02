@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
 import { Navigation } from '@/components/layout/Navigation'
+import { Footer } from '@/components/layout/Footer'
 import PageTransition from '@/components/ui/PageTransition'
 import SwipeNavigation from '@/components/ui/SwipeGestures'
 import { Toaster } from 'sonner'
@@ -146,6 +147,9 @@ export default function RootLayout({
                   </PageTransition>
                 </div>
               </main>
+
+              {/* Footer */}
+              <Footer />
             </div>
           </div>
         </Providers>

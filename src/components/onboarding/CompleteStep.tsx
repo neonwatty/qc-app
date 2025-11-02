@@ -76,7 +76,7 @@ export function CompleteStep({ preferences, onComplete, onPrevious }: CompleteSt
         </div>
         
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          You're All Set! 🎉
+          You&apos;re All Set! 🎉
         </h2>
         <p className="text-lg text-gray-600">
           Your personalized experience is ready
@@ -120,7 +120,7 @@ export function CompleteStep({ preferences, onComplete, onPrevious }: CompleteSt
           <div>
             <p className="font-medium text-gray-900">Welcome to your journey!</p>
             <p className="text-sm text-gray-600 mt-1">
-              Jeremy & Deb's relationship dashboard is ready. Start with your first check-in or explore the features at your own pace.
+              Jeremy & Deb&apos;s relationship dashboard is ready. Start with your first check-in or explore the features at your own pace.
             </p>
           </div>
         </div>

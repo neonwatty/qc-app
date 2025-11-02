@@ -30,7 +30,7 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
           Welcome to Quality Control
         </h1>
         <p className="text-lg text-gray-600">
-          Let's personalize your relationship check-in experience
+          Let&apos;s personalize your relationship check-in experience
         </p>
       </motion.div>
 
@@ -41,7 +41,7 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
         className="bg-pink-50 rounded-lg p-4 text-left space-y-3"
       >
         <p className="text-sm text-gray-700 font-medium">
-          You'll be playing as <span className="font-semibold text-pink-600">Jeremy</span>, 
+          You&apos;ll be playing as <span className="font-semibold text-pink-600">Jeremy</span>,
           with <span className="font-semibold text-purple-600">Deb</span> as your partner.
         </p>
         <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
@@ -82,7 +82,7 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
           size="lg"
           className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white"
         >
-          Let's Get Started
+          Let&apos;s Get Started
         </Button>
       </motion.div>
     </div>

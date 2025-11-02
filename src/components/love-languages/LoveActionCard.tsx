@@ -105,7 +105,7 @@ export function LoveActionCard({ action, onComplete, onEdit, onDelete }: LoveAct
           )}
 
           {action.notes && (
-            <p className="text-sm text-gray-600 italic">"{action.notes}"</p>
+            <p className="text-sm text-gray-600 italic">&ldquo;{action.notes}&rdquo;</p>
           )}
 
           <div className="flex items-center gap-2 pt-2">
