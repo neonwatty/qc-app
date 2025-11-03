@@ -80,17 +80,7 @@ export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
     <footer
       role="contentinfo"
-      className={cn(
-        // Hidden for marketing screenshots
-        "hidden",
-        // Desktop-only via Tailwind breakpoint - hidden on mobile due to bottom nav
-        "lg:block transition-colors duration-300",
-        // Glassmorphism effect matching Navigation and Header
-        "bg-white/95 backdrop-blur-md border-t border-rose-200/40 shadow-lg shadow-rose-100/30",
-        // Dark mode styles
-        "dark:bg-gray-900/95 dark:border-gray-700/40 dark:shadow-gray-800/30",
-        className
-      )}
+      className="hidden"
     >
       <div className="w-full py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">

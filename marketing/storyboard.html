@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC - Quality Control for Relationships | Product Storyboard</title>
+    <meta name="description" content="QC helps couples strengthen their relationship through structured check-ins, privacy-aware notes, and progress tracking.">
+    <style>
+        :root {
+            --primary: #EC4899;
+            --secondary: #A855F7;
+            --accent: #3B82F6;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --bg: #FFFFFF;
+            --bg-light: #F9FAFB;
+            --border: #E5E7EB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: linear-gradient(135deg, #FFF 0%, var(--bg-light) 100%);
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        header .tagline {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        header .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.85;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        nav .container {
+            padding: 16px 20px;
+        }
+
+        nav h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--text);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        /* Feature Sections */
+        .features {
+            padding: 40px 20px 80px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--text);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            font-size: clamp(0.95rem, 2vw, 1.1rem);
+            color: var(--text-light);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        @media (min-width: 768px) {
+            .feature-grid {
+                gap: 80px;
+            }
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-screenshot {
+            width: 100%;
+            max-height: 800px;
+            height: auto;
+            display: block;
+            background: var(--bg-light);
+            object-fit: contain;
+            object-position: top;
+            border: 1px solid var(--border);
+        }
+
+        .feature-content {
+            padding: 32px;
+        }
+
+        .feature-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+
+        .feature-title {
+            font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+            color: var(--text);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .feature-description {
+            font-size: clamp(0.95rem, 2vw, 1.125rem);
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* Category Dividers */
+        .category-divider {
+            text-align: center;
+            margin: 100px 0 60px;
+        }
+
+        .category-divider h4 {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            color: var(--secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            display: inline-block;
+            padding: 0 30px;
+        }
+
+        .category-divider h4::before,
+        .category-divider h4::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--secondary));
+        }
+
+        .category-divider h4::before {
+            right: 100%;
+            background: linear-gradient(90deg, var(--secondary), transparent);
+        }
+
+        .category-divider h4::after {
+            left: 100%;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        footer h3 {
+            font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+            margin-bottom: 16px;
+        }
+
+        footer p {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            opacity: 0.85;
+            margin-bottom: 12px;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .feature-content {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>QC - Quality Control</h1>
+        <p class="tagline">Relationship Check-ins, Done Right</p>
+        <p class="subtitle">A high-fidelity UX prototype for iOS</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <h2>Product Storyboard - Key Features & User Journey</h2>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h2>Simple tools to engineer a stronger relationship</h2>
+            <p>QC helps couples strengthen their connection through structured check-ins, privacy-aware note-taking, and meaningful progress tracking.</p>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+
+            <!-- ACT 1: THE PROBLEM -->
+            <div class="category-divider">
+                <h4>Getting Started</h4>
+            </div>
+
+            <div class="feature-grid">
+                <!-- Feature 1: Landing -->
+                <div class="feature-card">
+                    <img src="screenshots/01-landing.png" alt="QC Landing Page" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">01</span>
+                        <h3 class="feature-title">Welcome to QC</h3>
+                        <p class="feature-description">Quality Control helps couples strengthen their relationship through regular, structured check-ins.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Onboarding Welcome -->
+                <div class="feature-card">
+                    <img src="screenshots/02-onboarding-welcome.png" alt="Onboarding Welcome" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">02</span>
+                        <h3 class="feature-title">Quick Personalization</h3>
+                        <p class="feature-description">Get started in under 2 minutes with personalized relationship preferences.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Onboarding Quiz -->
+                <div class="feature-card">
+                    <img src="screenshots/03-onboarding-quiz.png" alt="Onboarding Quiz" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">03</span>
+                        <h3 class="feature-title">Communication Style Discovery</h3>
+                        <p class="feature-description">Discover your communication style and check-in preferences together.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACT 2: THE SOLUTION -->
+            <div class="category-divider">
+                <h4>Core Features</h4>
+            </div>
+
+            <div class="feature-grid">
+                <!-- Feature 4: Dashboard -->
+                <div class="feature-card">
+                    <img src="screenshots/04-dashboard.png" alt="Dashboard" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">04</span>
+                        <h3 class="feature-title">Relationship Command Center</h3>
+                        <p class="feature-description">Your relationship command center with activity feed, quick actions, and love languages.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 5: Check-in Start -->
+                <div class="feature-card">
+                    <img src="screenshots/05-checkin-start.png" alt="Check-in Start" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">05</span>
+                        <h3 class="feature-title">Structured Sessions</h3>
+                        <p class="feature-description">Choose discussion topics with customizable session rules and time limits.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 6: Check-in Discussion -->
+                <div class="feature-card">
+                    <img src="screenshots/06-checkin-discussion.png" alt="Check-in Discussion" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">06</span>
+                        <h3 class="feature-title">Guided Conversations</h3>
+                        <p class="feature-description">Guided prompts help facilitate meaningful conversations with your partner.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 7: Notes -->
+                <div class="feature-card">
+                    <img src="screenshots/07-notes.png" alt="Notes Library" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">07</span>
+                        <h3 class="feature-title">Privacy-Aware Notes</h3>
+                        <p class="feature-description">Keep private reflections or share insights with three-tier privacy controls.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 8: Growth Gallery -->
+                <div class="feature-card">
+                    <img src="screenshots/08-growth.png" alt="Growth Gallery" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">08</span>
+                        <h3 class="feature-title">Track Your Journey</h3>
+                        <p class="feature-description">Celebrate milestones and track your relationship progress over time.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 9: Love Languages -->
+                <div class="feature-card">
+                    <img src="screenshots/09-love-languages.png" alt="Love Languages" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">09</span>
+                        <h3 class="feature-title">Actionable Love Languages</h3>
+                        <p class="feature-description">Share the unique ways you feel loved with specific, actionable examples.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 10: Reminders -->
+                <div class="feature-card">
+                    <img src="screenshots/10-reminders.png" alt="Reminders" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">10</span>
+                        <h3 class="feature-title">Stay Connected</h3>
+                        <p class="feature-description">Stay connected with thoughtful prompts for check-ins and special moments.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 11: Requests -->
+                <div class="feature-card">
+                    <img src="screenshots/11-requests.png" alt="Requests" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">11</span>
+                        <h3 class="feature-title">Partner Communication</h3>
+                        <p class="feature-description">Send and respond to partner requests with built-in reminder conversion.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACT 3: CUSTOMIZATION -->
+            <div class="category-divider">
+                <h4>Customization</h4>
+            </div>
+
+            <div class="feature-grid">
+                <!-- Feature 12: Session Settings -->
+                <div class="feature-card">
+                    <img src="screenshots/12-settings-session.png" alt="Session Settings" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">12</span>
+                        <h3 class="feature-title">Session Rules</h3>
+                        <p class="feature-description">Customize check-in duration, timeouts, and turn-based discussions.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 13: Categories Manager -->
+                <div class="feature-card">
+                    <img src="screenshots/13-settings-categories.png" alt="Categories Manager" class="feature-screenshot">
+                    <div class="feature-content">
+                        <span class="feature-number">13</span>
+                        <h3 class="feature-title">Custom Discussion Topics</h3>
+                        <p class="feature-description">Create custom discussion categories with personalized prompts.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <h3>Built with Modern Web Technologies</h3>
+            <p>QC is a high-fidelity proof-of-concept for iOS</p>
+            <p>Mobile-first design • Privacy-focused • Progress tracking</p>
+
+            <div class="tech-stack">
+                <span class="tech-badge">Next.js 15</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">Tailwind CSS</span>
+                <span class="tech-badge">Framer Motion</span>
+                <span class="tech-badge">shadcn/ui</span>
+                <span class="tech-badge">React Context</span>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
