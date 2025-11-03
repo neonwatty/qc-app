@@ -81,8 +81,10 @@ export const Footer: React.FC<FooterProps> = ({ className = '' }) => {
     <footer
       role="contentinfo"
       className={cn(
+        // Hidden for marketing screenshots
+        "hidden",
         // Desktop-only via Tailwind breakpoint - hidden on mobile due to bottom nav
-        "hidden lg:block transition-colors duration-300",
+        "lg:block transition-colors duration-300",
         // Glassmorphism effect matching Navigation and Header
         "bg-white/95 backdrop-blur-md border-t border-rose-200/40 shadow-lg shadow-rose-100/30",
         // Dark mode styles
